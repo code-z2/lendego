@@ -1,0 +1,17 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "description": "lendego contracts",
+  "main": "index.js",
+  "repository": "https://github.com/peteruche21/lendego",
+  "author": "peter",
+  "license": "GPLv3",
+  "private": true,
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0"
+  }
+}
