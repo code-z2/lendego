@@ -977,6 +977,54 @@
         }
       }
     },
+    "src/Lend.sol": {
+      "lastModificationDate": 1669240105453,
+      "contentHash": "cd3d191c1400b5ec8525784820af9a51",
+      "sourceName": "src/Lend.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/tokens/ERC4626/vStable.sol"
+      ],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "LendEgo": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Lend.sol/LendEgo.json"
+        }
+      }
+    },
     "src/interface/IBorrow.sol": {
       "lastModificationDate": 1669058964699,
       "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
@@ -1057,49 +1105,9 @@
         }
       }
     },
-    "src/tokens/ERC4626/vLiquid.sol": {
-      "lastModificationDate": 1669058871019,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
-      "sourceName": "src/tokens/ERC4626/vLiquid.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": null,
-      "artifacts": {
-        "vLiquid": {
-          "0.8.17+commit.8df45f5f.Linux.gcc": "vLiquid.sol/vLiquid.json"
-        }
-      }
-    },
     "src/tokens/ERC4626/vStable.sol": {
-      "lastModificationDate": 1669153212954,
-      "contentHash": "c4cfbd98cc39f1870ad76ae78fb27491",
+      "lastModificationDate": 1669240244725,
+      "contentHash": "861ea67514e6869bd7afe4953e201c5a",
       "sourceName": "src/tokens/ERC4626/vStable.sol",
       "solcConfig": {
         "settings": {
@@ -1190,8 +1198,8 @@
       }
     },
     "test/vStable.t.sol": {
-      "lastModificationDate": 1669157405114,
-      "contentHash": "f1386c285328ebf40da25634f58567e8",
+      "lastModificationDate": 1669240277901,
+      "contentHash": "211de38ddd8cc5f9683015fbd003a123",
       "sourceName": "test/vStable.t.sol",
       "solcConfig": {
         "settings": {
@@ -1234,8 +1242,8 @@
       ],
       "versionRequirement": "^0.8.13",
       "artifacts": {
-        "CounterTest": {
-          "0.8.17+commit.8df45f5f.Linux.gcc": "vStable.t.sol/CounterTest.json"
+        "StablesVaultTest": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "vStable.t.sol/StablesVaultTest.json"
         }
       }
     }

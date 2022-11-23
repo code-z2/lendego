@@ -7,24 +7,18 @@ import "./tokens/mock/ERC20.sol";
 import "ds-test/test.sol";
 import "../src/tokens/ERC4626/vStable.sol";
 
-contract CounterTest is DSTest {
+contract StablesVaultTest is DSTest {
     StablesVault public vStable;
     MockToken public mock;
-    IERC20[5] assets;
+    address[5] assets;
 
     function setUp() public {
         mock = new MockToken();
-        assets = [
-            IERC20(address(mock)),
-            IERC20(address(mock)),
-            IERC20(address(mock)),
-            IERC20(address(mock)),
-            IERC20(address(mock))
-        ];
+        assets = [address(mock), address(mock), address(mock), address(mock), address(mock)];
         vStable = new StablesVault(assets, "vLendego", "vLDG");
     }
 
     function testStableTokensAreProvided() public {
-        // assertEq(vStable._assets[0], assets[0]);
+        assertEq(vStable.asset()[0], address(mock));
     }
 }
