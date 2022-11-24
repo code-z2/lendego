@@ -64,13 +64,13 @@ contract StablesVault is ERC20, Ownable {
      * @param caller: the address of who is depositing,
      * in the widthraw flow, only the message.sender is allowed since you can withdraw from vault directly
      */
-    function deposit(address caller, uint256 assets, uint256 choice) public onlyOwner {
+    function deposit(address caller, uint256 assets, uint256 choice) public onlyOwner returns (bool success) {
         // checks that the deposit value is higher than 0
         require(assets > 0, "Deposit is less than Zero");
         // the choice of stable must be available
         require(choice >= 0 && choice <= _assets.length - 1, "Invalid choice of Stable");
         // transfers asset of choice from user to contract
-        bool success = IERC20(_assets[choice]).transferFrom(caller, address(this), assets);
+        success = IERC20(_assets[choice]).transferFrom(caller, address(this), assets);
         // checks the value of _assets the holder has
         if (success) {
             shareHolder[caller] += assets;
@@ -81,7 +81,7 @@ contract StablesVault is ERC20, Ownable {
     }
 
     /** @notice The Strategy
-     * when a borrower deposits back his collateral
+     * when a borrower deposits back his loan
      * the accrued interest will be minted to the lender in form of shares
      * lender can then redeem these shares for actual stables
      * */
@@ -108,7 +108,7 @@ contract StablesVault is ERC20, Ownable {
         address receiver,
         address owner_,
         uint256 choice
-    ) public virtual onlyOwner returns (uint256) {
+    ) public onlyOwner returns (uint256) {
         // if trying to withdraw another stable, check theres is enough stable.
         require(_totalAssets(choice) > assets, "not enough liquidity for selected stable");
         require(assets <= shareHolder[owner_], "cannot widthraw more than shareholder has");
@@ -141,7 +141,7 @@ contract StablesVault is ERC20, Ownable {
         address receiver,
         address owner_,
         uint256 choice
-    ) public virtual onlyOwner returns (uint256) {
+    ) public onlyOwner returns (uint256) {
         // you can only redeem shares for stables if the shares are less than the vToken balance of the shareHolder
         require(shares <= balanceOf(owner_), "ERC4626: redeem more than max");
         // the choice of stable must be available
