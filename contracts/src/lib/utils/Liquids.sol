@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPLv3
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /// @title liquid token database for vLiquid
 /// this contract is only for testing purposes
 /// dont use in production
-contract Liquids is Ownable {
+contract Liquids is AccessControl {
+    // Create a new role identifier for the minter role
+    bytes32 public constant EDITOR_ROLE = keccak256("EDITOR_ROLE");
     struct Tokens {
         address token;
         address priceOracle;
@@ -15,20 +17,20 @@ contract Liquids is Ownable {
 
     Tokens[] database;
 
-    function addNew(address token, address priceOracle, string memory pair) public onlyOwner {
+    function addNew(address token, address priceOracle, string memory pair) public onlyRole(EDITOR_ROLE) {
         database.push(Tokens(token, priceOracle, pair));
     }
 
-    function getAll() external view returns (Tokens[] memory) {
+    function deleteOne(uint256 index) public onlyRole(EDITOR_ROLE) {
+        // just delete, don't re-order, don't modify sequence
+        delete database[index];
+    }
+
+    function _getAll() internal view returns (Tokens[] memory) {
         return database;
     }
 
-    function getOne(uint256 index) external view returns (Tokens memory) {
+    function _getOne(uint256 index) internal view returns (Tokens memory) {
         return database[index];
-    }
-
-    function deleteOne(uint256 index) public onlyOwner {
-        // just delete, don't re-order, don't modify sequence
-        delete database[index];
     }
 }
