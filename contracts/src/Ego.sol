@@ -25,6 +25,14 @@ contract Ego is Lend, Borrow {
         // emit new loan filled (address borrower, address lender, address stable, address amount, duration tenure)
     }
 
+    function fillUnstablePosition(uint256 tenure) public pure /** address collateral, uint256 nodeIDX*/ {
+        require(tenure >= 0 && tenure < 3, "Tenure: not surpported");
+        // checks that collateral price >= 125% of requested stable
+        // if collateral == address(0), check that msg.value price > 125% of requested stable
+        // calls nodes[nodeIDX].fill
+        // emit new loan filled (address borrower, address lender, address stable, address amount, duration tenure)
+    }
+
     function exitLenderFromPosition(uint256 nodeIdx) public view returns (bool) {
         require(msg.sender == pool[nodeIdx].lend.lender, "Lender: you are not the lender attached to this node");
         // checks that the tenure has expired
