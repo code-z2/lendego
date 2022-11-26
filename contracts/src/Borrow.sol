@@ -6,7 +6,7 @@ import "./interface/IDIAOracle.sol";
 
 contract Borrow {
     LiquidVault immutable liquidV;
-    uint256[3] acceptedTenures = [30, 60, 90]; // days
+    uint128[3] acceptedTenures = [30, 60, 90]; // days
     struct PartialNodeB {
         // borrowers details
         address borrower;
@@ -39,7 +39,7 @@ contract Borrow {
             collateral: collateral_,
             collateralIn: assets,
             maximumExpectedOutput: maximumExpectedOutput_,
-            tenure: tenure_,
+            tenure: acceptedTenures[tenure_],
             indexOfCollateral: choice
         });
         // broadcast new position
