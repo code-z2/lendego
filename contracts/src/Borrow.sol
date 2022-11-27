@@ -15,6 +15,8 @@ contract Borrow {
         uint256 maximumExpectedOutput; // usd
         uint128 tenure;
         uint128 indexOfCollateral;
+        uint8 maxPayableInterest;
+        bool restricted;
     }
 
     // pool of borrowers
@@ -26,21 +28,31 @@ contract Borrow {
 
     event NewBorrowRequest(address borrower, address liquid, uint256 assets, uint256 tenure);
 
-    function createUnstablePosition(uint128 choice, uint256 maximumExpectedOutput_, uint128 tenure_) public {
+    function createUnstablePosition(
+        uint128 choice,
+        uint256 collateralIn_,
+        uint256 maximumExpectedOutput_,
+        uint128 tenure_,
+        uint8 interest
+    ) public {
         require(acceptedTenures[tenure_] != 0, "Tenure: please choose a valid loan duration");
+        require(interest <= 15, "Interest reate cannot be more 15%");
         address collateral_ = liquidV.asset()[choice].token;
         // calculte 125% of maximumExpectedOutput in usd
         uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, choice);
+        require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
         // deposit into the vault
-        bool success = liquidV.deposit(msg.sender, assets, choice);
+        bool success = liquidV.deposit(msg.sender, collateralIn_, choice);
         // create new position
         PartialNodeB memory new_ = PartialNodeB({
             borrower: msg.sender,
             collateral: collateral_,
-            collateralIn: assets,
+            collateralIn: collateralIn_,
             maximumExpectedOutput: maximumExpectedOutput_,
             tenure: acceptedTenures[tenure_],
-            indexOfCollateral: choice
+            indexOfCollateral: choice,
+            maxPayableInterest: interest,
+            restricted: false
         });
         // broadcast new position
         success ? bPool.push(new_) : revert("deposit failed");

@@ -50,6 +50,10 @@ contract StablesVault is ERC20, Ownable {
         return balances;
     }
 
+    function getshares(address shareHolder_) external view returns (uint256) {
+        return shareHolder[shareHolder_];
+    }
+
     function previewWithdraw(uint256 assets, uint256 choice) public virtual returns (uint256) {
         uint256 supply = totalSupply();
         return (assets == 0 || supply == 0) ? assets : assets.mulDiv(supply, _totalAssets(choice), Math.Rounding.Up);

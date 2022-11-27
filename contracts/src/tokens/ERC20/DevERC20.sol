@@ -14,7 +14,7 @@ contract Atom is ERC20 {
         return 6;
     }
 
-    // yeah i know, you can mint for yourself if you want!
+    // yeah i know, you can mint for yourself for free yay! if you want!
     function mint(address to, uint256 amount) public {
         _mint(to, amount);
     }
@@ -33,6 +33,20 @@ contract WrappedETH is ERC20 {
 contract Dia is ERC20 {
     constructor() ERC20("Dia", "DIA") {
         _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+}
+
+contract USDC is ERC20 {
+    constructor() ERC20("USDC", "USDC") {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 9;
     }
 
     function mint(address to, uint256 amount) public {

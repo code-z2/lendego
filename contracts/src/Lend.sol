@@ -22,6 +22,7 @@ contract Lend {
         uint8 interestRate;
         uint256 assets;
         bool filled; // default false
+        bool acceptingRequests; // default true
     }
 
     // pool of lenders
@@ -43,7 +44,8 @@ contract Lend {
             choiceOfStable: AcceptedStables(choice),
             interestRate: interest,
             assets: assets,
-            filled: false
+            filled: false,
+            acceptingRequests: true
         });
         // broadcast new position
         success ? lPool.push(new_) : revert("deposit failed");
