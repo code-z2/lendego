@@ -20,7 +20,7 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 contract StablesVault is ERC20, Ownable {
     using Math for uint256;
     // array of five stable coins
-    address[5] _assets; // IERC20[5] works but tests disagrees
+    address[5] internal _assets; // IERC20[5] works but tests disagrees
 
     // emits when a user deposits into the vault
     event Deposit(address caller, uint256 amount);
@@ -28,7 +28,7 @@ contract StablesVault is ERC20, Ownable {
     event Withdraw(address caller, address receiver, address owner_, uint256 amount, uint256 shares);
 
     // keeps track of the user shares
-    mapping(address => uint256) shareHolder;
+    mapping(address => uint256) private shareHolder;
 
     // sets the erc20 stables.
     constructor(address[5] memory assets, string memory _name, string memory _symbol) ERC20(_name, _symbol) {
@@ -189,6 +189,16 @@ contract StablesVault is ERC20, Ownable {
 
         emit Withdraw(caller, receiver, owner_, assets, shares);
         success = _success;
+    }
+
+    // temporarily Permit movement of money from this contract
+    function temporaryPermit(uint256 choice, uint256 amount) public onlyOwner {
+        IERC20(_assets[choice]).approve(msg.sender, amount);
+    }
+
+    // revoke back such permit
+    function revokePermit(uint256 choice) public onlyOwner {
+        IERC20(_assets[choice]).approve(msg.sender, 0);
     }
 }
 

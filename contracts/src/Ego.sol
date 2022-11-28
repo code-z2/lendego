@@ -19,12 +19,12 @@ contract Ego is Lend, Borrow {
     }
 
     // the default stable-coin
-    AcceptedStables defaultChoice = AcceptedStables.USDC;
+    AcceptedStables private defaultChoice = AcceptedStables.USDC;
 
     // general pool
-    mapping(uint => Node) pool;
+    mapping(uint => Node) private pool;
     // used to keep track of lenders stables that cannot be withrawn due to open positions
-    mapping(address => uint256) lockedStables;
+    mapping(address => uint256) private lockedStables;
 
     constructor(address[5] memory stables) Lend(stables) {}
 
@@ -103,18 +103,21 @@ contract Ego is Lend, Borrow {
 
     function exitLenderFromPosition(uint256 nodeId) public {
         require(msg.sender == pool[nodeId].lend.lender, "Lender: you are not the lender attached to this node");
+        require(pool[nodeId].isOpen, "position has been closed");
         require(_hasTenureExpired(pool[nodeId]), "sorry loan tenure is still active");
         // caution with this
         _forcefullyExit(nodeId);
         // emit loan settled;
         emit LoanSettled(pool[nodeId].borrow.borrower, pool[nodeId].lend.lender, pool[nodeId].lend.assets, nodeId);
-        delete pool[nodeId];
+        pool[nodeId].isOpen = false;
     }
 
     function exitBorrowerFromPosition(uint256 nodeId, address reciever) public {
         require(msg.sender == pool[nodeId].borrow.borrower, "Borrower: you did not fill this position!");
+        require(pool[nodeId].isOpen, "position has been closed");
         Node memory node = pool[nodeId];
         // transfers loan + interest back to stablesVault;
+        // user handles the approval here
         _transfer(
             stableV.asset()[uint(node.lend.choiceOfStable)],
             msg.sender,
@@ -125,7 +128,7 @@ contract Ego is Lend, Borrow {
         // mints lender some more shares
         stableV.mint(node.lend.lender, calcInterestOnly(nodeId));
         // closes position
-        delete pool[nodeId];
+        pool[nodeId].isOpen = false;
         // transfers collateral from liquidV to borrower
         liquidV.withdraw(msg.sender, node.borrow.collateralIn, reciever, node.borrow.indexOfCollateral);
         // emit loan settled event();
@@ -144,6 +147,7 @@ contract Ego is Lend, Borrow {
         // loanee requests for node.lend.tenure += 15
         require(msg.sender == pool[nodeId].borrow.borrower, "Borrower: you did not fill this position!");
         require(!_hasTenureExpired(pool[nodeId]), "OOPS! sorry you can no longer extend your loan tenure");
+        require(pool[nodeId].isOpen, "position has been closed");
         // sets node.borrow.tenure += 15
         pool[nodeId].borrow.tenure += 15;
         // gets interest for tenure and interest for +15days
@@ -153,6 +157,15 @@ contract Ego is Lend, Borrow {
         // sets node.lend.interestRate to new interest.
         // reminder, interest rate cannot be more than 15%
         (newInterest > 15) ? pool[nodeId].lend.interestRate = 15 : pool[nodeId].lend.interestRate = newInterest;
+    }
+
+    function getAllPositions() public view returns (Node[] memory) {
+        uint256 currentNodeId = _nodeIdCounter.current();
+        Node[] memory allNodes = new Node[](currentNodeId);
+        for (uint i = 0; i < currentNodeId; i++) {
+            allNodes[i] = pool[i];
+        }
+        return allNodes;
     }
 
     // deactivates the lenders node
@@ -196,7 +209,9 @@ contract Ego is Lend, Borrow {
         // increments nodeid counter
         _nodeIdCounter.increment();
         // transfers expected usd to borrower
+        stableV.temporaryPermit(uint(lender.choiceOfStable), lender.assets);
         _transfer(stableV.asset()[uint(lender.choiceOfStable)], address(stableV), borrower.borrower, lender.assets);
+        stableV.revokePermit(uint(lender.choiceOfStable));
         // todo make sure non-rentrant
         lockedStables[lender.lender] += lender.assets;
     }
@@ -244,6 +259,7 @@ contract Ego is Lend, Borrow {
         // todo this function is meant to swap collateral back to defaultChoice from diffussion swap
         // todo moves the funds back to stable vault
         // diffussion.swap(address(selectedCollateral), defaultChoice, amount);
+        amount + selectedCollateral; // just to silent warnings
         return true;
     }
 }

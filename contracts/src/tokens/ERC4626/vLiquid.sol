@@ -17,7 +17,7 @@ contract LiquidVault is Liquids, Ownable {
 
     // keeps track of the user shares
     // owner => choice => balance
-    mapping(address => mapping(uint256 => uint256)) shareHolder;
+    mapping(address => mapping(uint256 => uint256)) private shareHolder;
 
     constructor(address editor) {
         // these roles are only applied in the liquids DB.

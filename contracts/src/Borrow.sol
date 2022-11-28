@@ -35,7 +35,7 @@ contract Borrow {
         uint128 tenure_,
         uint8 interest
     ) public {
-        require(acceptedTenures[tenure_] != 0, "Tenure: please choose a valid loan duration");
+        require(tenure_ >= 0 && tenure_ < 3, "Tenure: please choose a valid loan duration");
         require(interest <= 15, "Interest reate cannot be more 15%");
         address collateral_ = liquidV.asset()[choice].token;
         // calculte 125% of maximumExpectedOutput in usd
@@ -87,9 +87,17 @@ contract Borrow {
         return (toBeDebited / 4) + toBeDebited;
     }
 
+    function getAllBorrowers() public view returns(PartialNodeB[] memory) {
+        return bPool;
+    }
+
     function _removeUnstableItemFromPool(uint256 index) internal {
-        require(bPool.length > 0 && bPool.length <= index, "unable to remove");
+        require(index < bPool.length, "unable to remove");
         bPool[index] = bPool[bPool.length - 1];
         bPool.pop();
+    }
+
+    function getLiquidVaultAddress() public view returns(address){
+        return address(liquidV);
     }
 }

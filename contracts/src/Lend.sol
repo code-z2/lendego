@@ -69,9 +69,17 @@ contract Lend {
         );
     }
 
+    function getAllLenders() public view returns (PartialNodeL[] memory) {
+        return lPool;
+    }
+
     function _removeItemFromPool(uint256 index) internal {
-        require(lPool.length > 0 && lPool.length <= index, "unable to remove");
+        require(index < lPool.length, "unable to remove");
         lPool[index] = lPool[lPool.length - 1];
         lPool.pop();
+    }
+
+    function getStableVaultAddress() public view returns (address) {
+        return address(stableV);
     }
 }

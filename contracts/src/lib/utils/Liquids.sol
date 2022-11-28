@@ -15,7 +15,7 @@ contract Liquids is AccessControl {
         string pair;
     }
 
-    Tokens[] database;
+    Tokens[] internal database;
 
     function addNew(address token, address priceOracle, string memory pair) public onlyRole(EDITOR_ROLE) {
         database.push(Tokens(token, priceOracle, pair));
