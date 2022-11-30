@@ -5,3 +5,9 @@ libs = ['lib']
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 solc_version = "0.8.17"
+gas_reports = ["*"]
+optimizer = true
+optimizer_runs = 20000
+
+[rpc_endpoints]
+eth_rpc_url = "${EVMOS_RPC_URL}"

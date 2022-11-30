@@ -19,7 +19,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -59,7 +59,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -112,7 +112,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -164,7 +164,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -221,7 +221,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -264,7 +264,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -310,7 +310,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -350,7 +350,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -392,7 +392,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -432,7 +432,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -477,7 +477,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -519,7 +519,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -562,7 +562,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -602,7 +602,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -634,6 +634,93 @@
         }
       }
     },
+    "lib/openzeppelin-contracts/contracts/access/AccessControl.sol": {
+      "lastModificationDate": 1669155999427,
+      "contentHash": "95a6c227d1b8843e9385518a5bce4853",
+      "sourceName": "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "AccessControl": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "AccessControl.sol/AccessControl.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol": {
+      "lastModificationDate": 1669155999427,
+      "contentHash": "57c84298234411cea19c7c284d86be8b",
+      "sourceName": "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IAccessControl": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "IAccessControl.sol/IAccessControl.json"
+        }
+      }
+    },
     "lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
       "lastModificationDate": 1669155999427,
       "contentHash": "e436cea06129be2c73cda4b1acc848b5",
@@ -642,7 +729,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -684,7 +771,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -728,7 +815,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -768,7 +855,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -810,7 +897,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -842,6 +929,170 @@
         }
       }
     },
+    "lib/openzeppelin-contracts/contracts/utils/Counters.sol": {
+      "lastModificationDate": 1669155999495,
+      "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/Counters.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Counters": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Counters.sol/Counters.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1669155999495,
+      "contentHash": "396031251978f8febfd90cb62cb240ec",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Strings": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Strings.sol/Strings.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1669155999499,
+      "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "ERC165": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "ERC165.sol/ERC165.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1669155999499,
+      "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC165": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "IERC165.sol/IERC165.json"
+        }
+      }
+    },
     "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
       "lastModificationDate": 1669155999499,
       "contentHash": "fd24c9c5c3573a53f3c96324d6dd5f5c",
@@ -850,7 +1101,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -882,15 +1133,15 @@
         }
       }
     },
-    "script/Counter.s.sol": {
-      "lastModificationDate": 1669034552419,
-      "contentHash": "0705c52104730a78aef4aa6694175c81",
-      "sourceName": "script/Counter.s.sol",
+    "script/Deployment.s.sol": {
+      "lastModificationDate": 1669765454418,
+      "contentHash": "9676cc078abd210f1909b90607b6a4ea",
+      "sourceName": "script/Deployment.s.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -928,24 +1179,93 @@
         "lib/forge-std/src/StdUtils.sol",
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol"
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Counters.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/Borrow.sol",
+        "src/Ego.sol",
+        "src/Lend.sol",
+        "src/interface/IDIAOracle.sol",
+        "src/interface/ILiquidVault.sol",
+        "src/lib/utils/DiaOracle.sol",
+        "src/lib/utils/Liquids.sol",
+        "src/tokens/ERC20/DevERC20.sol",
+        "src/tokens/ERC4626/vLiquid.sol",
+        "src/tokens/ERC4626/vStable.sol"
       ],
       "versionRequirement": "^0.8.13",
       "artifacts": {
-        "CounterScript": {
-          "0.8.17+commit.8df45f5f.Linux.gcc": "Counter.s.sol/CounterScript.json"
+        "DeploymentScript": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Deployment.s.sol/DeploymentScript.json"
         }
       }
     },
-    "src/Borrow.sol": {
-      "lastModificationDate": 1669058881140,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
-      "sourceName": "src/Borrow.sol",
+    "src/.deps/npm/@openzeppelin/contracts/access/AccessControl.sol": {
+      "lastModificationDate": 1669670727591,
+      "contentHash": "95a6c227d1b8843e9385518a5bce4853",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/.deps/npm/@openzeppelin/contracts/access/IAccessControl.sol",
+        "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol",
+        "src/.deps/npm/@openzeppelin/contracts/utils/Strings.sol",
+        "src/.deps/npm/@openzeppelin/contracts/utils/introspection/ERC165.sol",
+        "src/.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol",
+        "src/.deps/npm/@openzeppelin/contracts/utils/math/Math.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "AccessControl": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "access/AccessControl.sol/AccessControl.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/access/IAccessControl.sol": {
+      "lastModificationDate": 1669670727627,
+      "contentHash": "57c84298234411cea19c7c284d86be8b",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/access/IAccessControl.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -970,22 +1290,546 @@
         }
       },
       "imports": [],
-      "versionRequirement": null,
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IAccessControl": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "access/IAccessControl.sol/IAccessControl.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1669670727559,
+      "contentHash": "e436cea06129be2c73cda4b1acc848b5",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Ownable": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "access/Ownable.sol/Ownable.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "lastModificationDate": 1669670358992,
+      "contentHash": "834a0dde221759af42b030253315b086",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/token/ERC20/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/.deps/npm/@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "src/.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "ERC20/ERC20.sol/ERC20.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1669670727571,
+      "contentHash": "ad7c2d0af148c8f9f097d65deeb4da6b",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC20": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "ERC20/IERC20.sol/IERC20.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+      "lastModificationDate": 1669670359040,
+      "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/.deps/npm/@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC20Metadata": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "extensions/IERC20Metadata.sol/IERC20Metadata.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1669670727595,
+      "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Context": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "utils/Context.sol/Context.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/utils/Counters.sol": {
+      "lastModificationDate": 1669670358932,
+      "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/Counters.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Counters": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "utils/Counters.sol/Counters.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1669670727619,
+      "contentHash": "396031251978f8febfd90cb62cb240ec",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/.deps/npm/@openzeppelin/contracts/utils/math/Math.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Strings": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "utils/Strings.sol/Strings.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1669670727615,
+      "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/introspection/ERC165.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "ERC165": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "introspection/ERC165.sol/ERC165.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1669670727711,
+      "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC165": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "introspection/IERC165.sol/IERC165.json"
+        }
+      }
+    },
+    "src/.deps/npm/@openzeppelin/contracts/utils/math/Math.sol": {
+      "lastModificationDate": 1669670727719,
+      "contentHash": "b9c58920ce74d6dc819161786112e7ee",
+      "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/math/Math.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Math": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "math/Math.sol/Math.json"
+        }
+      }
+    },
+    "src/Borrow.sol": {
+      "lastModificationDate": 1669670735343,
+      "contentHash": "3238c5fe7c10c1bce872273caac3a28a",
+      "sourceName": "src/Borrow.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/interface/IDIAOracle.sol",
+        "src/lib/utils/Liquids.sol",
+        "src/tokens/ERC4626/vLiquid.sol"
+      ],
+      "versionRequirement": "=0.8.17",
       "artifacts": {
         "Borrow": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "Borrow.sol/Borrow.json"
         }
       }
     },
+    "src/Ego.sol": {
+      "lastModificationDate": 1669670727035,
+      "contentHash": "1d9c0246d2dd9b3d60313bc73399b891",
+      "sourceName": "src/Ego.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Counters.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/Borrow.sol",
+        "src/Lend.sol",
+        "src/interface/IDIAOracle.sol",
+        "src/lib/utils/Liquids.sol",
+        "src/tokens/ERC4626/vLiquid.sol",
+        "src/tokens/ERC4626/vStable.sol"
+      ],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "Ego": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Ego.sol/Ego.json"
+        }
+      }
+    },
     "src/Lend.sol": {
-      "lastModificationDate": 1669240105453,
-      "contentHash": "cd3d191c1400b5ec8525784820af9a51",
+      "lastModificationDate": 1669669765808,
+      "contentHash": "bce26c7513956bcdbaa7b4d39574c7a1",
       "sourceName": "src/Lend.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1020,20 +1864,20 @@
       ],
       "versionRequirement": "=0.8.17",
       "artifacts": {
-        "LendEgo": {
-          "0.8.17+commit.8df45f5f.Linux.gcc": "Lend.sol/LendEgo.json"
+        "Lend": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Lend.sol/Lend.json"
         }
       }
     },
     "src/interface/IBorrow.sol": {
-      "lastModificationDate": 1669058964699,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "lastModificationDate": 1669736278578,
+      "contentHash": "c8f50ae9a4754a335431528d704a757b",
       "sourceName": "src/interface/IBorrow.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1058,22 +1902,22 @@
         }
       },
       "imports": [],
-      "versionRequirement": null,
+      "versionRequirement": "=0.8.17",
       "artifacts": {
         "IBorrow": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "IBorrow.sol/IBorrow.json"
         }
       }
     },
-    "src/interface/ILend.sol": {
-      "lastModificationDate": 1668985762704,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
-      "sourceName": "src/interface/ILend.sol",
+    "src/interface/IDIAOracle.sol": {
+      "lastModificationDate": 1669486002952,
+      "contentHash": "43e3c82cc88a3c53bf6ddd9162a17ea6",
+      "sourceName": "src/interface/IDIAOracle.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1098,22 +1942,377 @@
         }
       },
       "imports": [],
-      "versionRequirement": null,
+      "versionRequirement": "^0.8.13",
+      "artifacts": {
+        "IDIAOracleV2": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "IDIAOracle.sol/IDIAOracleV2.json"
+        }
+      }
+    },
+    "src/interface/IEgo.sol": {
+      "lastModificationDate": 1669736539229,
+      "contentHash": "75e3cb51ae976dbb9050eb403e9f6de6",
+      "sourceName": "src/interface/IEgo.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "IEgo": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "IEgo.sol/IEgo.json"
+        }
+      }
+    },
+    "src/interface/ILend.sol": {
+      "lastModificationDate": 1669736152879,
+      "contentHash": "637a018259f815c08a5d10805bddcf0d",
+      "sourceName": "src/interface/ILend.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.8.17",
       "artifacts": {
         "ILend": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "ILend.sol/ILend.json"
         }
       }
     },
+    "src/interface/ILiquidVault.sol": {
+      "lastModificationDate": 1669736045471,
+      "contentHash": "e42f1c939a344ebd5b070dec1d793662",
+      "sourceName": "src/interface/ILiquidVault.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "ILiquidVault": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "ILiquidVault.sol/ILiquidVault.json"
+        }
+      }
+    },
+    "src/interface/IStableVault.sol": {
+      "lastModificationDate": 1669736012180,
+      "contentHash": "8d88f56cca50a8330fa5ddbddff8944f",
+      "sourceName": "src/interface/IStableVault.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "IStablesVault": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "IStableVault.sol/IStablesVault.json"
+        }
+      }
+    },
+    "src/lib/utils/DiaOracle.sol": {
+      "lastModificationDate": 1669669816798,
+      "contentHash": "08c8b9a61f40964383b5b922fa6e72b6",
+      "sourceName": "src/lib/utils/DiaOracle.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src/interface/IDIAOracle.sol"
+      ],
+      "versionRequirement": "^0.8.13",
+      "artifacts": {
+        "TestOracle": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DiaOracle.sol/TestOracle.json"
+        }
+      }
+    },
+    "src/lib/utils/Liquids.sol": {
+      "lastModificationDate": 1669664776614,
+      "contentHash": "5bbd20fe58470c0f1c51d78c3a3fae5e",
+      "sourceName": "src/lib/utils/Liquids.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol"
+      ],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "Liquids": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Liquids.sol/Liquids.json"
+        }
+      }
+    },
+    "src/tokens/ERC20/DevERC20.sol": {
+      "lastModificationDate": 1669669850728,
+      "contentHash": "0fc5e40213eb046d4bb20fa8d5add385",
+      "sourceName": "src/tokens/ERC20/DevERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol"
+      ],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "Atom": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/Atom.json"
+        },
+        "Dia": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/Dia.json"
+        },
+        "USDC": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/USDC.json"
+        },
+        "WrappedETH": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/WrappedETH.json"
+        }
+      }
+    },
+    "src/tokens/ERC4626/vLiquid.sol": {
+      "lastModificationDate": 1669669937300,
+      "contentHash": "04afb06fbccc9dc7b6298bddeee4c07b",
+      "sourceName": "src/tokens/ERC4626/vLiquid.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 20000
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/lib/utils/Liquids.sol"
+      ],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "LiquidVault": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "vLiquid.sol/LiquidVault.json"
+        }
+      }
+    },
     "src/tokens/ERC4626/vStable.sol": {
-      "lastModificationDate": 1669240244725,
-      "contentHash": "861ea67514e6869bd7afe4953e201c5a",
+      "lastModificationDate": 1669670358428,
+      "contentHash": "a2f74e8b60e27bfa43a31d03cddbc79d",
       "sourceName": "src/tokens/ERC4626/vStable.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1160,7 +2359,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1205,7 +2404,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 20000
           },
           "metadata": {
             "bytecodeHash": "ipfs",
