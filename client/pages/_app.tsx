@@ -13,6 +13,8 @@ import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
 import LayoutComponent from "../components/Layout";
+import useStore from "../store/useStore";
+import { useEffect } from "react";
 
 const testnetEvmos: Chain = {
   id: 9000,
@@ -56,6 +58,11 @@ const wagmiClient = createClient({
 const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
+  const state = useStore((state) => state);
+  useEffect(() => {
+    state.setAll("9000");
+  }, []);
+
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider

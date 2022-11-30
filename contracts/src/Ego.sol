@@ -11,7 +11,7 @@ contract Ego is Lend, Borrow {
 
     Counters.Counter private _nodeIdCounter;
     struct Node {
-        uint nodeId; // unique node identifier
+        uint256 nodeId; // unique node identifier
         uint timeStamp; // timestamp when node was created
         bool isOpen; // if the positions represented by this node are still open
         PartialNodeL lend; // the lenders details
@@ -61,9 +61,9 @@ contract Ego is Lend, Borrow {
             restricted: false
         });
         if (success) {
-            _handleNodeService(borrower, lPool[partialNodeLIdx]);
             // calls partialNodeLIdx.fill
             lPool[partialNodeLIdx].filled = true;
+            _handleNodeService(borrower, lPool[partialNodeLIdx]);
             emit LoanTaken(
                 msg.sender,
                 lPool[partialNodeLIdx].lender,

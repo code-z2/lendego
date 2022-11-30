@@ -12,16 +12,16 @@ const LoanCard = () => {
           Tue, Nov 22, 2022 6:30 PM WAT
         </p>
         <p className=" font-normal text-slate-600 text-sm dark:text-slate-500">
-          {
+          {/* {
             [
               "Le Meriadian Gues house Lison",
               "Freeway Drive Bogota, Columbia",
               "online",
             ][Math.floor(Math.random() * 3)]
-          }
+          } */}
         </p>
         <p className="font-bold text-slate-500 dark:text-slate-400">
-          {["0.23 ETH", "Free"][Math.floor(Math.random() * 2)]}
+          {/* {["0.23 ETH", "Free"][Math.floor(Math.random() * 2)]} */}
         </p>
         <div className="card-actions justify-end">
           <p className="font-medium text-slate-500 dark:text-slate-400">
