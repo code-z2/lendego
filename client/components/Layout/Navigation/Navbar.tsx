@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "../../Link/Link";
 import Connect from "../Connect/Onboard";
 const Nav = () => {
   return (
@@ -27,13 +28,41 @@ const Nav = () => {
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a>Lend</a>
+                <a href="/" className="inline-flex gap-2">
+                  <span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                    </svg>
+                  </span>
+                  Home
+                </a>
               </li>
               <li>
-                <a>Borrow</a>
+                <a href="/borrow" className="inline-flex gap-2">
+                  <span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  </span>{" "}
+                  Borrow
+                </a>
               </li>
               <li>
-                <a>Profile</a>
+                <Link to="profile" />
               </li>
               <li className="mx-auto">
                 <a>
@@ -44,7 +73,7 @@ const Nav = () => {
           </div>
         </div>
         <div className="navbar-center">
-          <a className="btn btn-ghost normal-case text-xl">
+          <a className="btn btn-ghost normal-case text-xl text-slate-500 dark:text-slate-300">
             The Alchemy of Money
           </a>
         </div>

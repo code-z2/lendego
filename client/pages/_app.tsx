@@ -1,4 +1,10 @@
 import "../styles/globals.css";
+import { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
+import {
+  RainbowKitSiweNextAuthProvider,
+  GetSiweMessageOptions,
+} from "@rainbow-me/rainbowkit-siwe-next-auth";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -57,28 +63,39 @@ const wagmiClient = createClient({
 
 const queryClient = new QueryClient();
 
+const getSiweMessageOptions: GetSiweMessageOptions = () => ({
+  statement: "Sign in to The Alchemy of Money",
+});
+
 export default function App({ Component, pageProps }: AppProps) {
   const state = useStore((state) => state);
   useEffect(() => {
     state.setAll("9000");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider
-        modalSize="compact"
-        chains={chains}
-        theme={{
-          lightMode: lightTheme(),
-          darkMode: darkTheme(),
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <LayoutComponent>
-            <Component {...pageProps} />
-          </LayoutComponent>
-        </QueryClientProvider>
-      </RainbowKitProvider>
+      <SessionProvider refetchInterval={0} session={pageProps.session}>
+        <RainbowKitSiweNextAuthProvider
+          getSiweMessageOptions={getSiweMessageOptions}
+        >
+          <RainbowKitProvider
+            modalSize="compact"
+            chains={chains}
+            theme={{
+              lightMode: lightTheme(),
+              darkMode: darkTheme(),
+            }}
+          >
+            <QueryClientProvider client={queryClient}>
+              <LayoutComponent>
+                <Component {...pageProps} />
+              </LayoutComponent>
+            </QueryClientProvider>
+          </RainbowKitProvider>
+        </RainbowKitSiweNextAuthProvider>
+      </SessionProvider>
     </WagmiConfig>
   );
 }

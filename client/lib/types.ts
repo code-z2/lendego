@@ -60,3 +60,10 @@ export interface IBalance {
 export interface ICovalentResponse {
   data: { data: { items: {}[] } };
 }
+
+export type LoanCardPropsType = IBorrow | ILend;
+
+export interface IBorrowForm {
+  collateral: number | string;
+  amount: number | string;
+}

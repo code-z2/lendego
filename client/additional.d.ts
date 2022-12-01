@@ -1,1 +1,1 @@
-declare module "infinite-react-carousel";
+declare module "react-blockies";

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { ethers } from "ethers";
 import { formatEther, formatUnits } from "ethers/lib/utils.js";
 import { contracts, liquids, stables } from "./constants";
@@ -102,7 +102,10 @@ async function getPositions(chain: string) {
   return formattedData;
 }
 
-async function getBalances(address: string, chainId: string) {
+async function getBalances(
+  address: string,
+  chainId: string
+): Promise<{}[] | void> {
   const endpoint = `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?quote-currency=USD&no-nft-fetch=true&key=${process.env.NEXT_PUBLIC_COVALENTHQ_API_KEY}`;
   const res = await axios
     .get(endpoint)
@@ -111,14 +114,12 @@ async function getBalances(address: string, chainId: string) {
   return res;
 }
 
-async function getStableBalances(chain: string) {
+function formatBalances(data: {}[] | void, accepted: string[]): IBalance[] {
   let total = 0;
-  const accepted = ["USDC", "DAI", "USDT", "BUSD", "FRAX"];
-  const balances = await getBalances(contracts[chain].STABLEV.address, chain);
-  const formattedData: IBalance[] = new Array();
-  balances?.map((el: any, id) => {
+  const _formattedData: IBalance[] = new Array();
+  data?.map((el: any, id: number) => {
     accepted.includes(el.contract_name)
-      ? (formattedData[id] = {
+      ? (_formattedData[id] = {
           name: el.contract_name,
           symbol: el.contract_ticker_symbol,
           amount: formatUnits(el.balance, el.contract_decimals),
@@ -127,37 +128,26 @@ async function getStableBalances(chain: string) {
       : null;
     total += el.balance;
   });
-  formattedData[formattedData.length] = {
-    name: "stableV",
-    symbol: "svToken",
+  _formattedData[_formattedData.length] = {
+    name: "Vault",
+    symbol: "vToken",
     amount: total,
     total: true,
   };
+  return _formattedData;
+}
+
+async function getStableBalances(chain: string) {
+  const accepted = ["USDC", "DAI", "USDT", "BUSD", "FRAX"];
+  const balances = await getBalances(contracts[chain].STABLEV.address, chain);
+  const formattedData: IBalance[] = formatBalances(balances, accepted);
   return formattedData;
 }
 
 async function getLiquidBalances(chain: string) {
-  let total = 0;
   const accepted = ["ATOM", "DIA", "WETH"];
   const balances = await getBalances(contracts[chain].LIQUIDV.address, chain);
-  const formattedData: IBalance[] = new Array();
-  balances?.map((el: any, id) => {
-    accepted.includes(el.contract_name)
-      ? (formattedData[id] = {
-          name: el.contract_name,
-          symbol: el.contract_ticker_symbol,
-          amount: formatUnits(el.balance, el.contract_decimals),
-          logo: el.logo_url,
-        })
-      : null;
-    total += el.balance;
-  });
-  formattedData[formattedData.length] = {
-    name: "liquidV",
-    symbol: "lvToken",
-    amount: total,
-    total: true,
-  };
+  const formattedData: IBalance[] = formatBalances(balances, accepted);
   return formattedData;
 }
 
