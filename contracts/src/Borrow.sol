@@ -87,7 +87,7 @@ contract Borrow {
         return (toBeDebited / 4) + toBeDebited;
     }
 
-    function getAllBorrowers() public view returns(PartialNodeB[] memory) {
+    function getAllBorrowers() public view returns (PartialNodeB[] memory) {
         return bPool;
     }
 
@@ -97,7 +97,7 @@ contract Borrow {
         bPool.pop();
     }
 
-    function getLiquidVaultAddress() public view returns(address){
+    function getLiquidVaultAddress() public view returns (address) {
         return address(liquidV);
     }
 }

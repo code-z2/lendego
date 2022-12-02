@@ -1,20 +1,45 @@
-import React from "react";
+import Image from "next/image";
+import React, { FC } from "react";
+import { IBalance } from "../../lib/types";
 
-const DataCard = () => {
+const DataCard: FC<IBalance> = (props, { key }) => {
   return (
-    <div className="card w-64 bg-primary text-primary-content relative">
+    <div
+      className="card md:w-64 bg-primary text-primary-content relative"
+      key={key}
+    >
       <div className="badge absolute right-2 top-2 font-semibold">vault</div>
       <div className="card-body p-5">
         <div className="card-title flex justify-between text-base">
           <div className="gap-4 inline-flex">
             <div className="avatar">
-              <div className="w-16 mask mask-hexagon">
-                <img src="/USDC.svg" />
-              </div>
+              {props?.total ? (
+                <h2 className="card-title">Total :</h2>
+              ) : (
+                <div className="w-16 mask mask-hexagon">
+                  <Image
+                    src={`/${props?.symbol}.svg`}
+                    alt={`${props?.symbol} logo`}
+                    fill
+                  />
+                </div>
+              )}
             </div>
             <div>
-              <h2 className="card-title">$4,000</h2>
-              <p className="text-slate-300">4,000 USDC</p>
+              {props?.total !== true && (
+                <h2 className="card-title truncate">
+                  $
+                  {props?.value?.toLocaleString("en-US", {
+                    maximumFractionDigits: 5,
+                  })}
+                </h2>
+              )}
+              <p className="text-slate-300 truncate">
+                {props?.amount?.toLocaleString("en-US", {
+                  maximumFractionDigits: 5,
+                })}{" "}
+                {!props?.total && props?.symbol}
+              </p>
             </div>
           </div>
         </div>

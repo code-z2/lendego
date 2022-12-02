@@ -31,14 +31,14 @@ const Link = ({ to }: { to?: "profile" }) => {
   return (
     <div className="flex text-base font-bold">
       <h2>
-        <a className="link link-hover" href="/create/new/lend">
-          Provide Loan
+        <a className="link text-blue-400" href="/create/new/lend">
+          provide a loan
         </a>
       </h2>
       <div className="divider divider-horizontal"></div>
       <h2>
-        <a className="link link-hover" href="/create/new/borrow">
-          Request Loan
+        <a className="link text-blue-400" href="/create/new/borrow">
+          request for loan
         </a>
       </h2>
     </div>

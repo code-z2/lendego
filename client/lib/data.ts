@@ -12,7 +12,10 @@ import {
 
 const EMVOS_RPC_URL: string = process.env.NEXT_PUBLIC_EMVOS_RPC_URL as string;
 const provider = new ethers.providers.JsonRpcProvider(EMVOS_RPC_URL);
-const ego = (chainId: string) =>
+const acceptedStables = ["USDC", "DAI", "USDT", "BUSD", "FRAX"];
+const acceptedLiquids = ["ATOM", "DIA", "WETH", "WEVMOS"];
+
+export const ego = (chainId: string) =>
   new ethers.Contract(
     contracts[chainId].EGO.address,
     contracts[chainId].EGO.abi,
@@ -49,7 +52,7 @@ async function getLends(chain: string) {
 }
 
 function formatBorrowNode(data: any, id?: number): IBorrow {
-  const collateralIndex = parseInt(formatEther(data.indexOfCollateral));
+  const collateralIndex = parseInt(formatUnits(data.indexOfCollateral, 0));
   return {
     bnodeId: id,
     borrower: data.borrower,
@@ -64,7 +67,7 @@ function formatBorrowNode(data: any, id?: number): IBorrow {
       data.maximumExpectedOutput,
       liquids(9000)[collateralIndex].decimals
     ),
-    tenure: parseInt(formatEther(data.tenure)),
+    tenure: parseInt(formatUnits(data.tenure, 0)),
     maxPayableInterest: data.maxPayableInterest,
     restricted: data.restricted,
   };
@@ -114,19 +117,20 @@ async function getBalances(
   return res;
 }
 
-function formatBalances(data: {}[] | void, accepted: string[]): IBalance[] {
+function formatBalances(data: {}[] | void, accepted: Set<string>): IBalance[] {
   let total = 0;
   const _formattedData: IBalance[] = new Array();
   data?.map((el: any, id: number) => {
-    accepted.includes(el.contract_name)
+    accepted.has(el.contract_ticker_symbol)
       ? (_formattedData[id] = {
           name: el.contract_name,
           symbol: el.contract_ticker_symbol,
-          amount: formatUnits(el.balance, el.contract_decimals),
+          amount: parseFloat(formatUnits(el.balance, el.contract_decimals)),
           logo: el.logo_url,
+          address: el.contract_address,
         })
       : null;
-    total += el.balance;
+    total += parseFloat(formatUnits(el.balance, el.contract_decimals));
   });
   _formattedData[_formattedData.length] = {
     name: "Vault",
@@ -138,16 +142,30 @@ function formatBalances(data: {}[] | void, accepted: string[]): IBalance[] {
 }
 
 async function getStableBalances(chain: string) {
-  const accepted = ["USDC", "DAI", "USDT", "BUSD", "FRAX"];
   const balances = await getBalances(contracts[chain].STABLEV.address, chain);
-  const formattedData: IBalance[] = formatBalances(balances, accepted);
+  const formattedData: IBalance[] = formatBalances(
+    balances,
+    new Set(acceptedStables)
+  );
   return formattedData;
 }
 
 async function getLiquidBalances(chain: string) {
-  const accepted = ["ATOM", "DIA", "WETH"];
   const balances = await getBalances(contracts[chain].LIQUIDV.address, chain);
-  const formattedData: IBalance[] = formatBalances(balances, accepted);
+  const formattedData: IBalance[] = formatBalances(
+    balances,
+    new Set(acceptedLiquids)
+  );
+  return formattedData;
+}
+
+async function getUserBalances(chain: string, address: string) {
+  const balances = await getBalances(address, chain);
+  console.log(balances);
+  const formattedData: IBalance[] = formatBalances(
+    balances,
+    new Set(acceptedStables.concat(acceptedLiquids))
+  );
   return formattedData;
 }
 
@@ -157,4 +175,5 @@ export {
   getPositions,
   getLiquidBalances,
   getStableBalances,
+  getUserBalances,
 };

@@ -1,12 +1,12 @@
 import Blockies from "react-blockies";
 
-const Seed = (address: string) => {
+const Seed = (address: string, scale: number, size: number) => {
   return (
     <Blockies
       seed={address.toLowerCase()}
-      scale={3}
+      scale={scale}
       className="identicon"
-      size={10}
+      size={size}
     />
   );
 };

@@ -7,21 +7,22 @@ import {
   getPositions,
   getStableBalances,
 } from "../lib/data";
+import { IBalance, IBorrow, ILend } from "../lib/types";
 
 export interface IDappStore {
   setAll: (chain: string) => void;
 
   // partial lenders nodes
-  lenders: {}[];
+  lenders: ILend[];
   isLendersAvailable: boolean;
-  setLenders: (lenders: {}[]) => void;
-  getLenders: (sart: number, end: number) => void;
+  setLenders: (lenders: ILend[]) => void;
+  getLenders: (sart: number, end: number) => ILend[];
 
   // partial borowers nodes
-  borrowers: {}[];
+  borrowers: IBorrow[];
   isBorrowersAvailable: boolean;
-  setBorrowers: (borrowers: {}[]) => void;
-  getBorrowers: (sart: number, end: number) => void;
+  setBorrowers: (borrowers: IBorrow[]) => void;
+  getBorrowers: (sart: number, end: number) => IBorrow[];
 
   // filled nodes
   positions: {}[];
@@ -30,14 +31,14 @@ export interface IDappStore {
   getPositions: (start: number, end: number) => void;
 
   // stable Vault balances
-  stableVaultBalances: {}[];
+  stableVaultBalances: IBalance[];
   isStableVaultBalancesAvailable: boolean;
-  setStableVaultBalances: (balances: {}[]) => void;
+  setStableVaultBalances: (balances: IBalance[]) => void;
 
   // liquid vault balances
-  liquidVaultBalances: {}[];
+  liquidVaultBalances: IBalance[];
   isLiquidVaultBalancesAvailable: boolean;
-  setLiquidVaultBalances: (balances: {}[]) => void;
+  setLiquidVaultBalances: (balances: IBalance[]) => void;
 }
 
 const useStore = create<IDappStore>((set, get) => ({
@@ -60,14 +61,14 @@ const useStore = create<IDappStore>((set, get) => ({
 
   lenders: [],
   isLendersAvailable: false,
-  setLenders: (lenders: {}[]) =>
+  setLenders: (lenders: ILend[]) =>
     set((state) => ({ lenders: lenders, isLendersAvailable: true })),
   getLenders: (start: number, end: number) =>
     get().isBorrowersAvailable ? get().lenders.slice(start, end) : [],
 
   borrowers: [],
   isBorrowersAvailable: false,
-  setBorrowers: (borrowers: {}[]) =>
+  setBorrowers: (borrowers: IBorrow[]) =>
     set((state) => ({ borrowers: borrowers, isBorrowersAvailable: true })),
   getBorrowers: (start: number, end: number) =>
     get().isBorrowersAvailable ? get().borrowers.slice(start, end) : [],
@@ -81,7 +82,7 @@ const useStore = create<IDappStore>((set, get) => ({
 
   stableVaultBalances: [],
   isStableVaultBalancesAvailable: false,
-  setStableVaultBalances: (balances: {}[]) =>
+  setStableVaultBalances: (balances: IBalance[]) =>
     set((state) => ({
       stableVaultBalances: balances,
       isStableVaultBalancesAvailable: true,
@@ -89,7 +90,7 @@ const useStore = create<IDappStore>((set, get) => ({
 
   liquidVaultBalances: [],
   isLiquidVaultBalancesAvailable: false,
-  setLiquidVaultBalances: (balances: {}[]) =>
+  setLiquidVaultBalances: (balances: IBalance[]) =>
     set({
       liquidVaultBalances: balances,
       isLiquidVaultBalancesAvailable: true,

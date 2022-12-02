@@ -10,6 +10,10 @@ import { IContracts } from "./types";
 
 export const contracts: IContracts = {
   9000: {
+    WEVMOS: {
+      address: "0x051986279A8E6Db379A166a6D82B06F46fb51C4D",
+      abi: usdcAbi,
+    },
     USDC: {
       address: "0x70F6C56a5D53DAff1d3418B74a2D40692eDafbeF",
       abi: usdcAbi,
@@ -51,4 +55,5 @@ export const liquids = (chainId: string | number) => [
   { name: "ATOM", decimals: 6, ...contracts[chainId].ATOM },
   { name: "WETH", decimals: 18, ...contracts[chainId].WETH },
   { name: "DIA", decimals: 18, ...contracts[chainId].DIA },
+  { name: "WEVMOS", decimals: 18, ...contracts[chainId].WEVMOS },
 ];

@@ -1,8 +1,10 @@
 import { ContractInterface } from "ethers";
+import React, { SetStateAction } from "react";
 
 type contractObj = { address: string; abi: ContractInterface };
 export interface IContracts {
   [key: string]: {
+    WEVMOS: contractObj;
     USDC: contractObj;
     ATOM: contractObj;
     WETH: contractObj;
@@ -55,6 +57,7 @@ export interface IBalance {
   logo?: string;
   value?: number | string;
   total?: boolean;
+  address?: string;
 }
 
 export interface ICovalentResponse {
@@ -66,4 +69,10 @@ export type LoanCardPropsType = IBorrow | ILend;
 export interface IBorrowForm {
   collateral: number | string;
   amount: number | string;
+}
+
+export interface IPagination {
+  pagination: number;
+  maxLength: number;
+  callBack: React.Dispatch<SetStateAction<number>>;
 }

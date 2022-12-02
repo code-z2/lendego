@@ -1,8 +1,9 @@
 import { isAddress } from "ethers/lib/utils.js";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import ProfileHeader from "../../components/Headers/ProfileHeader";
 
 const Profile: NextPage<{ address: string }> = ({ address }) => {
-  return <div>hello from profile</div>;
+  return <ProfileHeader address={address} />;
 };
 
 export default Profile;
