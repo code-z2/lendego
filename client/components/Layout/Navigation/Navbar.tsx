@@ -1,5 +1,6 @@
+import Link from "next/link";
 import React from "react";
-import Link from "../../Link/Link";
+import Linkto from "../../Link/Link";
 import Connect from "../Connect/Onboard";
 const Nav = () => {
   return (
@@ -28,7 +29,7 @@ const Nav = () => {
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a href="/" className="inline-flex gap-2">
+                <Link href="/" className="inline-flex gap-2">
                   <span>
                     <svg
                       className="w-4 h-4"
@@ -40,10 +41,10 @@ const Nav = () => {
                     </svg>
                   </span>
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/borrow" className="inline-flex gap-2">
+                <Link href="/borrow" className="inline-flex gap-2">
                   <span>
                     <svg
                       className="w-4 h-4"
@@ -59,23 +60,24 @@ const Nav = () => {
                     </svg>
                   </span>{" "}
                   Borrow
-                </a>
+                </Link>
               </li>
               <li>
-                <Link to="profile" />
+                <Linkto to="profile" />
               </li>
-              <li className="mx-auto">
-                <a>
-                  <Connect />
-                </a>
+              <li className="mx-auto link-hover">
+                <Connect />
               </li>
             </ul>
           </div>
         </div>
         <div className="navbar-center">
-          <a className="btn btn-ghost normal-case text-xl text-slate-500 dark:text-slate-300">
+          <Link
+            className="btn btn-ghost normal-case text-xl text-slate-500 dark:text-slate-300"
+            href="/"
+          >
             The Alchemy of Money
-          </a>
+          </Link>
         </div>
         <div className="navbar-end">
           <button className="btn btn-ghost btn-circle">

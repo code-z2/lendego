@@ -5,6 +5,7 @@ import { formatAddress } from "../../utils/formatAddress";
 import CopyButton from "../Buttons/CopyButton";
 import { getUserBalances } from "../../lib/data";
 import { IBalance } from "../../lib/types";
+import Image from "next/image";
 
 const ProfileHeader: FC<{ address: string }> = ({ address }) => {
   const [balances, setBalances] = useState<IBalance[]>();
@@ -23,9 +24,12 @@ const ProfileHeader: FC<{ address: string }> = ({ address }) => {
       ?.map((el, id) => {
         return (
           <div className="btn gap-2 py-0" key={id}>
-            <img
+            <Image
               className="mask mask-hexagon w-8 h-8"
               src={`/${el?.symbol}.svg`}
+              alt={`${el?.symbol}`}
+              width={0}
+              height={0}
             />
             {el?.symbol}
             <div className="badge bg-primary">

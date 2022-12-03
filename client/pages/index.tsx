@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import { useState } from "react";
 import LoanCard from "../components/Cards/LoanCard";
 import SStats from "../components/Carousel/SStats";
-import Link from "../components/Link/Link";
+import Linkto from "../components/Link/Link";
 import Pagination from "../components/Pagination/Pagination";
 import useStore from "../store/useStore";
 
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
     <div>
       <SStats />
       <div className="divider my-6"></div>
-      <Link />
+      <Linkto />
       <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10 mt-8">
         {isLendersAvailable && renderList()}
       </div>

@@ -1,12 +1,13 @@
 import React from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
-const Link = ({ to }: { to?: "profile" }) => {
+const Linkto = ({ to }: { to?: "profile" }) => {
   const { data } = useSession();
   if (to === "profile")
     return (
       <div>
-        <a
+        <Link
           className="link link-hover inline-flex gap-2"
           href={`/address/${data?.user?.name}`}
         >
@@ -25,24 +26,24 @@ const Link = ({ to }: { to?: "profile" }) => {
             </svg>
           </span>
           Profile
-        </a>
+        </Link>
       </div>
     );
   return (
     <div className="flex text-base font-bold">
       <h2>
-        <a className="link text-blue-400" href="/create/new/lend">
+        <Link className="link text-blue-400" href="/create/new/lend">
           provide a loan
-        </a>
+        </Link>
       </h2>
       <div className="divider divider-horizontal"></div>
       <h2>
-        <a className="link text-blue-400" href="/create/new/borrow">
+        <Link className="link text-blue-400" href="/create/new/borrow">
           request for loan
-        </a>
+        </Link>
       </h2>
     </div>
   );
 };
 
-export default Link;
+export default Linkto;
