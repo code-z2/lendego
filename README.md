@@ -13,15 +13,21 @@ This means, collateral deposits by the borrower will increase with time to help 
 
 ## How it works
 
-• A user creates a partial node
+* A user creates a partial node
+
 ![banner](./client/public/create.png)
-• A user fulfills the other partial node
+
+* A user fulfills the other partial node
+
 ![banner](./client/public/fillorder.png)
-• a new node is created from both partiall nodes
-• exchange of requeststed stable assets for addresses collateral
-• node marked as active/running
-• timestamp snapshot created
-• Want to close the position, the address has to deposit back the stables + interest to take back his collaterals+ yields
+
+* a new node is created from both partial nodes
+* exchange of requeststed stable assets for addresses collateral
+* node marked as active/running
+* timestamp snapshot created
+
+* Want to close the position, the address has to deposit back the stables + interest to take back his collaterals+ yields
+
 ![banner](./client/public/settle.png)
 
 ## Nodes
@@ -29,23 +35,35 @@ This means, collateral deposits by the borrower will increase with time to help 
 Each node represents a position,
 There are three types of nodes
 
-- BNodes : liquid nodes. These are partial nodes created when an address makes a loan request. With provided collaterals, acceptable interest range, and loans expected duration
+* BNodes : liquid nodes. These are partial nodes created when an address makes a loan request. With provided collaterals, acceptable interest range, and loans expected duration
+
 ![banner](./client/public/2.svg)
-- LNodes: stable nodes. These are partial nodes created when an address offers a stable coins to possible needers,
+
+* LNodes: stable nodes. These are partial nodes created when an address offers a stable coins to possible needers,
+
 ![banner](./client/public/3.svg)
-- Node: this represents a full node.
+
+* Node: this represents a full node.
 It is created when a lender merges with a borrower and exchanges values.
+
 ![banner](./client/public/5.svg)
 
 ## Node transitions
 
-- Partial to full: here two participants joins to form a node
+* Partial to full: here two participants joins to form a node
+
 ![banner](./client/public/4.svg)
-- Full to settled: here the borrower exits a node by refunding the loan + interest to the lender
-- Full to restricted: a node can only move from full to restricted if
+
+* Full to settled: here the borrower exits a node by refunding the loan + interest to the lender
+
+![banner](./client/public/6.svg)
+
+* Full to restricted: a node can only move from full to restricted if
 
     1. The lender forcefully exits a loan; if repayment is not made on time and the loan duration has expired
     2. The position is liquidated; due the price activity, the collateral can't keep the partial nodes together
+
+![banner](./client/public/7.svg)
 
 ### Interest Rate structure
 
@@ -87,11 +105,11 @@ However this feature is yet to be implemented.
 
 the vaults were adapted from
 
-- [openzeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC4626.sol
+* [openzeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC4626.sol
 )
-- [blog](https://blog.logrocket.com/write-erc-4626-token-contract-yield-bearing-vaults/
+* [blog](https://blog.logrocket.com/write-erc-4626-token-contract-yield-bearing-vaults/
 )
-- [transmission](https://github.com/transmissions11/solmate/blob/main/src/mixins/ERC4626.sol
+* [transmission](https://github.com/transmissions11/solmate/blob/main/src/mixins/ERC4626.sol
 )
 
 Alchemoney implemented a multi token vault that manages shareholders across 5 stable coins.
