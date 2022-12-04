@@ -65,7 +65,7 @@ function formatBorrowNode(data: any, id?: number): IBorrow {
     collateralId: collateralIndex,
     maximumExpectedOutput: formatUnits(
       data.maximumExpectedOutput,
-      liquids(9000)[collateralIndex].decimals
+      stables(9000)[0].decimals
     ),
     tenure: parseInt(formatUnits(data.tenure, 0)),
     maxPayableInterest: data.maxPayableInterest,

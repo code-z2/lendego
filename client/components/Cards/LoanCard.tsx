@@ -2,7 +2,7 @@ import Image from "next/image";
 import React, { FC } from "react";
 import { formatAddress } from "../../utils/formatAddress";
 import Seed from "../Blockies/Seed";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   IBorrow,
   IBorrowForm,
@@ -10,9 +10,18 @@ import {
   LoanCardPropsType,
 } from "../../lib/types";
 import { useSession } from "next-auth/react";
-import { ego } from "../../lib/data";
+import useActions from "../../hooks/useActions";
 
 const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
+  const {
+    burnStablePosition,
+    burnUnstablePosition,
+    restrictLendersNode,
+    fillStablePosition,
+    fillUnstablePosition,
+  } = useActions({
+    chainId: 9000,
+  });
   const lender = props as ILend;
   const borrower = props as IBorrow;
   const { data } = useSession();
@@ -21,9 +30,21 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
     handleSubmit,
     watch,
     reset,
+    control,
     formState: { errors },
   } = useForm<IBorrowForm>();
-  const onSubmit = handleSubmit((data) => console.log(data));
+
+  const onSubmit = handleSubmit(async (data_) => {
+    const data__ = { ...data_, nodeId: lender?.lnodeId! };
+    console.log(data__);
+    lender?.lender
+      ? await fillStablePosition(data__)
+      : await fillUnstablePosition(
+          borrower?.bnodeId!,
+          borrower?.maximumExpectedOutput.toString()!
+        );
+    reset();
+  });
 
   const getQuote = (asset: number, collateral: number): JSX.Element => {
     const percentage = (100 / asset) * (collateral * 12);
@@ -175,44 +196,125 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             </div>
           </div>
         )}
-        <form onSubmit={onSubmit} className="w-full flex flex-col mt-1">
-          {errors.amount && (
-            <span className="mx-auto text-red-500 mb-2">
-              This field is required
-            </span>
-          )}
-          {lender?.lender && (
-            <div className="inline-flex gap-2 items-center">
-              <div>
-                <p className="text-slate-500 dark:text-red-100">collateral:</p>
-              </div>
-              <select
-                className="select select-ghost w-24"
-                {...register("collateral")}
+        {lender?.lender === data?.user?.name ||
+        borrower?.borrower === data?.user?.name ? (
+          <div>
+            <button
+              className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
+                !data?.user?.name && "btn-disabled"
+              }`}
+              onClick={async () => {
+                lender?.lender === data?.user?.name
+                  ? await burnStablePosition(lender?.lnodeId as number)
+                  : await burnUnstablePosition(borrower?.bnodeId as number);
+              }}
+              disabled={!data?.user?.name}
+            >
+              burn
+            </button>
+            {lender?.lender === data?.user?.name && (
+              <button
+                className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
+                  !data?.user?.name && "btn-disabled"
+                }`}
+                onClick={async () => {
+                  lender?.lender === data?.user?.name &&
+                    (await restrictLendersNode(lender?.lnodeId as number));
+                }}
+                disabled={!data?.user?.name}
               >
-                <option defaultValue="EVMOS">Evmos</option>
-                <option value="ATOM">Atom</option>
-                <option value="WETH">Weth</option>
-                <option value="WETH">DIA</option>
-              </select>
-              <input
-                type="text"
-                placeholder="amount"
-                className="input w-full p-2"
-                {...register("amount", { required: true })}
-              />
-            </div>
-          )}
-          <button
-            className={`btn btn-link lowercase text-teal-600 disabled:text-slate-700 mx-auto ${
-              !data?.user?.name && "btn-disabled"
-            }`}
-            type="submit"
-            disabled={!data?.user?.name}
-          >
-            fill order
-          </button>
-        </form>
+                restrict
+              </button>
+            )}
+          </div>
+        ) : (
+          <form onSubmit={onSubmit} className="w-full flex flex-col mt-1">
+            {errors.collateralAmount && (
+              <span className="mx-auto text-red-500 mb-2">
+                This field is required
+              </span>
+            )}
+            {lender?.lender && (
+              <div className="inline-flex gap-2 items-center my-2">
+                <div>
+                  <p className="text-slate-500 dark:text-red-100">
+                    collateral:
+                  </p>
+                </div>
+                <Controller
+                  control={control}
+                  name="collateralId"
+                  defaultValue={3}
+                  render={({
+                    field: { onChange, onBlur, value, name, ref },
+                    fieldState: { isTouched, isDirty, error },
+                    formState,
+                  }) => (
+                    <select
+                      className="select select-ghost"
+                      onChange={(val) => onChange(val.target.value)}
+                    >
+                      <option defaultValue={3} value={3}>
+                        Evmos
+                      </option>
+                      <option value={0}>Atom</option>
+                      <option value={1}>Weth</option>
+                      <option value={2}>DIA</option>
+                    </select>
+                  )}
+                />
+                <input
+                  type="text"
+                  placeholder="amount"
+                  className="input w-full p-2"
+                  {...register("collateralAmount", { required: true })}
+                />
+              </div>
+            )}
+            {lender?.lender && (
+              <div className="inline-flex justify-between my-2">
+                <div>
+                  <p className="text-slate-500 dark:text-red-100">
+                    tenure (Days):
+                  </p>
+                </div>
+                <div>
+                  <Controller
+                    control={control}
+                    name={"tenure"}
+                    defaultValue={0}
+                    render={({
+                      field: { onChange, onBlur, value, name, ref },
+                      fieldState: { isTouched, isDirty, error },
+                      formState,
+                    }) => (
+                      <select
+                        className="select select-ghost w-24"
+                        {...register("tenure")}
+                        onChange={(val) => onChange(val.target.value)}
+                      >
+                        <option defaultValue={0} value={0}>
+                          30
+                        </option>
+                        <option value={1}>60</option>
+                        <option value={2}>90</option>
+                      </select>
+                    )}
+                  />
+                </div>
+              </div>
+            )}
+            <button
+              className={`btn btn-link lowercase text-teal-600 disabled:text-slate-700 mx-auto ${
+                !data?.user?.name && "btn-disabled"
+              }`}
+              type="submit"
+              disabled={!data?.user?.name}
+            >
+              fill order
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

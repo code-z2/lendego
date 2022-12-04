@@ -3,8 +3,11 @@ import React, { FC } from "react";
 import { IPosition } from "../../lib/types";
 import { formatAddress } from "../../utils/formatAddress";
 import { useSession } from "next-auth/react";
+import useActions from "../../hooks/useActions";
 
 const PositionCard: FC<IPosition> = (props, { key }) => {
+  const { extendBorrowersLoan, forcefullyExitLenderFromNode, settleLoan } =
+    useActions({ chainId: 9000 });
   const { data } = useSession();
   return (
     <div
@@ -143,6 +146,52 @@ const PositionCard: FC<IPosition> = (props, { key }) => {
               {props?.borrow?.tenure} Days
             </p>
           </div>
+        </div>
+        <div className="inline-flex justify-between">
+          {/* extend loan */}
+          {props?.borrow?.borrower === data?.user?.name && props?.isOpen && (
+            <button
+              className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
+                !data?.user?.name && "btn-disabled"
+              }`}
+              onClick={async () => {
+                await extendBorrowersLoan(props?.nodeId!);
+              }}
+              disabled={!data?.user?.name}
+            >
+              extend loan
+            </button>
+          )}
+          {/* forcefully exit lend */}
+          {props?.lend?.lender === data?.user?.name &&
+            props?.isOpen &&
+            new Date(Date.now()) > props?.expiresAt && (
+              <button
+                className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
+                  !data?.user?.name && "btn-disabled"
+                }`}
+                onClick={async () => {
+                  await forcefullyExitLenderFromNode(props?.lend?.lnodeId!);
+                }}
+                disabled={!data?.user?.name}
+              >
+                exit node
+              </button>
+            )}
+          {/* settle loan */}
+          {props?.borrow?.borrower === data?.user?.name && props?.isOpen && (
+            <button
+              className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
+                !data?.user?.name && "btn-disabled"
+              }`}
+              onClick={async () => {
+                await settleLoan(props);
+              }}
+              disabled={!data?.user?.name}
+            >
+              settle loan
+            </button>
+          )}
         </div>
       </div>
     </div>

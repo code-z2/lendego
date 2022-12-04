@@ -67,8 +67,10 @@ export interface ICovalentResponse {
 export type LoanCardPropsType = IBorrow | ILend;
 
 export interface IBorrowForm {
-  collateral: number | string;
-  amount: number | string;
+  collateralId: number | string;
+  collateralAmount: number | string;
+  nodeId: number;
+  tenure: number;
 }
 
 export interface IPagination {
