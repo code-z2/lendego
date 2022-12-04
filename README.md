@@ -139,3 +139,34 @@ Implementing a multi-token vault to handle shareholders management for 5 stable 
 4. liquidation
 
 ### Set up
+
+1. Contracts
+
+```bash
+git clone https://github.com/peteruche21/lendego.git
+# set up your .env variable
+# rename .env.example to .env and provide the required keys
+cd contracts
+# follow docs at https://book.getfoundry.sh to set up forge, cast and anvil
+yarn install
+forge build
+# to deploy mock tokens
+sh ./deployTokens.sh
+# deploy script
+sh ./runscripts.sh [local] [--fork] # currently not working though.
+# deploy with forge create
+sh ./deploy.sh #currently not working too
+
+```
+
+2. Front-end
+
+```bash
+# assuming you have already cloned this repo
+cd client
+yarn install
+yarn start
+
+# for prod
+yarn build
+```
