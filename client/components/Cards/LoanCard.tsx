@@ -196,8 +196,9 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             </div>
           </div>
         )}
-        {lender?.lender === data?.user?.name ||
-        borrower?.borrower === data?.user?.name ? (
+        {data?.user?.name &&
+        (lender?.lender === data?.user?.name ||
+          borrower?.borrower === data?.user?.name) ? (
           <div>
             <button
               className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
