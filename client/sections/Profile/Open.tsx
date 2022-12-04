@@ -26,7 +26,7 @@ const OpenPositions = ({ address }: { address: string }) => {
     return getTotal(pagination, pagination + 19)
       .filter(
         (el: any) =>
-          ((el.acceptingRequests && !el.filled) || el.borrower) &&
+          (!el.filled || el.borrower) &&
           (el.lender === address || el.borrower === address)
       )
       .map((el: any, id) => {

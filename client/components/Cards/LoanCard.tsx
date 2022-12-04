@@ -70,7 +70,13 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
           </div>
           <div>
             <div className="badge badge-accent badge-outline">
-              {lender?.filled ? "active" : "open"}
+              {lender?.acceptingRequests
+                ? lender?.filled
+                  ? "active"
+                  : "open"
+                : borrower?.borrower
+                ? "open"
+                : "restricted"}
             </div>
           </div>
         </div>
@@ -213,7 +219,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             >
               burn
             </button>
-            {lender?.lender === data?.user?.name && (
+            {lender?.lender === data?.user?.name && lender?.acceptingRequests && (
               <button
                 className={`btn btn-link lowercase text-orange-500 disabled:text-slate-700 mx-auto ${
                   !data?.user?.name && "btn-disabled"

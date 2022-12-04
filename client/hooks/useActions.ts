@@ -135,7 +135,7 @@ const useActions = ({ chainId }: { chainId: number }) => {
       console.log(error);
     }
   };
-
+  // working
   const fillUnstablePosition = async (
     nodeId: number,
     maximumExpectedOutput: string
@@ -153,7 +153,7 @@ const useActions = ({ chainId }: { chainId: number }) => {
       console.log(error);
     }
   };
-
+  // working
   const burnStablePosition = async (nodeId: number) => {
     console.log(nodeId);
     try {
@@ -164,6 +164,7 @@ const useActions = ({ chainId }: { chainId: number }) => {
       console.log(error);
     }
   };
+  // working
   const burnUnstablePosition = async (nodeId: number) => {
     console.log(nodeId);
     try {
