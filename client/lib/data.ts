@@ -85,13 +85,22 @@ async function getBorrows(chain: string) {
   return formattedData;
 }
 
+function parseDate(timestamp: number, tenure: number) {
+  const datetime = new Date(timestamp * 1000);
+  datetime.setDate(datetime.getDate() + tenure);
+  return datetime.toLocaleDateString();
+}
+
 function formatPositions(data: unknown[]): IPosition[] {
   const _formattedData: IPosition[] = new Array(data.length);
   data.map((el: any, id) => {
     _formattedData[id] = {
       nodeId: parseInt(formatEther(el.nodeId)),
-      createdAt: formatEther(el.timeStamp),
-      expiresAt: formatEther(el.timeStamp),
+      createdAt: parseDate(parseInt(formatUnits(el.timeStamp, 0)), 0),
+      expiresAt: parseDate(
+        parseInt(formatUnits(el.timeStamp, 0)),
+        parseInt(formatUnits(el.borrow.tenure, 0))
+      ),
       isOpen: el.isOpen,
       borrow: formatBorrowNode(el.borrow),
       lend: formatLendNode(el.lend),
@@ -161,7 +170,6 @@ async function getLiquidBalances(chain: string) {
 
 async function getUserBalances(chain: string, address: string) {
   const balances = await getBalances(address, chain);
-  console.log(balances);
   const formattedData: IBalance[] = formatBalances(
     balances,
     new Set(acceptedStables.concat(acceptedLiquids))

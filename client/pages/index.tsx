@@ -4,6 +4,8 @@ import LoanCard from "../components/Cards/LoanCard";
 import SStats from "../components/Carousel/SStats";
 import Linkto from "../components/Link/Link";
 import Pagination from "../components/Pagination/Pagination";
+import Empty from "../components/SuspenseUI/Empty";
+import Loading from "../components/SuspenseUI/Loading";
 import useStore from "../store/useStore";
 
 const Home: NextPage = () => {
@@ -37,18 +39,29 @@ const Home: NextPage = () => {
       <SStats />
       <div className="divider my-6"></div>
       <Linkto />
-      <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10 mt-8">
-        {isLendersAvailable && renderList()}
-      </div>
-      <div className="flex">
-        {isLendersAvailable && (
-          <Pagination
-            pagination={pagination}
-            maxLength={lenders.length}
-            callBack={setPagination}
-          />
-        )}
-      </div>
+
+      {isLendersAvailable ? (
+        <div>
+          {lenders?.length > 0 ? (
+            <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10 mt-8">
+              {isLendersAvailable && renderList()}
+            </div>
+          ) : (
+            <Empty />
+          )}
+          <div className="flex">
+            {lenders?.length > 0 && (
+              <Pagination
+                pagination={pagination}
+                maxLength={lenders.length}
+                callBack={setPagination}
+              />
+            )}
+          </div>
+        </div>
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 };

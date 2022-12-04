@@ -4,6 +4,8 @@ import LoanCard from "../components/Cards/LoanCard";
 import LStats from "../components/Carousel/LStats";
 import Linkto from "../components/Link/Link";
 import Pagination from "../components/Pagination/Pagination";
+import Empty from "../components/SuspenseUI/Empty";
+import Loading from "../components/SuspenseUI/Loading";
 import useStore from "../store/useStore";
 
 const Borrow: NextPage = () => {
@@ -36,18 +38,28 @@ const Borrow: NextPage = () => {
       <LStats />
       <div className="divider my-6"></div>
       <Linkto />
-      <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10 mt-8">
-        {isBorrowersAvailable && renderList()}
-      </div>
-      <div className="flex">
-        {isBorrowersAvailable && (
-          <Pagination
-            pagination={pagination}
-            maxLength={borrowers.length}
-            callBack={setPagination}
-          />
-        )}
-      </div>
+      {isBorrowersAvailable ? (
+        <div>
+          {borrowers?.length > 0 ? (
+            <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10 mt-8">
+              {isBorrowersAvailable && renderList()}
+            </div>
+          ) : (
+            <Empty />
+          )}
+          <div className="flex">
+            {borrowers?.length > 0 && (
+              <Pagination
+                pagination={pagination}
+                maxLength={borrowers.length}
+                callBack={setPagination}
+              />
+            )}
+          </div>
+        </div>
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 };

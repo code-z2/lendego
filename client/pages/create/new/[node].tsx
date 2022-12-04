@@ -1,7 +1,8 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import OrderCard from "../../../components/Cards/OrderCard";
 
 const CreateNode: NextPage<{ node: string }> = ({ node }) => {
-  return <div>hello from {node}</div>;
+  return <OrderCard node={node} />;
 };
 
 export default CreateNode;

@@ -7,7 +7,7 @@ import {
   getPositions,
   getStableBalances,
 } from "../lib/data";
-import { IBalance, IBorrow, ILend } from "../lib/types";
+import { IBalance, IBorrow, ILend, IPosition } from "../lib/types";
 
 export interface IDappStore {
   setAll: (chain: string) => void;
@@ -25,10 +25,10 @@ export interface IDappStore {
   getBorrowers: (sart: number, end: number) => IBorrow[];
 
   // filled nodes
-  positions: {}[];
+  positions: IPosition[];
   isPositionsAvailable: boolean;
-  setPositions: (borrowers: {}[]) => void;
-  getPositions: (start: number, end: number) => void;
+  setPositions: (borrowers: IPosition[]) => void;
+  getPositions: (start: number, end: number) => IPosition[];
 
   // stable Vault balances
   stableVaultBalances: IBalance[];
@@ -75,7 +75,7 @@ const useStore = create<IDappStore>((set, get) => ({
 
   positions: [],
   isPositionsAvailable: false,
-  setPositions: (positions: {}[]) =>
+  setPositions: (positions: IPosition[]) =>
     set((state) => ({ positions: positions, isPositionsAvailable: true })),
   getPositions: (start: number, end: number) =>
     get().isPositionsAvailable ? get().positions.slice(start, end) : [],
