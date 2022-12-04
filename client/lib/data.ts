@@ -95,7 +95,7 @@ function formatPositions(data: unknown[]): IPosition[] {
   const _formattedData: IPosition[] = new Array(data.length);
   data.map((el: any, id) => {
     _formattedData[id] = {
-      nodeId: parseInt(formatEther(el.nodeId)),
+      nodeId: parseInt(formatUnits(el.nodeId, 0)),
       createdAt: parseDate(parseInt(formatUnits(el.timeStamp, 0)), 0),
       expiresAt: parseDate(
         parseInt(formatUnits(el.timeStamp, 0)),
