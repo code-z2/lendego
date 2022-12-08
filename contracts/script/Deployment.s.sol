@@ -29,10 +29,10 @@ contract DeploymentScript is Script {
         ILiquidVault(lv).addNew(address(dia), address(oracle), "DIA/USD");
 
         // just preapprove me
-        usdc.approve(sv, 1000);
-        atom.approve(lv, 1000);
-        dia.approve(lv, 1000);
-        weth.approve(lv, 1000);
+        usdc.approve(sv, 1000 * 10 ** 9);
+        atom.approve(lv, 1000 * 10 ** 6);
+        dia.approve(lv, 1000 * 10 ** 18);
+        weth.approve(lv, 1000 * 10 ** 18);
 
         vm.stopBroadcast();
     }

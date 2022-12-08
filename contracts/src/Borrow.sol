@@ -77,14 +77,21 @@ contract Borrow {
     }
 
     function getQuoteByExpectedOutput(uint256 maximumExpectedOutput_, uint128 choice) public returns (uint256) {
-        // perform dia oracle operation
+        require(
+            maximumExpectedOutput_ <= 1000000000 * 10 ** 18,
+            "more than a billion? from who? sorry go to Central Bank"
+        );
+        // calculate 125% of expected output
+        uint256 leastOutput = maximumExpectedOutput_ / 4 + maximumExpectedOutput_ + 5;
+        // perform dia oracle operation, get latest price of collateral token
         (uint128 latestPrice, ) = IDIAOracleV2(liquidV.asset()[choice].priceOracle).getValue(
             liquidV.asset()[choice].pair
         );
-        // calculate maximumExpectedOutput_ + 5 of the price; where 5 is offset
-        uint256 toBeDebited = (maximumExpectedOutput_ + 5) / latestPrice;
-        // return 125%
-        return (toBeDebited / 4) + toBeDebited;
+        uint256 raw = leastOutput / latestPrice;
+        //todo convert raw to appropriate decimals
+        // 1. raw / 10 ** usd Decimal
+        // 2. raw * 10 ** collateral token decimals
+        return raw;
     }
 
     function getAllBorrowers() public view returns (PartialNodeB[] memory) {

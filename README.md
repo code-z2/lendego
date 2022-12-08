@@ -152,11 +152,12 @@ yarn install
 forge build
 # to deploy mock tokens
 sh ./deployTokens.sh
-# deploy script
-sh ./runscripts.sh [local] [--fork] # currently not working though.
 # deploy with forge create
-sh ./deploy.sh #currently not working too
-
+sh ./deploy.sh <usdc address> <usdt address> <busd address> <dai address> <frax address>
+# deploy script
+# local: optional to deploy to local anvil node
+# local --fork: optional to deploy to evmos mainnet fork
+sh ./runscripts.sh [local] [--fork] # currently not working though.
 ```
 
 2. Front-end
@@ -165,8 +166,11 @@ sh ./deploy.sh #currently not working too
 # assuming you have already cloned this repo
 cd client
 yarn install
-yarn start
+
+# development
+yarn dev
 
 # for prod
 yarn build
+yarn start
 ```

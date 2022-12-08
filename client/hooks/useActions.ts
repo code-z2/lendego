@@ -2,13 +2,7 @@ import { BigNumber, ethers, Signer } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils.js";
 import { useContract, useSigner } from "wagmi";
 import { contracts, liquids, stables } from "../lib/constants";
-import {
-  IBorrow,
-  IBorrowForm,
-  ILend,
-  IPosition,
-  LoanCardPropsType,
-} from "../lib/types";
+import { IBorrow, IBorrowForm, ILend, IPosition } from "../lib/types";
 
 const useActions = ({ chainId }: { chainId: number }) => {
   const { data: signer } = useSigner({
@@ -213,7 +207,7 @@ const useActions = ({ chainId }: { chainId: number }) => {
       const approve = await _contractS(node.lend.stableId)?.approve(
         contracts[chainId].EGO.address,
         parseUnits(
-          node.lend.assets.toString(),
+          ((node.lend.assets as number) * 1.3).toString(),
           stables(chainId)[node.lend.stableId].decimals
         )
       );

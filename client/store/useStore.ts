@@ -43,20 +43,17 @@ export interface IDappStore {
 
 const useStore = create<IDappStore>((set, get) => ({
   setAll: async (chain = "9000") => {
-    const [lenders, borrowers, positions, stables, liquids] = await Promise.all(
-      [
-        getLends(chain),
-        getBorrows(chain),
-        getPositions(chain),
-        getStableBalances(chain),
-        getLiquidBalances(chain),
-      ]
-    );
+    const [lenders, borrowers, positions] = await Promise.all([
+      getLends(chain),
+      getBorrows(chain),
+      getPositions(chain),
+    ]);
     get().setLenders(lenders);
     get().setBorrowers(borrowers);
     get().setPositions(positions);
-    get().setStableVaultBalances(stables);
-    get().setLiquidVaultBalances(liquids);
+    // covalent is a bit slower. so handle these whenever they are ready
+    get().setStableVaultBalances(await getStableBalances(chain));
+    get().setLiquidVaultBalances(await getLiquidBalances(chain));
   },
 
   lenders: [],

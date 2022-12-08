@@ -1134,8 +1134,8 @@
       }
     },
     "script/Deployment.s.sol": {
-      "lastModificationDate": 1669765454418,
-      "contentHash": "9676cc078abd210f1909b90607b6a4ea",
+      "lastModificationDate": 1670502698638,
+      "contentHash": "adc0370104303c933b1574c2f4ba3302",
       "sourceName": "script/Deployment.s.sol",
       "solcConfig": {
         "settings": {
@@ -1710,8 +1710,8 @@
       }
     },
     "src/Borrow.sol": {
-      "lastModificationDate": 1669670735343,
-      "contentHash": "3238c5fe7c10c1bce872273caac3a28a",
+      "lastModificationDate": 1669986703160,
+      "contentHash": "fb435ea87947e02ff98a2e173bb37910",
       "sourceName": "src/Borrow.sol",
       "solcConfig": {
         "settings": {
@@ -1763,8 +1763,8 @@
       }
     },
     "src/Ego.sol": {
-      "lastModificationDate": 1669670727035,
-      "contentHash": "1d9c0246d2dd9b3d60313bc73399b891",
+      "lastModificationDate": 1669842772528,
+      "contentHash": "6561ed4ba46bf40e4d9b28fb69a8805d",
       "sourceName": "src/Ego.sol",
       "solcConfig": {
         "settings": {

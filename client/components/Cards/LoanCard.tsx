@@ -57,6 +57,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
       key={key}
     >
       <div className="card-body relative">
+        {/* address and status */}
         <div className="card-title flex justify-between text-base">
           <div className="gap-2 inline-flex">
             <div className="avatar">
@@ -76,22 +77,24 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
                   : "open"
                 : borrower?.borrower
                 ? "open"
-                : "restricted"}
+                : "disabled"}
             </div>
           </div>
         </div>
+        {/*  status: requesting or ofering */}
         <div>
           <p className="text-slate-500 dark:text-red-100">
             {borrower?.borrower ? "requesting:" : "offering"}
           </p>
         </div>
+        {/* stable token offered and logo */}
         <div className="flex justify-between items-center font-bold p-2 text-slate-500 dark:text-slate-400">
           <div className=" inline-flex gap-2">
             <div className="avatar">
               <div className="w-8 rounded-xl relative">
                 <Image
                   src={`/${lender?.stableName || "USDC"}.svg`}
-                  alt="loan card"
+                  alt="token logo"
                   fill
                 />
               </div>
@@ -110,6 +113,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             </p>
           </div>
         </div>
+        {/* interest rate */}
         <div className="inline-flex justify-between">
           <div>
             <p className="text-slate-500 dark:text-red-100">interest rate:</p>
@@ -134,6 +138,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             </p>
           </div>
         </div>
+        {/* tenure */}
         {borrower?.borrower && (
           <div className="inline-flex justify-between">
             <div>
@@ -146,6 +151,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             </div>
           </div>
         )}
+        {/* collateral */}
         {borrower?.borrower && (
           <div className="inline-flex justify-between">
             <div>
@@ -170,6 +176,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             </div>
           </div>
         )}
+        {/* collateral ratio */}
         {borrower?.borrower && (
           <div className="inline-flex justify-between">
             <div>
@@ -235,92 +242,95 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
             )}
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="w-full flex flex-col mt-1">
-            {errors.collateralAmount && (
-              <span className="mx-auto text-red-500 mb-2">
-                This field is required
-              </span>
-            )}
-            {lender?.lender && (
-              <div className="inline-flex gap-2 items-center my-2">
-                <div>
-                  <p className="text-slate-500 dark:text-red-100">
-                    collateral:
-                  </p>
-                </div>
-                <Controller
-                  control={control}
-                  name="collateralId"
-                  defaultValue={3}
-                  render={({
-                    field: { onChange, onBlur, value, name, ref },
-                    fieldState: { isTouched, isDirty, error },
-                    formState,
-                  }) => (
-                    <select
-                      className="select select-ghost"
-                      onChange={(val) => onChange(val.target.value)}
-                    >
-                      <option defaultValue={3} value={3}>
-                        Evmos
-                      </option>
-                      <option value={0}>Atom</option>
-                      <option value={1}>Weth</option>
-                      <option value={2}>DIA</option>
-                    </select>
-                  )}
-                />
-                <input
-                  type="text"
-                  placeholder="amount"
-                  className="input w-full p-2"
-                  {...register("collateralAmount", { required: true })}
-                />
-              </div>
-            )}
-            {lender?.lender && (
-              <div className="inline-flex justify-between my-2">
-                <div>
-                  <p className="text-slate-500 dark:text-red-100">
-                    tenure (Days):
-                  </p>
-                </div>
-                <div>
-                  <Controller
-                    control={control}
-                    name={"tenure"}
-                    defaultValue={0}
-                    render={({
-                      field: { onChange, onBlur, value, name, ref },
-                      fieldState: { isTouched, isDirty, error },
-                      formState,
-                    }) => (
-                      <select
-                        className="select select-ghost w-24"
-                        {...register("tenure")}
-                        onChange={(val) => onChange(val.target.value)}
-                      >
-                        <option defaultValue={0} value={0}>
-                          30
-                        </option>
-                        <option value={1}>60</option>
-                        <option value={2}>90</option>
-                      </select>
-                    )}
-                  />
-                </div>
-              </div>
-            )}
-            <button
-              className={`btn btn-link lowercase text-teal-600 disabled:text-slate-700 mx-auto ${
-                !data?.user?.name && "btn-disabled"
-              }`}
-              type="submit"
-              disabled={!data?.user?.name}
-            >
-              fill order
-            </button>
-          </form>
+          (lender?.acceptingRequests || borrower?.borrower) && (
+            <form onSubmit={onSubmit} className="w-full flex flex-col mt-1">
+              {errors.collateralAmount && (
+                <span className="mx-auto text-red-500 mb-2">
+                  This field is required
+                </span>
+              )}
+              {lender?.lender && (
+                <>
+                  <div className="inline-flex gap-2 items-center my-2">
+                    <div>
+                      <p className="text-slate-500 dark:text-red-100">
+                        collateral:
+                      </p>
+                    </div>
+                    <Controller
+                      control={control}
+                      name="collateralId"
+                      defaultValue={3}
+                      render={({
+                        field: { onChange, onBlur, value, name, ref },
+                        fieldState: { isTouched, isDirty, error },
+                        formState,
+                      }) => (
+                        <select
+                          className="select select-ghost"
+                          onChange={(val) => onChange(val.target.value)}
+                        >
+                          <option defaultValue={3} value={3}>
+                            Evmos
+                          </option>
+                          <option value={0}>Atom</option>
+                          <option value={1}>Weth</option>
+                          <option value={2}>DIA</option>
+                        </select>
+                      )}
+                    />
+                    <input
+                      type="text"
+                      placeholder="amount"
+                      className="input w-full p-2"
+                      {...register("collateralAmount", { required: true })}
+                    />
+                  </div>
+
+                  <div className="inline-flex justify-between my-2">
+                    <div>
+                      <p className="text-slate-500 dark:text-red-100">
+                        tenure (Days):
+                      </p>
+                    </div>
+                    <div>
+                      <Controller
+                        control={control}
+                        name={"tenure"}
+                        defaultValue={0}
+                        render={({
+                          field: { onChange, onBlur, value, name, ref },
+                          fieldState: { isTouched, isDirty, error },
+                          formState,
+                        }) => (
+                          <select
+                            className="select select-ghost w-24"
+                            {...register("tenure")}
+                            onChange={(val) => onChange(val.target.value)}
+                          >
+                            <option defaultValue={0} value={0}>
+                              30
+                            </option>
+                            <option value={1}>60</option>
+                            <option value={2}>90</option>
+                          </select>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+              <button
+                className={`btn btn-link lowercase text-teal-600 disabled:text-slate-700 mx-auto ${
+                  !data?.user?.name && "btn-disabled"
+                }`}
+                type="submit"
+                disabled={!data?.user?.name}
+              >
+                fill order
+              </button>
+            </form>
+          )
         )}
       </div>
     </div>

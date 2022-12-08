@@ -13,48 +13,39 @@ const OpenPositions = ({ address }: { address: string }) => {
 
   const total: (ILend | IBorrow)[] =
     isLendersAvailable || isBorrowersAvailable
-      ? [...lenders, ...borrowers]
+      ? [
+          ...lenders.filter((el: ILend) => !el.filled && el.lender === address),
+          ...borrowers.filter((el: IBorrow) => el.borrower === address),
+        ]
       : [];
-
-  const getTotal = (start: number, end: number): (ILend | IBorrow)[] => {
-    return isLendersAvailable || isBorrowersAvailable
-      ? total.slice(start, end)
-      : [];
-  };
 
   const renderList = (): (JSX.Element | undefined)[] => {
-    return getTotal(pagination, pagination + 19)
-      .filter(
-        (el: any) =>
-          (!el.filled || el.borrower) &&
-          (el.lender === address || el.borrower === address)
-      )
-      .map((el: any, id) => {
-        return (
-          <LoanCard
-            lnodeId={el.lnodeId}
-            lender={el.lender}
-            stableId={el.stableId}
-            stableAddress={el.stableAddress}
-            stableName={el.stableName}
-            interestRate={el.interestRate}
-            assets={el.assets}
-            filled={el.filled}
-            acceptingRequests={el.acceptingRequests}
-            key={id}
-            bnodeId={el.bnodeId}
-            collateralAddress={el.collateralAddress}
-            collateralId={el.collateralId}
-            collateralAmount={el.collateralAmount}
-            maxPayableInterest={el.maxPayableInterest}
-            maximumExpectedOutput={el.maximumExpectedOutput}
-            collateralName={el.collateralName}
-            borrower={el.borrower}
-            tenure={el.tenure}
-            restricted={el.restricted}
-          />
-        );
-      });
+    return total.slice(pagination, pagination + 19).map((el: any, id) => {
+      return (
+        <LoanCard
+          lnodeId={el.lnodeId}
+          lender={el.lender}
+          stableId={el.stableId}
+          stableAddress={el.stableAddress}
+          stableName={el.stableName}
+          interestRate={el.interestRate}
+          assets={el.assets}
+          filled={el.filled}
+          acceptingRequests={el.acceptingRequests}
+          key={id}
+          bnodeId={el.bnodeId}
+          collateralAddress={el.collateralAddress}
+          collateralId={el.collateralId}
+          collateralAmount={el.collateralAmount}
+          maxPayableInterest={el.maxPayableInterest}
+          maximumExpectedOutput={el.maximumExpectedOutput}
+          collateralName={el.collateralName}
+          borrower={el.borrower}
+          tenure={el.tenure}
+          restricted={el.restricted}
+        />
+      );
+    });
   };
   return (
     <div className="space-y-4 py-10">
