@@ -12,7 +12,7 @@ import {
 
 const EMVOS_RPC_URL: string = process.env.NEXT_PUBLIC_EMVOS_RPC_URL as string;
 const provider = new ethers.providers.JsonRpcProvider(EMVOS_RPC_URL);
-const acceptedStables = ["USDC", "DAI", "USDT", "BUSD", "FRAX"];
+const acceptedStables = ["USDC", "DAI", "USDT", "BUSD", "FRAX", "svLE"];
 const acceptedLiquids = ["ATOM", "DIA", "WETH", "WEVMOS"];
 
 export const ego = (chainId: string) =>
@@ -130,15 +130,22 @@ function formatBalances(data: {}[] | void, accepted: Set<string>): IBalance[] {
   let total = 0;
   const _formattedData: IBalance[] = new Array();
   data?.map((el: any, id: number) => {
-    accepted.has(el.contract_ticker_symbol)
-      ? (_formattedData[id] = {
-          name: el.contract_name,
-          symbol: el.contract_ticker_symbol,
-          amount: parseFloat(formatUnits(el.balance, el.contract_decimals)),
-          logo: el.logo_url,
-          address: el.contract_address,
-        })
-      : null;
+    accepted.has(el.contract_ticker_symbol) &&
+      (el.contract_ticker_symbol === "svLE"
+        ? (_formattedData[id] = {
+            name: el.contract_name,
+            symbol: el.contract_ticker_symbol,
+            amount: parseFloat(formatUnits(el.balance, 9)),
+            logo: el.logo_url,
+            address: el.contract_address,
+          })
+        : (_formattedData[id] = {
+            name: el.contract_name,
+            symbol: el.contract_ticker_symbol,
+            amount: parseFloat(formatUnits(el.balance, el.contract_decimals)),
+            logo: el.logo_url,
+            address: el.contract_address,
+          }));
     total += parseFloat(formatUnits(el.balance, el.contract_decimals));
   });
   _formattedData[_formattedData.length] = {

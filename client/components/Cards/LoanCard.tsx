@@ -71,12 +71,12 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
           </div>
           <div>
             <div className="badge badge-accent badge-outline">
-              {lender?.acceptingRequests
+              {borrower?.borrower
+                ? "open"
+                : lender?.acceptingRequests
                 ? lender?.filled
                   ? "active"
                   : "open"
-                : borrower?.borrower
-                ? "open"
                 : "disabled"}
             </div>
           </div>

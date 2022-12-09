@@ -11,7 +11,7 @@ const ProfileHeader: FC<{ address: string }> = ({ address }) => {
   const [balances, setBalances] = useState<IBalance[]>();
   const { data } = useSession();
   const queryBalances = async () =>
-    setBalances(await getUserBalances("9000", data?.user?.name as string));
+    setBalances(await getUserBalances("9000", address));
   // const balances = use(getUserBalances("9000", address));
   useEffect(() => {
     queryBalances();
@@ -34,7 +34,7 @@ const ProfileHeader: FC<{ address: string }> = ({ address }) => {
             {el?.symbol}
             <div className="badge bg-primary">
               {el?.amount?.toLocaleString("en-US", {
-                maximumFractionDigits: 5,
+                maximumFractionDigits: 2,
               })}
             </div>
           </div>

@@ -30,7 +30,7 @@ const Linkto = ({ to }: { to?: "profile" }) => {
       </div>
     );
   return (
-    <div className="flex text-base font-bold">
+    <div className="flex text-base font-bold my-5">
       <h2>
         <Link className="link text-blue-400" href="/create/new/lend">
           provide a loan

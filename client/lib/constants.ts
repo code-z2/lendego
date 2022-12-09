@@ -49,6 +49,7 @@ export const stables = (chainId: string | number) => [
   { name: "USDT", decimals: 9, ...contracts[chainId].USDC },
   { name: "BUSD", decimals: 9, ...contracts[chainId].USDC },
   { name: "FRAX", decimals: 9, ...contracts[chainId].USDC },
+  { name: "svLE", decimals: 9, ...contracts[chainId].STABLEV },
 ];
 
 export const liquids = (chainId: string | number) => [
