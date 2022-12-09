@@ -43,17 +43,24 @@ const ProfileHeader: FC<{ address: string }> = ({ address }) => {
   };
   return (
     <div className="card bg-neutral text-primary-content h-36 pt-16">
-      <div className="card-body p-0 pb-2 bg-gray-700 rounded-b-2xl flex-row">
-        <div className="w-16 h-16 mask mask-hexagon -translate-y-6 ml-3">
-          {Seed(address, 3, 20)}
-        </div>
-        <div className="overflow-x-hidden">
+      <div className="card-body p-0 pb-2 bg-gray-700 rounded-b-2xl">
+        <div className="flex">
+          <div className="relative w-20">
+            <div className="w-16 h-16 mask mask-hexagon -translate-y-6 ml-3 absolute">
+              {Seed(address, 3, 20)}
+            </div>
+          </div>
+
           <div className="font-bold p-2">
             {formatAddress(address)}{" "}
             <span>
-              <CopyButton text={address} />
+              <div className="tooltip" data-tip="copy">
+                <CopyButton text={address} />
+              </div>
             </span>
           </div>
+        </div>
+        <div className="px-2">
           <div className="flex gap-2 overflow-x-auto">
             {data?.user?.name === address && renderBalances()}
           </div>

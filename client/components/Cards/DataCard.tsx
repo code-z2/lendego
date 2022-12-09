@@ -9,7 +9,7 @@ const DataCard: FC<IBalance> = (props, { key }) => {
       key={key}
     >
       <div className="badge absolute right-2 top-2 font-semibold">vault</div>
-      <div className="card-body p-5">
+      <div className="card-body p-5 pt-8">
         <div className="card-title flex justify-between text-base">
           <div className="gap-4 inline-flex">
             <div className="avatar">
@@ -30,13 +30,13 @@ const DataCard: FC<IBalance> = (props, { key }) => {
                 <h2 className="card-title truncate">
                   $
                   {props?.value?.toLocaleString("en-US", {
-                    maximumFractionDigits: 5,
+                    maximumFractionDigits: 2,
                   })}
                 </h2>
               )}
               <p className="text-slate-300 truncate">
                 {props?.amount?.toLocaleString("en-US", {
-                  maximumFractionDigits: 5,
+                  maximumFractionDigits: 2,
                 })}{" "}
                 {!props?.total && props?.symbol}
               </p>

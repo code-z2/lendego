@@ -21,12 +21,14 @@ const SStats = () => {
     });
   };
   return (
-    <div className="flex space-x-4 overflow-x-auto justify-around">
-      <DataCard key={10} name="BUSD" symbol="BUSD" amount={0} value={0} />
-      <DataCard key={11} name="USDT" symbol="USDT" amount={0} value={0} />
-      <DataCard key={12} name="DAI" symbol="DAI" amount={0} value={0} />
-      <DataCard key={13} name="FRAX" symbol="FRAX" amount={0} value={0} />
-      {isStableVaultBalancesAvailable && renderList()}
+    <div className="overflow-x-hidden">
+      <div className="flex gap-4 overflow-x-auto">
+        <DataCard key={10} name="BUSD" symbol="BUSD" amount={0} value={0} />
+        <DataCard key={11} name="USDT" symbol="USDT" amount={0} value={0} />
+        <DataCard key={12} name="DAI" symbol="DAI" amount={0} value={0} />
+        <DataCard key={13} name="FRAX" symbol="FRAX" amount={0} value={0} />
+        {isStableVaultBalancesAvailable && renderList()}
+      </div>
     </div>
   );
 };

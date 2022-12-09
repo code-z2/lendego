@@ -21,8 +21,10 @@ const LStats = () => {
     });
   };
   return (
-    <div className="flex space-x-4 overflow-x-auto justify-around">
-      {isLiquidVaultBalancesAvailable && renderList()}
+    <div className="overflow-x-hidden">
+      <div className="flex gap-4 overflow-x-auto">
+        {isLiquidVaultBalancesAvailable && renderList()}
+      </div>
     </div>
   );
 };

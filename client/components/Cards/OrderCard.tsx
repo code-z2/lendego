@@ -45,10 +45,10 @@ const OrderCard = ({ node }: { node: string }) => {
 
   return (
     <form onSubmit={onSubmit} className="w-full flex flex-col mt-1">
-      <div className="card card-compact md:w-[28rem] bg-base-100 md:shadow-xl min-h-[14rem] bg-opacity-50 hover:shadow-md p-10 glass m-auto">
+      <div className="card card-compact md:w-[28rem] bg-base-100 md:shadow-xl min-h-[14rem] hover:shadow-md p-10 bg-opacity-50 glass m-auto relative">
+        <div className="absolute w-72 h-72 top-15 left-20 bg-blue-200 rounded-md mix-blend-multiply filter blur-2xl opacity-50"></div>
         <div className="card-body relative space-y-5">
           {/* from: borrower or lender */}
-
           {data?.user?.name ? (
             <div className="gap-2 inline-flex">
               <div className="avatar">
