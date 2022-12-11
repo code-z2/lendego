@@ -153,7 +153,7 @@ forge build
 # to deploy mock tokens
 sh ./deployTokens.sh
 # deploy with forge create
-sh ./deploy.sh <usdc address> <usdt address> <busd address> <dai address> <frax address>
+sh ./deploy.sh <atom address> <weth address> <dia address> <usdc address>
 # deploy script
 # local: optional to deploy to local anvil node
 # local --fork: optional to deploy to evmos mainnet fork

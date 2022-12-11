@@ -31,7 +31,7 @@ contract LiquidVault is Liquids, Ownable {
         // checks that the deposit value is higher than 0
         require(assets > 0, "Deposit is less than Zero");
         // the choice of liquid must be available
-        require(choice >= 0 && choice <= database.length - 1, "Invalid choice of liquid");
+        require(choice <= database.length - 1, "Invalid choice of liquid");
         // transfers asset of choice from user to contract
         success = IERC20(database[choice].token).transferFrom(caller, address(this), assets);
         // checks the value of _assets the holder has
@@ -51,7 +51,7 @@ contract LiquidVault is Liquids, Ownable {
         require(_totalAssets(choice) > assets, "not enough liquidity for selected liquid");
         require(assets <= shareHolder[caller][choice], "cannot widthraw more than shareholder has");
         // the choice of liquid must be available
-        require(choice >= 0 && choice <= database.length - 1, "Invalid choice of liquid");
+        require(choice <= database.length - 1, "Invalid choice of liquid");
 
         // _withdraw handles rentrancy proof
         success = _withdraw(caller, receiver, assets, choice);

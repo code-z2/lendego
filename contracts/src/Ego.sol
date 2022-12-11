@@ -4,7 +4,6 @@ pragma solidity 0.8.17;
 import "./Borrow.sol";
 import "./Lend.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Ego is Lend, Borrow {
     using Counters for Counters.Counter;
@@ -37,14 +36,18 @@ contract Ego is Lend, Borrow {
         uint256 partialNodeLIdx,
         uint256 tenure
     ) public {
-        require(tenure >= 0 && tenure < 3, "Tenure: not surpported");
+        require(tenure < 3, "Tenure: not surpported");
         require(partialNodeLIdx < lPool.length, "Lender: the selected lender does not exist");
         require(selectedCollateral < liquidV.asset().length, "Liquid: the selected collateral is not surpported");
         require(lPool[partialNodeLIdx].acceptingRequests, "Notice: lender is currently not accepting requests");
 
         address collateral = liquidV.asset()[selectedCollateral].token;
         // calculate 125% of maximumExpectedOutput in usd
-        uint256 assets = getQuoteByExpectedOutput(lPool[partialNodeLIdx].assets, selectedCollateral);
+        uint256 assets = getQuoteByExpectedOutput(
+            lPool[partialNodeLIdx].assets,
+            IERC20Plus(stableV.asset()[uint(lPool[partialNodeLIdx].choiceOfStable)]).decimals(),
+            selectedCollateral
+        );
         // cannot deposit less than 125% of collateral
         require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
         // deducts borrowers funds
@@ -60,16 +63,22 @@ contract Ego is Lend, Borrow {
             maxPayableInterest: lPool[partialNodeLIdx].interestRate,
             restricted: false
         });
+        // temporary partial node holder
+        PartialNodeL memory lender = lPool[partialNodeLIdx];
+        lender.filled = true;
         if (success) {
-            // calls partialNodeLIdx.fill
-            lPool[partialNodeLIdx].filled = true;
-            _handleNodeService(borrower, lPool[partialNodeLIdx]);
-            emit LoanTaken(
-                msg.sender,
-                lPool[partialNodeLIdx].lender,
-                lPool[partialNodeLIdx].assets,
-                acceptedTenures[tenure]
-            );
+            bool handled = _handleNodeService(borrower, lender);
+            if (handled) {
+                // calls partialNodeLIdx.fill
+                lPool[partialNodeLIdx].filled = true;
+                emit LoanTaken(
+                    msg.sender,
+                    lPool[partialNodeLIdx].lender,
+                    lPool[partialNodeLIdx].assets,
+                    acceptedTenures[tenure]
+                );
+                // if value exchange fails, just broadcast borrower
+            } else bPool.push(borrower);
         }
     }
 
@@ -89,15 +98,19 @@ contract Ego is Lend, Borrow {
         });
 
         if (success) {
-            _handleNodeService(bPool[partialNodeBIdx], lender);
+            // if the lender deposited, then add him to pool
             lPool.push(lender);
-            _removeUnstableItemFromPool(partialNodeBIdx);
-            emit LoanTaken(
-                bPool[partialNodeBIdx].borrower,
-                msg.sender,
-                bPool[partialNodeBIdx].maximumExpectedOutput,
-                bPool[partialNodeBIdx].tenure
-            );
+            // handle money exchange
+            bool handled = _handleNodeService(bPool[partialNodeBIdx], lender);
+            if (handled) {
+                _removeUnstableItemFromPool(partialNodeBIdx);
+                emit LoanTaken(
+                    bPool[partialNodeBIdx].borrower,
+                    msg.sender,
+                    bPool[partialNodeBIdx].maximumExpectedOutput,
+                    bPool[partialNodeBIdx].tenure
+                );
+            }
         }
     }
 
@@ -112,27 +125,32 @@ contract Ego is Lend, Borrow {
         pool[nodeId].isOpen = false;
     }
 
-    function exitBorrowerFromPosition(uint256 nodeId, address reciever) public {
+    function exitBorrowerFromPosition(uint256 nodeId, address reciever) public returns (bool complete) {
         require(msg.sender == pool[nodeId].borrow.borrower, "Borrower: you did not fill this position!");
         require(pool[nodeId].isOpen, "position has been closed");
+        // todo: check balance of liquidV before attempting
         Node memory node = pool[nodeId];
         // transfers loan + interest back to stablesVault;
         // user handles the approval here
-        _transfer(
+        // ! @audit this is rentrant, but at the benefit of the lender
+        // ? how: the attacker must successfully deposit money, which increments the lenders shares
+        bool success = _transfer(
             stableV.asset()[uint(node.lend.choiceOfStable)],
             msg.sender,
             address(stableV),
             calcLoanPlusInterest(nodeId)
         );
-        lockedStables[node.lend.lender] -= node.lend.assets;
-        // mints lender some more shares
-        stableV.mint(node.lend.lender, calcInterestOnly(nodeId));
-        // closes position
-        pool[nodeId].isOpen = false;
-        // transfers collateral from liquidV to borrower
-        liquidV.withdraw(msg.sender, node.borrow.collateralIn, reciever, node.borrow.indexOfCollateral);
-        // emit loan settled event();
-        emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
+        if (success) {
+            lockedStables[node.lend.lender] -= node.lend.assets;
+            // mints lender some more shares
+            stableV.mint(node.lend.lender, calcInterestOnly(nodeId));
+            // closes position
+            pool[nodeId].isOpen = false;
+            // transfers collateral from liquidV to borrower
+            complete = liquidV.withdraw(msg.sender, node.borrow.collateralIn, reciever, node.borrow.indexOfCollateral);
+            // emit loan settled event();
+            emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
+        }
     }
 
     function calcLoanPlusInterest(uint256 nodeId) public view returns (uint256) {
@@ -178,23 +196,23 @@ contract Ego is Lend, Borrow {
         lPool[partialNodeLIdx].acceptingRequests = false;
     }
 
-    function withdraw(uint256 assets, address receiver, uint8 choice) public {
+    function withdraw(uint256 assets, address receiver, uint8 choice) public returns (uint256 amount) {
         require(
             assets < (stableV.getshares(msg.sender) - lockedStables[msg.sender]),
             "cannot withdraw more than allowed"
         );
-        stableV.withdraw(msg.sender, assets, receiver, msg.sender, choice);
+        amount = stableV.withdraw(msg.sender, assets, receiver, msg.sender, choice);
     }
 
-    function redeem(uint256 shares, address receiver, uint8 choice) public {
+    function redeem(uint256 shares, address receiver, uint8 choice) public returns (uint256 amount) {
         require(
             shares < (stableV.balanceOf(msg.sender) - lockedStables[msg.sender]),
             "cannot redeem more than allowed"
         );
-        stableV.redeem(msg.sender, shares, receiver, msg.sender, choice);
+        amount = stableV.redeem(msg.sender, shares, receiver, msg.sender, choice);
     }
 
-    function _handleNodeService(PartialNodeB memory borrower, PartialNodeL memory lender) internal {
+    function _handleNodeService(PartialNodeB memory borrower, PartialNodeL memory lender) internal returns (bool) {
         uint256 currentNode = _nodeIdCounter.current();
         // creates paired node
         Node memory new_ = Node({
@@ -204,20 +222,31 @@ contract Ego is Lend, Borrow {
             lend: lender,
             borrow: borrower
         });
-        // broadcasts paired node
-        pool[currentNode] = new_;
-        // increments nodeid counter
-        _nodeIdCounter.increment();
         // transfers expected usd to borrower
-        stableV.temporaryPermit(uint(lender.choiceOfStable), lender.assets);
-        _transfer(stableV.asset()[uint(lender.choiceOfStable)], address(stableV), borrower.borrower, lender.assets);
-        stableV.revokePermit(uint(lender.choiceOfStable));
-        // todo make sure non-rentrant
-        lockedStables[lender.lender] += lender.assets;
+        bool permitted = stableV.temporaryPermit(uint(lender.choiceOfStable), lender.assets);
+        if (permitted) {
+            bool success = _transfer(
+                stableV.asset()[uint(lender.choiceOfStable)],
+                address(stableV),
+                borrower.borrower,
+                lender.assets
+            );
+            stableV.revokePermit(uint(lender.choiceOfStable));
+            if (success) {
+                // broadcasts paired node
+                pool[currentNode] = new_;
+                // increments nodeid counter
+                _nodeIdCounter.increment();
+                // lock lenders funds
+                lockedStables[lender.lender] += lender.assets;
+                return true;
+            }
+        }
+        return false;
     }
 
-    function _transfer(address contract_, address from, address to, uint256 amount) internal {
-        IERC20(contract_).transferFrom(from, to, amount);
+    function _transfer(address contract_, address from, address to, uint256 amount) internal returns (bool success) {
+        success = IERC20Plus(contract_).transferFrom(from, to, amount);
     }
 
     function _hasTenureExpired(Node memory node) internal view returns (bool) {
@@ -233,7 +262,7 @@ contract Ego is Lend, Borrow {
             liquidV.asset()[node.borrow.indexOfCollateral].pair
         );
         // extra 2$ for gas price
-        uint256 initialFunds = (node.lend.assets + 2) / latestPrice;
+        uint256 initialFunds = (node.lend.assets + 2000000000) / latestPrice;
         // assuming diffusion swap has be carried out on collateral
         _swapAtDiffussion(initialFunds, node.borrow.indexOfCollateral);
         // unlocks stable of collateral wei amount equivlavent

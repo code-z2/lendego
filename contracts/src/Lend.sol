@@ -52,7 +52,7 @@ contract Lend {
         emit NewLoan(msg.sender, stableV.asset()[choice], assets, interest);
     }
 
-    function burnPosition(uint256 partialNodeLIdx) public {
+    function burnPosition(uint256 partialNodeLIdx) public returns (uint256 amount) {
         // requires only msg.sender == partialNodeL.lender
         require(msg.sender == lPool[partialNodeLIdx].lender, "Lender: you are not the lender that owns this node");
         // requires position not filled.
@@ -60,7 +60,7 @@ contract Lend {
         // delete the partialnode
         _removeItemFromPool(partialNodeLIdx);
         // transfer stable from vault to lender
-        stableV.withdraw(
+        amount = stableV.withdraw(
             msg.sender,
             lPool[partialNodeLIdx].assets,
             msg.sender,

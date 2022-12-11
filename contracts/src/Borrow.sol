@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 import "./tokens/ERC4626/vLiquid.sol";
 import "./interface/IDIAOracle.sol";
+import "./interface/IERC20.sol";
 
 contract Borrow {
     LiquidVault immutable liquidV;
@@ -35,11 +36,11 @@ contract Borrow {
         uint128 tenure_,
         uint8 interest
     ) public {
-        require(tenure_ >= 0 && tenure_ < 3, "Tenure: please choose a valid loan duration");
+        require(tenure_ < 3, "Tenure: please choose a valid loan duration");
         require(interest <= 15, "Interest reate cannot be more 15%");
         address collateral_ = liquidV.asset()[choice].token;
         // calculte 125% of maximumExpectedOutput in usd
-        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, choice);
+        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, 9, choice);
         require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
         // deposit into the vault
         bool success = liquidV.deposit(msg.sender, collateralIn_, choice);
@@ -59,7 +60,7 @@ contract Borrow {
         emit NewBorrowRequest(msg.sender, collateral_, assets, tenure_);
     }
 
-    function burnUnstablePosition(uint256 partialNodeLIdx) public {
+    function burnUnstablePosition(uint256 partialNodeLIdx) public returns (bool success) {
         // requires only msg.sender == partialNodeL.borrower
         require(
             msg.sender == bPool[partialNodeLIdx].borrower,
@@ -68,7 +69,7 @@ contract Borrow {
         // delete the partialnode
         _removeUnstableItemFromPool(partialNodeLIdx);
         // transfer liquid from vault to borrower
-        liquidV.withdraw(
+        success = liquidV.withdraw(
             msg.sender,
             bPool[partialNodeLIdx].collateralIn,
             msg.sender,
@@ -76,7 +77,11 @@ contract Borrow {
         );
     }
 
-    function getQuoteByExpectedOutput(uint256 maximumExpectedOutput_, uint128 choice) public returns (uint256) {
+    function getQuoteByExpectedOutput(
+        uint256 maximumExpectedOutput_,
+        uint8 decimals,
+        uint128 choice
+    ) public returns (uint256) {
         require(
             maximumExpectedOutput_ <= 1000000000 * 10 ** 18,
             "more than a billion? from who? sorry go to Central Bank"
@@ -87,10 +92,13 @@ contract Borrow {
         (uint128 latestPrice, ) = IDIAOracleV2(liquidV.asset()[choice].priceOracle).getValue(
             liquidV.asset()[choice].pair
         );
-        uint256 raw = leastOutput / latestPrice;
-        //todo convert raw to appropriate decimals
-        // 1. raw / 10 ** usd Decimal
+        // ? slither asked me to change order.
+        // @follow-up
         // 2. raw * 10 ** collateral token decimals
+        uint256 raw = leastOutput * 10 ** IERC20Plus(liquidV.asset()[choice].token).decimals();
+        // 1. raw / 10 ** usd Decimal
+        raw = (raw / 10 ** decimals) / latestPrice;
+
         return raw;
     }
 

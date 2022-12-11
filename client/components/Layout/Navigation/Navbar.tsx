@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Linkto from "../../Link/Link";
@@ -76,7 +77,14 @@ const Nav = () => {
             className="btn btn-ghost normal-case text-xl text-slate-500 dark:text-slate-300"
             href="/"
           >
-            The Alchemy of Money
+            <Image
+              className="mask mask-hexagon w-8 h-8 mx-2"
+              src="/svLE.svg"
+              alt="logo"
+              width={0}
+              height={0}
+            />
+            Alchemy of Money
           </Link>
         </div>
         <div className="navbar-end">

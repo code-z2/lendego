@@ -72,7 +72,7 @@ contract StablesVault is ERC20, Ownable {
         // checks that the deposit value is higher than 0
         require(assets > 0, "Deposit is less than Zero");
         // the choice of stable must be available
-        require(choice >= 0 && choice <= _assets.length - 1, "Invalid choice of Stable");
+        require(choice <= _assets.length - 1, "Invalid choice of Stable");
         // transfers asset of choice from user to contract
         success = IERC20(_assets[choice]).transferFrom(caller, address(this), assets);
         // checks the value of _assets the holder has
@@ -117,7 +117,7 @@ contract StablesVault is ERC20, Ownable {
         require(_totalAssets(choice) > assets, "not enough liquidity for selected stable");
         require(assets <= shareHolder[owner_], "cannot widthraw more than shareholder has");
         // the choice of stable must be available
-        require(choice >= 0 && choice <= _assets.length - 1, "Invalid choice of Stable");
+        require(choice <= _assets.length - 1, "Invalid choice of Stable");
 
         uint256 shares = previewWithdraw(assets, choice);
         // _withdraw handles rentrancy proof
@@ -149,7 +149,7 @@ contract StablesVault is ERC20, Ownable {
         // you can only redeem shares for stables if the shares are less than the vToken balance of the shareHolder
         require(shares <= balanceOf(owner_), "ERC4626: redeem more than max");
         // the choice of stable must be available
-        require(choice >= 0 && choice <= _assets.length - 1, "Invalid choice of Stable");
+        require(choice <= _assets.length - 1, "Invalid choice of Stable");
 
         uint256 assets = previewRedeem(shares, choice);
         _withdraw(caller, receiver, owner_, assets, shares, choice);
@@ -192,13 +192,13 @@ contract StablesVault is ERC20, Ownable {
     }
 
     // temporarily Permit movement of money from this contract
-    function temporaryPermit(uint256 choice, uint256 amount) public onlyOwner {
-        IERC20(_assets[choice]).approve(msg.sender, amount);
+    function temporaryPermit(uint256 choice, uint256 amount) public onlyOwner returns (bool success) {
+        success = IERC20(_assets[choice]).approve(msg.sender, amount);
     }
 
     // revoke back such permit
-    function revokePermit(uint256 choice) public onlyOwner {
-        IERC20(_assets[choice]).approve(msg.sender, 0);
+    function revokePermit(uint256 choice) public onlyOwner returns (bool success) {
+        success = IERC20(_assets[choice]).approve(msg.sender, 0);
     }
 }
 
