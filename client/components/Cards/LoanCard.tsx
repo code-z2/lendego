@@ -11,6 +11,7 @@ import {
 } from "../../lib/types";
 import { useSession } from "next-auth/react";
 import useActions from "../../hooks/useActions";
+import Link from "next/link";
 
 const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
   const {
@@ -53,7 +54,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
 
   return (
     <div
-      className="card card-compact md:w-72 bg-base-100 md:shadow-xl min-h-[14rem] bg-opacity-50 hover:shadow-md"
+      className="card card-compact md:w-72 bg-base-100 md:shadow-xl min-h-[14rem] bg-opacity-50 hover:shadow-md mx-auto"
       key={key}
     >
       <div className="card-body relative">
@@ -66,7 +67,12 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
               </div>
             </div>
             <div className="font-light">
-              {formatAddress(lender?.lender || borrower?.borrower)}
+              <Link
+                className="link link-hover"
+                href={`/address/${lender?.lender || borrower?.borrower}`}
+              >
+                {formatAddress(lender?.lender || borrower?.borrower)}
+              </Link>
             </div>
           </div>
           <div>
@@ -327,7 +333,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
                 type="submit"
                 disabled={!data?.user?.name}
               >
-                fill order
+                {data?.user?.name ? "fill order" : "disconnected"}
               </button>
             </form>
           )

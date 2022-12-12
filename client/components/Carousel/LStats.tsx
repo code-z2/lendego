@@ -22,7 +22,7 @@ const LStats = () => {
   };
   return (
     <div className="overflow-x-hidden">
-      <div className="flex gap-4 overflow-x-auto">
+      <div className="flex gap-4 overflow-x-auto lg:justify-evenly">
         {isLiquidVaultBalancesAvailable && renderList()}
       </div>
     </div>
