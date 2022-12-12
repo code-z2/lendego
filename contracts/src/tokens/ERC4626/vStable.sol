@@ -195,11 +195,6 @@ contract StablesVault is ERC20, Ownable {
     function temporaryPermit(uint256 choice, uint256 amount) public onlyOwner returns (bool success) {
         success = IERC20(_assets[choice]).approve(msg.sender, amount);
     }
-
-    // revoke back such permit
-    function revokePermit(uint256 choice) public onlyOwner returns (bool success) {
-        success = IERC20(_assets[choice]).approve(msg.sender, 0);
-    }
 }
 
 // todo - implementing a full EIP4626-like vault for multi-tokens (stables)

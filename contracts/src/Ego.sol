@@ -4,18 +4,12 @@ pragma solidity 0.8.17;
 import "./Borrow.sol";
 import "./Lend.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import {Node} from "./lib/ImportantStructs.sol";
 
 contract Ego is Lend, Borrow {
     using Counters for Counters.Counter;
 
     Counters.Counter private _nodeIdCounter;
-    struct Node {
-        uint256 nodeId; // unique node identifier
-        uint timeStamp; // timestamp when node was created
-        bool isOpen; // if the positions represented by this node are still open
-        PartialNodeL lend; // the lenders details
-        PartialNodeB borrow; // the borrowers details
-    }
 
     // the default stable-coin
     AcceptedStables private defaultChoice = AcceptedStables.USDC;
@@ -231,7 +225,6 @@ contract Ego is Lend, Borrow {
                 borrower.borrower,
                 lender.assets
             );
-            stableV.revokePermit(uint(lender.choiceOfStable));
             if (success) {
                 // broadcasts paired node
                 pool[currentNode] = new_;

@@ -5,20 +5,11 @@ import "./tokens/ERC4626/vLiquid.sol";
 import "./interface/IDIAOracle.sol";
 import "./interface/IERC20.sol";
 
+import {PartialNodeB} from "./lib/ImportantStructs.sol";
+
 contract Borrow {
     LiquidVault immutable liquidV;
     uint128[3] acceptedTenures = [30, 60, 90]; // days
-    struct PartialNodeB {
-        // borrowers details
-        address borrower;
-        address collateral;
-        uint256 collateralIn;
-        uint256 maximumExpectedOutput; // usd
-        uint128 tenure;
-        uint128 indexOfCollateral;
-        uint8 maxPayableInterest;
-        bool restricted;
-    }
 
     // pool of borrowers
     PartialNodeB[] bPool;

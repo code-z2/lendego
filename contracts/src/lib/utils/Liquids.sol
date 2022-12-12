@@ -2,6 +2,7 @@
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import {Tokens} from "../ImportantStructs.sol";
 
 /// @title liquid token database for vLiquid
 /// this contract is only for testing purposes
@@ -9,11 +10,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract Liquids is AccessControl {
     // Create a new role identifier for the minter role
     bytes32 public constant EDITOR_ROLE = keccak256("EDITOR_ROLE");
-    struct Tokens {
-        address token;
-        address priceOracle;
-        string pair;
-    }
 
     Tokens[] internal database;
 

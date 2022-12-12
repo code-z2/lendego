@@ -2,28 +2,10 @@
 pragma solidity 0.8.17;
 
 import "./tokens/ERC4626/vStable.sol";
+import {PartialNodeL, AcceptedStables} from "./lib/ImportantStructs.sol";
 
 contract Lend {
     StablesVault immutable stableV;
-
-    enum AcceptedStables {
-        USDC,
-        DAI,
-        USDT,
-        BUSD,
-        FRAX
-    }
-
-    // represents an unfifilled order
-    struct PartialNodeL {
-        // lenders entry
-        address lender;
-        AcceptedStables choiceOfStable;
-        uint8 interestRate;
-        uint256 assets;
-        bool filled; // default false
-        bool acceptingRequests; // default true
-    }
 
     // pool of lenders
     PartialNodeL[] lPool;
