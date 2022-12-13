@@ -4,6 +4,7 @@ import { IPosition } from "../../lib/types";
 import { formatAddress } from "../../utils/formatAddress";
 import { useSession } from "next-auth/react";
 import useActions from "../../hooks/useActions";
+import Link from "next/link";
 
 const PositionCard: FC<IPosition> = (props, { key }) => {
   const { extendBorrowersLoan, forcefullyExitLenderFromNode, settleLoan } =
@@ -41,7 +42,12 @@ const PositionCard: FC<IPosition> = (props, { key }) => {
           <p className="text-slate-500 dark:text-red-100 py-2">from:</p>
           <div className="card-title flex justify-between text-base">
             <div className="font-light">
-              {formatAddress(props?.lend?.lender)}
+              <Link
+                className="link link-hover"
+                href={`/address/${props?.lend?.lender}`}
+              >
+                {formatAddress(props?.lend?.lender)}
+              </Link>
             </div>
             <div>
               <p className="text-slate-500 dark:text-red-100 inline-flex font-light">
@@ -68,7 +74,12 @@ const PositionCard: FC<IPosition> = (props, { key }) => {
           <p className="text-slate-500 dark:text-red-100 py-2">to:</p>
           <div className="card-title flex justify-between text-base">
             <div className="font-light">
-              {formatAddress(props?.borrow?.borrower)}
+              <Link
+                className="link link-hover"
+                href={`/address/${props?.borrow?.borrower}`}
+              >
+                {formatAddress(props?.borrow?.borrower)}
+              </Link>
             </div>
             <div>
               <p className="text-slate-500 dark:text-red-100 inline-flex font-light">

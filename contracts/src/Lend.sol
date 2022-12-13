@@ -14,7 +14,8 @@ contract Lend {
         stableV = new StablesVault(stables, "svLendEgo", "svLE");
     }
 
-    event NewLoan(address lender, address stable, uint256 asset, uint8 interestRate);
+    event NewLoan(address indexed lender, address indexed stable, uint256 indexed asset, uint8 interestRate);
+    event BurntPosition(address indexed burner, PartialNodeL lnode);
 
     function createPosition(uint256 assets, uint8 choice, uint8 interest) public {
         require(interest <= 15, "Interest reate cannot be more 15%");
@@ -38,17 +39,14 @@ contract Lend {
         // requires only msg.sender == partialNodeL.lender
         require(msg.sender == lPool[partialNodeLIdx].lender, "Lender: you are not the lender that owns this node");
         // requires position not filled.
-        require(lPool[partialNodeLIdx].filled == false, "you cannot not burn this position");
+        require(!lPool[partialNodeLIdx].filled, "you cannot not burn this position");
+        //create temp memory location
+        PartialNodeL memory temp = lPool[partialNodeLIdx];
         // delete the partialnode
         _removeItemFromPool(partialNodeLIdx);
         // transfer stable from vault to lender
-        amount = stableV.withdraw(
-            msg.sender,
-            lPool[partialNodeLIdx].assets,
-            msg.sender,
-            msg.sender,
-            uint(lPool[partialNodeLIdx].choiceOfStable)
-        );
+        amount = stableV.withdraw(msg.sender, temp.assets, msg.sender, msg.sender, uint(temp.choiceOfStable));
+        emit BurntPosition(msg.sender, temp);
     }
 
     function getAllLenders() public view returns (PartialNodeL[] memory) {

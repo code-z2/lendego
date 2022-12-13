@@ -3,8 +3,7 @@ pragma solidity 0.8.17;
 
 import "./tokens/ERC4626/vLiquid.sol";
 import "./interface/IDIAOracle.sol";
-import "./interface/IERC20.sol";
-
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {PartialNodeB} from "./lib/ImportantStructs.sol";
 
 contract Borrow {
@@ -18,7 +17,8 @@ contract Borrow {
         liquidV = new LiquidVault(msg.sender);
     }
 
-    event NewBorrowRequest(address borrower, address liquid, uint256 assets, uint256 tenure);
+    event NewBorrowRequest(address indexed borrower, address indexed liquid, uint256 indexed assets, uint256 tenure);
+    event BurntUnstablePosition(address indexed burner, PartialNodeB bnode);
 
     function createUnstablePosition(
         uint128 choice,
@@ -51,21 +51,19 @@ contract Borrow {
         emit NewBorrowRequest(msg.sender, collateral_, assets, tenure_);
     }
 
-    function burnUnstablePosition(uint256 partialNodeLIdx) public returns (bool success) {
+    function burnUnstablePosition(uint256 partialNodeBIdx) public returns (bool success) {
         // requires only msg.sender == partialNodeL.borrower
         require(
-            msg.sender == bPool[partialNodeLIdx].borrower,
+            msg.sender == bPool[partialNodeBIdx].borrower,
             "Borrower: you are not the borrower that created this node, or node does not exist"
         );
+        //create temp memory location
+        PartialNodeB memory temp = bPool[partialNodeBIdx];
         // delete the partialnode
-        _removeUnstableItemFromPool(partialNodeLIdx);
+        _removeUnstableItemFromPool(partialNodeBIdx);
         // transfer liquid from vault to borrower
-        success = liquidV.withdraw(
-            msg.sender,
-            bPool[partialNodeLIdx].collateralIn,
-            msg.sender,
-            bPool[partialNodeLIdx].indexOfCollateral
-        );
+        success = liquidV.withdraw(msg.sender, temp.collateralIn, msg.sender, temp.indexOfCollateral);
+        emit BurntUnstablePosition(msg.sender, temp);
     }
 
     function getQuoteByExpectedOutput(
@@ -73,10 +71,7 @@ contract Borrow {
         uint8 decimals,
         uint128 choice
     ) public returns (uint256) {
-        require(
-            maximumExpectedOutput_ <= 1000000000 * 10 ** 18,
-            "more than a billion? from who? sorry go to Central Bank"
-        );
+        require(maximumExpectedOutput_ <= 100000000 ether, "more than a 100m? from who? sorry go to Central Bank");
         // calculate 125% of expected output
         uint256 leastOutput = maximumExpectedOutput_ / 4 + maximumExpectedOutput_ + 5;
         // perform dia oracle operation, get latest price of collateral token
@@ -86,7 +81,7 @@ contract Borrow {
         // ? slither asked me to change order.
         // @follow-up
         // 2. raw * 10 ** collateral token decimals
-        uint256 raw = leastOutput * 10 ** IERC20Plus(liquidV.asset()[choice].token).decimals();
+        uint256 raw = leastOutput * 10 ** IERC20Metadata(liquidV.asset()[choice].token).decimals();
         // 1. raw / 10 ** usd Decimal
         raw = (raw / 10 ** decimals) / latestPrice;
 

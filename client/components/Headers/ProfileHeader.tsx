@@ -12,7 +12,7 @@ const ProfileHeader: FC<{ address: string }> = ({ address }) => {
   const { data } = useSession();
   const queryBalances = async () =>
     setBalances(await getUserBalances("9000", address));
-  // const balances = use(getUserBalances("9000", address));
+
   useEffect(() => {
     queryBalances();
     // eslint-disable-next-line react-hooks/exhaustive-deps
