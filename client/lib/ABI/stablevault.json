@@ -473,19 +473,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "choice",
-        "type": "uint256"
-      }
-    ],
-    "name": "revokePermit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "symbol",
     "outputs": [
@@ -512,7 +499,13 @@
       }
     ],
     "name": "temporaryPermit",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

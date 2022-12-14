@@ -58,8 +58,8 @@ contract LiquidVault is Liquids, Ownable {
     }
 
     // return the list of all accepted liquid assets
-    function asset() public virtual returns (Tokens[] memory) {
-        return database;
+    function asset() public view returns (Tokens[] memory) {
+        return _getAll();
     }
 
     // returns the balance of a single asset

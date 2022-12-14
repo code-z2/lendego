@@ -12,8 +12,20 @@ import {
 
 const EMVOS_RPC_URL: string = process.env.NEXT_PUBLIC_EMVOS_RPC_URL as string;
 const provider = new ethers.providers.JsonRpcProvider(EMVOS_RPC_URL);
-const acceptedStables = ["USDC", "DAI", "USDT", "BUSD", "FRAX", "svLE"];
-const acceptedLiquids = ["ATOM", "DIA", "WETH", "WEVMOS"];
+const acceptedStables = [
+  contracts[9000].USDC.address.toLowerCase(),
+  contracts[9000].USDT.address.toLowerCase(),
+  contracts[9000].BUSD.address.toLowerCase(),
+  contracts[9000].DAI.address.toLowerCase(),
+  contracts[9000].FRAX.address.toLowerCase(),
+  contracts[9000].STABLEV.address.toLowerCase(),
+];
+const acceptedLiquids = [
+  contracts[9000].WEVMOS.address.toLowerCase(),
+  contracts[9000].WETH.address.toLowerCase(),
+  contracts[9000].DIA.address.toLowerCase(),
+  contracts[9000].ATOM.address.toLowerCase(),
+];
 
 export const ego = (chainId: string) =>
   new ethers.Contract(
@@ -130,7 +142,7 @@ function formatBalances(data: {}[] | void, accepted: Set<string>): IBalance[] {
   let total = 0;
   const _formattedData: IBalance[] = new Array();
   data?.map((el: any, id: number) => {
-    accepted.has(el.contract_ticker_symbol) &&
+    accepted.has(el.contract_address) &&
       (el.contract_ticker_symbol === "svLE"
         ? (_formattedData[id] = {
             name: el.contract_name,

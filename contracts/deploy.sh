@@ -8,7 +8,7 @@ if [ "$#" -ne 5 ]; then
 else
     echo "deploying the EGO contract ..."
     ## deploy the ego contract
-    forge create --optimize --rpc-url $EVMOS_RPC_URL --private-key $PRIVATE_KEY src/Ego.sol:Ego --constructor-args [$1,$2,$3,$4,$5]
+    forge create --optimize --optimizer-runs 200 --rpc-url $EVMOS_RPC_URL --private-key $PRIVATE_KEY src/Ego.sol:Ego --constructor-args [$1,$2,$3,$4,$5]
 fi
 
 echo "deploying the oracle contract ..."

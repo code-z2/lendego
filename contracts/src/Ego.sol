@@ -5,7 +5,7 @@ import "./Borrow.sol";
 import "./Lend.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {Node} from "./lib/ImportantStructs.sol";
-import {Diffuse} from "./lib/Diffuse.sol";
+import {Diffuse} from "./lib/utils/Diffuse.sol";
 
 /**
  * @title Ego - peer to peer lending and borrowing
@@ -15,6 +15,8 @@ import {Diffuse} from "./lib/Diffuse.sol";
  * @dev - please see IEgo interface in interface/IEgo
  */
 contract Ego is Lend, Borrow {
+    Diffuse diffuse = new Diffuse();
+
     using Counters for Counters.Counter;
     // private counter used to hold current nodeId
     Counters.Counter private _nodeIdCounter;
@@ -387,7 +389,7 @@ contract Ego is Lend, Borrow {
         // extra 2$ for gas price
         uint256 initialFunds = (node.lend.assets + 2 gwei) / latestPrice;
         // assuming diffusion swap has be carried out on collateral
-        Diffuse.safeSwap(initialFunds, node.borrow.indexOfCollateral);
+        diffuse.safeSwap(initialFunds, node.borrow.indexOfCollateral);
         // unlocks stable of collateral wei amount equivlavent
         lockedStables[node.lend.lender] -= node.lend.assets;
         // reconstruct a restricted node
@@ -397,7 +399,7 @@ contract Ego is Lend, Borrow {
         // then try to collect interest.
         uint256 interests = calcInterestOnly(nodeId) / latestPrice;
         // sell assets equivalent on diffussion swap
-        try Diffuse.safeSwap(interests, node.borrow.indexOfCollateral) returns (bool success) {
+        try diffuse.safeSwap(interests, node.borrow.indexOfCollateral) returns (bool success) {
             if (success) {
                 // mint lender interest shares
                 stableV.mint(node.lend.lender, calcInterestOnly(nodeId));

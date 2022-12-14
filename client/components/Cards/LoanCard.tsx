@@ -49,7 +49,13 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
 
   const getQuote = (asset: number, collateral: number): JSX.Element => {
     const percentage = (100 / asset) * (collateral * 12);
-    return <>{percentage}</>;
+    return (
+      <>
+        {percentage.toLocaleString("en-US", {
+          maximumFractionDigits: 2,
+        })}
+      </>
+    );
   };
 
   return (
@@ -266,7 +272,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
                     <Controller
                       control={control}
                       name="collateralId"
-                      defaultValue={3}
+                      defaultValue={0}
                       render={({
                         field: { onChange, onBlur, value, name, ref },
                         fieldState: { isTouched, isDirty, error },
@@ -276,12 +282,12 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
                           className="select select-ghost"
                           onChange={(val) => onChange(val.target.value)}
                         >
-                          <option defaultValue={3} value={3}>
+                          <option defaultValue={0} value={0}>
                             Evmos
                           </option>
-                          <option value={0}>Atom</option>
-                          <option value={1}>Weth</option>
-                          <option value={2}>DIA</option>
+                          <option value={1}>Atom</option>
+                          <option value={2}>Weth</option>
+                          <option value={3}>DIA</option>
                         </select>
                       )}
                     />

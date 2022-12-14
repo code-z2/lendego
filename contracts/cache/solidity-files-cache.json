@@ -19,7 +19,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -59,7 +59,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -112,7 +112,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -164,7 +164,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -221,7 +221,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -264,7 +264,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -310,7 +310,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -350,7 +350,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -392,7 +392,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -432,7 +432,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -477,7 +477,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -519,7 +519,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -562,7 +562,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -602,7 +602,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -642,7 +642,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -689,7 +689,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -729,7 +729,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -771,7 +771,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -815,7 +815,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -855,7 +855,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -897,7 +897,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -937,7 +937,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -977,7 +977,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1019,7 +1019,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1061,7 +1061,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1101,7 +1101,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1141,7 +1141,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1197,7 +1197,9 @@
         "src/Lend.sol",
         "src/interface/IDIAOracle.sol",
         "src/interface/ILiquidVault.sol",
+        "src/lib/ImportantStructs.sol",
         "src/lib/utils/DiaOracle.sol",
+        "src/lib/utils/Diffuse.sol",
         "src/lib/utils/Liquids.sol",
         "src/tokens/ERC20/DevERC20.sol",
         "src/tokens/ERC4626/vLiquid.sol",
@@ -1211,14 +1213,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/access/AccessControl.sol": {
-      "lastModificationDate": 1669670727591,
+      "lastModificationDate": 1669769197237,
       "contentHash": "95a6c227d1b8843e9385518a5bce4853",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1258,14 +1260,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/access/IAccessControl.sol": {
-      "lastModificationDate": 1669670727627,
+      "lastModificationDate": 1669769197357,
       "contentHash": "57c84298234411cea19c7c284d86be8b",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/access/IAccessControl.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1298,14 +1300,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1669670727559,
+      "lastModificationDate": 1669769197069,
       "contentHash": "e436cea06129be2c73cda4b1acc848b5",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1340,14 +1342,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1669670358992,
+      "lastModificationDate": 1669769197089,
       "contentHash": "834a0dde221759af42b030253315b086",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1384,14 +1386,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1669670727571,
+      "lastModificationDate": 1669769196501,
       "contentHash": "ad7c2d0af148c8f9f097d65deeb4da6b",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1424,14 +1426,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1669670359040,
+      "lastModificationDate": 1669769197261,
       "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1466,14 +1468,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1669670727595,
+      "lastModificationDate": 1669769197249,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1506,14 +1508,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/utils/Counters.sol": {
-      "lastModificationDate": 1669670358932,
+      "lastModificationDate": 1669769196729,
       "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/Counters.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1546,14 +1548,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1669670727619,
+      "lastModificationDate": 1669769197349,
       "contentHash": "396031251978f8febfd90cb62cb240ec",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1588,14 +1590,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1669670727615,
+      "lastModificationDate": 1669769197337,
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1630,14 +1632,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1669670727711,
+      "lastModificationDate": 1669769197445,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1670,14 +1672,14 @@
       }
     },
     "src/.deps/npm/@openzeppelin/contracts/utils/math/Math.sol": {
-      "lastModificationDate": 1669670727719,
+      "lastModificationDate": 1669769197049,
       "contentHash": "b9c58920ce74d6dc819161786112e7ee",
       "sourceName": "src/.deps/npm/@openzeppelin/contracts/utils/math/Math.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1710,14 +1712,14 @@
       }
     },
     "src/Borrow.sol": {
-      "lastModificationDate": 1669986703160,
-      "contentHash": "fb435ea87947e02ff98a2e173bb37910",
+      "lastModificationDate": 1671010562838,
+      "contentHash": "fd82e961e57bea4fe0691b253be76cdb",
       "sourceName": "src/Borrow.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1746,12 +1748,14 @@
         "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
         "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
         "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
         "src/interface/IDIAOracle.sol",
+        "src/lib/ImportantStructs.sol",
         "src/lib/utils/Liquids.sol",
         "src/tokens/ERC4626/vLiquid.sol"
       ],
@@ -1762,15 +1766,15 @@
         }
       }
     },
-    "src/Ego.sol": {
-      "lastModificationDate": 1669842772528,
-      "contentHash": "6561ed4ba46bf40e4d9b28fb69a8805d",
-      "sourceName": "src/Ego.sol",
+    "src/Ego.reduced.sol": {
+      "lastModificationDate": 1671010648149,
+      "contentHash": "569a5b9e74d456f56b7952d9327db434",
+      "sourceName": "src/Ego.reduced.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1810,6 +1814,69 @@
         "src/Borrow.sol",
         "src/Lend.sol",
         "src/interface/IDIAOracle.sol",
+        "src/lib/ImportantStructs.sol",
+        "src/lib/utils/Diffuse.sol",
+        "src/lib/utils/Liquids.sol",
+        "src/tokens/ERC4626/vLiquid.sol",
+        "src/tokens/ERC4626/vStable.sol"
+      ],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "Ego": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Ego.reduced.sol/Ego.json"
+        }
+      }
+    },
+    "src/Ego.sol": {
+      "lastModificationDate": 1671009184388,
+      "contentHash": "eb82fe55105eac8a5fe58d8fe0fcea8b",
+      "sourceName": "src/Ego.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/access/AccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Counters.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/Borrow.sol",
+        "src/Lend.sol",
+        "src/interface/IDIAOracle.sol",
+        "src/lib/ImportantStructs.sol",
+        "src/lib/utils/Diffuse.sol",
         "src/lib/utils/Liquids.sol",
         "src/tokens/ERC4626/vLiquid.sol",
         "src/tokens/ERC4626/vStable.sol"
@@ -1822,14 +1889,14 @@
       }
     },
     "src/Lend.sol": {
-      "lastModificationDate": 1669669765808,
-      "contentHash": "bce26c7513956bcdbaa7b4d39574c7a1",
+      "lastModificationDate": 1671010456546,
+      "contentHash": "4df02960a684c9d9b01b1ab8077eb8e8",
       "sourceName": "src/Lend.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1860,6 +1927,7 @@
         "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/lib/ImportantStructs.sol",
         "src/tokens/ERC4626/vStable.sol"
       ],
       "versionRequirement": "=0.8.17",
@@ -1877,7 +1945,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1917,7 +1985,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1957,7 +2025,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -1997,7 +2065,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2037,7 +2105,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2077,7 +2145,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2109,6 +2177,46 @@
         }
       }
     },
+    "src/lib/ImportantStructs.sol": {
+      "lastModificationDate": 1670863724604,
+      "contentHash": "aede62d1c9b1fb792acd00d4f102733e",
+      "sourceName": "src/lib/ImportantStructs.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "ImportantStructs": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "ImportantStructs.sol/ImportantStructs.json"
+        }
+      }
+    },
     "src/lib/utils/DiaOracle.sol": {
       "lastModificationDate": 1669669816798,
       "contentHash": "08c8b9a61f40964383b5b922fa6e72b6",
@@ -2117,7 +2225,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2151,15 +2259,55 @@
         }
       }
     },
+    "src/lib/utils/Diffuse.sol": {
+      "lastModificationDate": 1671009017789,
+      "contentHash": "b4137be95e05d5a885986a31ab433320",
+      "sourceName": "src/lib/utils/Diffuse.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.8.17",
+      "artifacts": {
+        "Diffuse": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "Diffuse.sol/Diffuse.json"
+        }
+      }
+    },
     "src/lib/utils/Liquids.sol": {
-      "lastModificationDate": 1669664776614,
-      "contentHash": "5bbd20fe58470c0f1c51d78c3a3fae5e",
+      "lastModificationDate": 1671017887965,
+      "contentHash": "1fb21d821b39b50108aa28cae706eb9f",
       "sourceName": "src/lib/utils/Liquids.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2190,7 +2338,8 @@
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol"
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/lib/ImportantStructs.sol"
       ],
       "versionRequirement": "=0.8.17",
       "artifacts": {
@@ -2200,14 +2349,14 @@
       }
     },
     "src/tokens/ERC20/DevERC20.sol": {
-      "lastModificationDate": 1669669850728,
-      "contentHash": "0fc5e40213eb046d4bb20fa8d5add385",
+      "lastModificationDate": 1671005644674,
+      "contentHash": "a2dd15bf68b08e7da6e108c093593b48",
       "sourceName": "src/tokens/ERC20/DevERC20.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2242,26 +2391,41 @@
         "Atom": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/Atom.json"
         },
+        "BUSD": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/BUSD.json"
+        },
+        "Dai": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/Dai.json"
+        },
         "Dia": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/Dia.json"
+        },
+        "FraxShare": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/FraxShare.json"
         },
         "USDC": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/USDC.json"
         },
+        "USDT": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/USDT.json"
+        },
         "WrappedETH": {
           "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/WrappedETH.json"
+        },
+        "WrappedEvmos": {
+          "0.8.17+commit.8df45f5f.Linux.gcc": "DevERC20.sol/WrappedEvmos.json"
         }
       }
     },
     "src/tokens/ERC4626/vLiquid.sol": {
-      "lastModificationDate": 1669669937300,
-      "contentHash": "04afb06fbccc9dc7b6298bddeee4c07b",
+      "lastModificationDate": 1671017956691,
+      "contentHash": "6bc89077dbd95823f16592594b73e516",
       "sourceName": "src/tokens/ERC4626/vLiquid.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2295,6 +2459,7 @@
         "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+        "src/lib/ImportantStructs.sol",
         "src/lib/utils/Liquids.sol"
       ],
       "versionRequirement": "=0.8.17",
@@ -2305,14 +2470,14 @@
       }
     },
     "src/tokens/ERC4626/vStable.sol": {
-      "lastModificationDate": 1669670358428,
-      "contentHash": "a2f74e8b60e27bfa43a31d03cddbc79d",
+      "lastModificationDate": 1670783285150,
+      "contentHash": "a14feafb7ab4d5827d7737875610d7d0",
       "sourceName": "src/tokens/ERC4626/vStable.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2359,7 +2524,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",
@@ -2404,7 +2569,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 20000
+            "runs": 200
           },
           "metadata": {
             "bytecodeHash": "ipfs",

@@ -2,3 +2,4 @@ out/
 artifacts
 .deps
 .env
+*.reduced.sol

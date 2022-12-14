@@ -27,8 +27,8 @@ contract Borrow {
         uint128 tenure_,
         uint8 interest
     ) public {
-        require(tenure_ < 3, "Tenure: please choose a valid loan duration");
-        require(interest <= 15, "Interest reate cannot be more 15%");
+        require(tenure_ < 3, "invalid Tenure");
+        require(interest <= 15, "Interest rate cannot be more 15%");
         address collateral_ = liquidV.asset()[choice].token;
         // calculte 125% of maximumExpectedOutput in usd
         uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, 1 gwei, choice);
@@ -71,7 +71,7 @@ contract Borrow {
         uint256 unit_,
         uint128 choice
     ) public returns (uint256) {
-        require(maximumExpectedOutput_ <= 100000000 ether, "more than a 100m? from who? sorry go to Central Bank");
+        require(maximumExpectedOutput_ <= 100000000 ether, "cannot take more than 1m ether");
         // calculate 125% of expected output
         uint256 leastOutput = maximumExpectedOutput_ / 4 + maximumExpectedOutput_ + 5;
         // perform dia oracle operation, get latest price of collateral token

@@ -37,9 +37,9 @@ contract Lend {
 
     function burnPosition(uint256 partialNodeLIdx) public returns (uint256 amount) {
         // requires only msg.sender == partialNodeL.lender
-        require(msg.sender == lPool[partialNodeLIdx].lender, "Lender: you are not the lender that owns this node");
+        require(msg.sender == lPool[partialNodeLIdx].lender, "invalid lender");
         // requires position not filled.
-        require(!lPool[partialNodeLIdx].filled, "you cannot not burn this position");
+        require(!lPool[partialNodeLIdx].filled, "cannot burn position");
         //create temp memory location
         PartialNodeL memory temp = lPool[partialNodeLIdx];
         // delete the partialnode

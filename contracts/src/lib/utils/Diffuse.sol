@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPLv3
 pragma solidity 0.8.17;
 
-library Diffuse {
+contract Diffuse {
     /**
      * @dev only devs
      * todo this function is meant to swap collateral back to defaultChoice from diffussion swap

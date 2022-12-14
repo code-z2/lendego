@@ -35,28 +35,33 @@ const useActions = ({ chainId }: { chainId: number }) => {
       signer as Signer
     );
 
-  const approveLiquid = async (amount: BigNumber, liquidId: number) =>
-    await _contractL(liquidId)?.approve(
+  const approveLiquid = async (amount: BigNumber, liquidId: number) => {
+    const tx = await _contractL(liquidId)?.approve(
       contracts[chainId].LIQUIDV.address,
       amount
     );
+    await tx.wait();
+    console.log(tx.status);
+  };
 
-  const approveStable = async (amount: BigNumber, stableId: number) =>
-    await _contractS(stableId)?.approve(
+  const approveStable = async (amount: BigNumber, stableId: number) => {
+    const tx = await _contractS(stableId)?.approve(
       contracts[chainId].STABLEV.address,
       amount
     );
+    await tx.wait();
+  };
+
   // working
   const createStablePosition = async (data: ILend) => {
     try {
-      const approve = await approveStable(
+      await approveStable(
         parseUnits(
           data.assets.toString(),
           stables(chainId)[data.stableId].decimals
         ),
         data.stableId
       );
-      approve.wait();
       const tx = await contract?.createPosition(
         parseUnits(
           data.assets.toString(),
@@ -65,24 +70,23 @@ const useActions = ({ chainId }: { chainId: number }) => {
         data.stableId,
         data.interestRate
       );
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const createUnstablePosition = async (data: IBorrow) => {
     const collateralId = parseUnits(data.collateralId.toString(), 0);
     try {
-      const approve = await approveLiquid(
+      await approveLiquid(
         parseUnits(
           data.collateralAmount.toString(),
           liquids(chainId)[data.collateralId].decimals
         ),
         data.collateralId
       );
-      approve.wait();
       const tx = await contract?.createUnstablePosition(
         collateralId,
         parseUnits(
@@ -96,24 +100,23 @@ const useActions = ({ chainId }: { chainId: number }) => {
         parseUnits(data.tenure.toString(), 0),
         data.maxPayableInterest
       );
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const fillStablePosition = async (data: IBorrowForm) => {
     const collateral = parseInt(data.collateralId.toString());
     try {
-      const approve = await approveLiquid(
+      await approveLiquid(
         parseUnits(
           data.collateralAmount.toString(),
           liquids(chainId)[collateral].decimals
         ),
         collateral
       );
-      approve.wait();
       const tx = await contract?.fillPosition(
         parseUnits(data.collateralId.toString(), 0),
         parseUnits(
@@ -123,48 +126,46 @@ const useActions = ({ chainId }: { chainId: number }) => {
         data.nodeId,
         data.tenure
       );
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const fillUnstablePosition = async (
     nodeId: number,
     maximumExpectedOutput: string
   ) => {
     try {
-      const approve = await approveStable(
+      await approveStable(
         parseUnits(maximumExpectedOutput, stables(chainId)[0].decimals),
         0
       );
-      approve.wait();
       const tx = await contract?.fillUnstablePosition(nodeId);
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const burnStablePosition = async (nodeId: number) => {
     console.log(nodeId);
     try {
       const tx = await contract?.burnPosition(nodeId);
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const burnUnstablePosition = async (nodeId: number) => {
     console.log(nodeId);
     try {
       const tx = await contract?.burnUnstablePosition(nodeId);
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
@@ -174,8 +175,7 @@ const useActions = ({ chainId }: { chainId: number }) => {
   const restrictLendersNode = async (nodeId: number) => {
     try {
       const tx = await contract?.deactivateLenderNode(nodeId);
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
@@ -184,23 +184,23 @@ const useActions = ({ chainId }: { chainId: number }) => {
   const forcefullyExitLenderFromNode = async (nodeId: number) => {
     try {
       const tx = await contract?.exitLenderFromPosition(nodeId);
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const extendBorrowersLoan = async (nodeId: number) => {
     console.log(nodeId);
     try {
       const tx = await contract?.extendLoanDuration(nodeId);
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }
   };
+
   // working
   const settleLoan = async (node: IPosition) => {
     try {
@@ -211,13 +211,12 @@ const useActions = ({ chainId }: { chainId: number }) => {
           stables(chainId)[node.lend.stableId].decimals
         )
       );
-      approve.wait();
+      await approve.wait();
       const tx = await contract?.exitBorrowerFromPosition(
         node.nodeId,
         node.borrow.borrower
       );
-      tx.wait();
-      return tx.status;
+      await tx.wait(1);
     } catch (error) {
       console.log(error);
     }

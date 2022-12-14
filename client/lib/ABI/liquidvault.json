@@ -219,12 +219,12 @@
             "type": "string"
           }
         ],
-        "internalType": "struct Liquids.Tokens[]",
+        "internalType": "struct Tokens[]",
         "name": "",
         "type": "tuple[]"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
