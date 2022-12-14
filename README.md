@@ -154,6 +154,10 @@ forge build
 sh ./deployTokens.sh
 # deploy with forge create
 sh ./deploy.sh <usdc address> <dai address> <usdt address> <busd address> <frax address>
+
+# in order to interact with the ui you need test tokens.
+sh ./mint.sh <your wallet address> # to mint test tokens to your address
+
 # deploy script
 # local: optional to deploy to local anvil node
 # local --fork: optional to deploy to evmos mainnet fork
