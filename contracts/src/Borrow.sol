@@ -31,7 +31,7 @@ contract Borrow {
         require(interest <= 15, "Interest reate cannot be more 15%");
         address collateral_ = liquidV.asset()[choice].token;
         // calculte 125% of maximumExpectedOutput in usd
-        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, 9, choice);
+        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, 1 gwei, choice);
         require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
         // deposit into the vault
         bool success = liquidV.deposit(msg.sender, collateralIn_, choice);
@@ -68,7 +68,7 @@ contract Borrow {
 
     function getQuoteByExpectedOutput(
         uint256 maximumExpectedOutput_,
-        uint8 decimals,
+        uint256 unit_,
         uint128 choice
     ) public returns (uint256) {
         require(maximumExpectedOutput_ <= 100000000 ether, "more than a 100m? from who? sorry go to Central Bank");
@@ -83,7 +83,7 @@ contract Borrow {
         // 2. raw * 10 ** collateral token decimals
         uint256 raw = leastOutput * 10 ** IERC20Metadata(liquidV.asset()[choice].token).decimals();
         // 1. raw / 10 ** usd Decimal
-        raw = (raw / 10 ** decimals) / latestPrice;
+        raw = (raw / unit_) / latestPrice;
 
         return raw;
     }
@@ -94,8 +94,12 @@ contract Borrow {
 
     function _removeUnstableItemFromPool(uint256 index) internal {
         require(index < bPool.length, "unable to remove");
-        bPool[index] = bPool[bPool.length - 1];
-        bPool.pop();
+        if (bPool.length == 1) {
+            delete bPool[index];
+        } else {
+            bPool[index] = bPool[bPool.length - 1];
+            bPool.pop();
+        }
     }
 
     function getLiquidVaultAddress() public view returns (address) {

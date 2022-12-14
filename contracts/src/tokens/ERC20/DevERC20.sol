@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /// you can mint for yourself the Tokens used in the test implementation of EGO.sol
 /// to test out out the lending/borrowing flow
+// ATOM
 contract Atom is ERC20 {
     constructor() ERC20("Atom", "ATOM") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+        _mint(msg.sender, 10000 * 10 ** decimals());
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -20,9 +21,10 @@ contract Atom is ERC20 {
     }
 }
 
+// WETH
 contract WrappedETH is ERC20 {
-    constructor() ERC20("WrappedETH", "WETH") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+    constructor() ERC20("Wrapped ETH", "WETH") {
+        _mint(msg.sender, 10000 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) public {
@@ -30,9 +32,21 @@ contract WrappedETH is ERC20 {
     }
 }
 
+// WEVMOS
+contract WrappedEvmos is ERC20 {
+    constructor() ERC20("Wrapped Evmos", "WEVMOS") {
+        _mint(msg.sender, 10000 * 10 ** decimals());
+    }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+}
+
+// DIA
 contract Dia is ERC20 {
     constructor() ERC20("Dia", "DIA") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+        _mint(msg.sender, 10000 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) public {
@@ -40,9 +54,70 @@ contract Dia is ERC20 {
     }
 }
 
+// USDC
 contract USDC is ERC20 {
     constructor() ERC20("USDC", "USDC") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+        _mint(msg.sender, 100000 * 10 ** decimals());
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 9;
+    }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+}
+
+// USDT
+contract USDT is ERC20 {
+    constructor() ERC20("USDT", "USDT") {
+        _mint(msg.sender, 100000 * 10 ** decimals());
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 9;
+    }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+}
+
+// DAI
+contract Dai is ERC20 {
+    constructor() ERC20("Dai", "DAI") {
+        _mint(msg.sender, 100000 * 10 ** decimals());
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 9;
+    }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+}
+
+// BUSD
+contract BUSD is ERC20 {
+    constructor() ERC20("BUSD", "BUSD") {
+        _mint(msg.sender, 100000 * 10 ** decimals());
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 9;
+    }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+}
+
+// FRAX
+contract FraxShare is ERC20 {
+    constructor() ERC20("Fraxshare", "FRAX") {
+        _mint(msg.sender, 100000 * 10 ** decimals());
     }
 
     function decimals() public view virtual override returns (uint8) {

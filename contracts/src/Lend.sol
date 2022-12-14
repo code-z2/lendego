@@ -55,8 +55,12 @@ contract Lend {
 
     function _removeItemFromPool(uint256 index) internal {
         require(index < lPool.length, "unable to remove");
-        lPool[index] = lPool[lPool.length - 1];
-        lPool.pop();
+        if (lPool.length == 1) {
+            delete lPool[index];
+        } else {
+            lPool[index] = lPool[lPool.length - 1];
+            lPool.pop();
+        }
     }
 
     function getStableVaultAddress() public view returns (address) {

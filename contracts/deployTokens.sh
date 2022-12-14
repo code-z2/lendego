@@ -10,7 +10,7 @@ deploy_token() {
     echo "########## ---- successfully deployed $1 ---- ##########"/n
 }
 
-contracts='Atom WrappedETH Dia USDC'
+contracts='Atom WrappedEvmos WrappedETH Dia USDC USDT Dai BUSD FraxShare'
 
 for token in $contracts; do
     deploy_token $token

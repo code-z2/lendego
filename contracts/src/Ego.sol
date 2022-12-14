@@ -5,6 +5,7 @@ import "./Borrow.sol";
 import "./Lend.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {Node} from "./lib/ImportantStructs.sol";
+import {Diffuse} from "./lib/Diffuse.sol";
 
 /**
  * @title Ego - peer to peer lending and borrowing
@@ -52,6 +53,7 @@ contract Ego is Lend, Borrow {
      * @param nodeId the node of id nodeId to extend loan tenure
      */
     event LoanExtended(uint256 indexed nodeId);
+    event ErrorLogging(string reason);
 
     /**
      * @notice - only called by the taker - takes out loan from a specific lender (partialNodeLIdx)
@@ -76,7 +78,7 @@ contract Ego is Lend, Borrow {
         // calculate 125% of maximumExpectedOutput in usd
         uint256 assets = getQuoteByExpectedOutput(
             lPool[partialNodeLIdx].assets,
-            IERC20Metadata(stableV.asset()[uint(lPool[partialNodeLIdx].choiceOfStable)]).decimals(),
+            10 ** IERC20Metadata(stableV.asset()[uint(lPool[partialNodeLIdx].choiceOfStable)]).decimals(),
             selectedCollateral
         );
         // cannot deposit less than 125% of collateral
@@ -385,34 +387,27 @@ contract Ego is Lend, Borrow {
         // extra 2$ for gas price
         uint256 initialFunds = (node.lend.assets + 2 gwei) / latestPrice;
         // assuming diffusion swap has be carried out on collateral
-        _diffuse(initialFunds, node.borrow.indexOfCollateral);
+        Diffuse.safeSwap(initialFunds, node.borrow.indexOfCollateral);
         // unlocks stable of collateral wei amount equivlavent
         lockedStables[node.lend.lender] -= node.lend.assets;
         // reconstruct a restricted node
         node.borrow.restricted = true;
         node.borrow.collateralIn -= initialFunds;
+
         // then try to collect interest.
         uint256 interests = calcInterestOnly(nodeId) / latestPrice;
         // sell assets equivalent on diffussion swap
-        bool success = _diffuse(interests, node.borrow.indexOfCollateral);
-        if (success) {
-            // mint lender interest shares
-            stableV.mint(node.lend.lender, calcInterestOnly(nodeId));
-            // update the nodes finall collateralIn
-            if (interests < node.borrow.collateralIn) node.borrow.collateralIn -= interests;
+        try Diffuse.safeSwap(interests, node.borrow.indexOfCollateral) returns (bool success) {
+            if (success) {
+                // mint lender interest shares
+                stableV.mint(node.lend.lender, calcInterestOnly(nodeId));
+                // update the nodes finall collateralIn
+                if (interests < node.borrow.collateralIn) node.borrow.collateralIn -= interests;
+            }
+        } catch Error(string memory reason) {
+            emit ErrorLogging(reason);
         }
         //  excess collateral will be moved to exitedPool, borrower can then scalp his remains from there
         bPool.push(node.borrow);
-    }
-
-    /**
-     * @dev only devs
-     * todo this function is meant to swap collateral back to defaultChoice from diffussion swap
-     * todo moves the funds back to stable vault
-     */
-    function _diffuse(uint256 amount, uint256 selectedCollateral) internal pure returns (bool) {
-        // diffussion.swap(address(selectedCollateral), defaultChoice, amount);
-        amount + selectedCollateral; // just to silent warnings
-        return true;
     }
 }
