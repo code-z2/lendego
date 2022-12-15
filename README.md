@@ -14,21 +14,12 @@ This means, collateral deposits by the borrower will increase with time to help 
 ## How it works
 
 * A user creates a partial node
-
-![banner](./client/public/create.png)
-
 * A user fulfills the other partial node
-
-![banner](./client/public/fillorder.png)
-
 * a new node is created from both partial nodes
 * exchange of requeststed stable assets for addresses collateral
 * node marked as active/running
 * timestamp snapshot created
-
 * Want to close the position, the address has to deposit back the stables + interest to take back his collaterals+ yields
-
-![banner](./client/public/settle.png)
 
 ## Nodes
 
