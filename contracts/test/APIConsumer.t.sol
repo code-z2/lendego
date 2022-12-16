@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "../src/APIConsumer.sol";
+import "../src/chainlink/APIConsumer.sol";
 import "./mocks/LinkToken.sol";
 import "forge-std/Test.sol";
 import "./mocks/MockOracle.sol";

@@ -60,7 +60,7 @@ const LoanCard: FC<LoanCardPropsType> = (props, { key }) => {
 
   return (
     <div
-      className="card card-compact md:w-72 bg-base-100 md:shadow-xl min-h-[14rem] bg-opacity-50 hover:shadow-md mx-auto"
+      className="card card-compact md:w-72 bg-base-100 md:shadow-xl min-h-[14rem] bg-opacity-50 hover:shadow-md mx-auto w-full"
       key={key}
     >
       <div className="card-body relative">

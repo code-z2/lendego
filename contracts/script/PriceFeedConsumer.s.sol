@@ -2,7 +2,7 @@
 pragma solidity ^0.8.7;
 
 import "forge-std/Script.sol";
-import "../src/PriceFeedConsumer.sol";
+import "../src/chainlink/PriceFeedConsumer.sol";
 import "./HelperConfig.sol";
 import "../test/mocks/MockV3Aggregator.sol";
 
