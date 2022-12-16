@@ -2,7 +2,7 @@
 pragma solidity ^0.8.7;
 
 import "forge-std/Script.sol";
-import "../src/VRFConsumerV2.sol";
+import "../src/chainlink/VRFConsumerV2.sol";
 import "./HelperConfig.sol";
 import "../src/test/mocks/LinkToken.sol";
 import "../src/test/mocks/MockVRFCoordinatorV2.sol";

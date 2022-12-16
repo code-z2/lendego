@@ -1,30 +1,31 @@
 {
-  "name": "lendego",
-  "version": "1.0.0",
-  "description": "Solvent P2P defi Lending Model.",
-  "author": "(Patrick Collins - foundry-starter-kit), Peter Anyaogu, Rukevwe Simon",
-  "license": "GPLv3",
-  "files": [
-    "src/**/*.sol"
-  ],
-  "devDependencies": {
-    "prettier": "^2.7.1",
-    "prettier-plugin-solidity": "^1.0.0-beta.19"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/peteruche21/lendego.git"
-  },
-  "bugs": {
-    "url": "https://github.com/peteruche21/lendego/issues"
-  },
-  "scripts": {
-    "setup": "make clean && make build",
-    "sync": "make update",
-    "test": "make test",
-    "snapshot": "make snapshot",
-    "format": "make format",
-    "lint": "make lint",
-    "all": "make all"
-  }
+    "name": "lendego",
+    "version": "1.0.0",
+    "description": "Solvent P2P defi Lending Model.",
+    "author": "(Patrick Collins - foundry-starter-kit), Peter Anyaogu, Rukevwe Simon",
+    "license": "GPLv3",
+    "private": "true",
+    "files": [
+        "src/**/*.sol"
+    ],
+    "devDependencies": {
+        "prettier": "^2.7.1",
+        "prettier-plugin-solidity": "^1.0.0-beta.19"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/peteruche21/lendego.git"
+    },
+    "bugs": {
+        "url": "https://github.com/peteruche21/lendego/issues"
+    },
+    "scripts": {
+        "setup": "make clean && make build",
+        "sync": "make update",
+        "test": "make test",
+        "snapshot": "make snapshot",
+        "format": "make format",
+        "lint": "make lint",
+        "all": "make all"
+    }
 }
