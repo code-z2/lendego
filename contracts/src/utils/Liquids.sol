@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import {Tokens} from "../ImportantStructs.sol";
+import {Tokens} from "../lib/ImportantStructs.sol";
 
 /// @title liquid token database for vLiquid
 /// this contract is only for testing purposes
