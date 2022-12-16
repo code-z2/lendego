@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPLv3
-pragma solidity 0.8.17;
+pragma solidity 0.8.13;
 
 interface ILiquidVault {
     function addNew(address token, address priceOracle, string memory pair) external; // restricted

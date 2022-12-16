@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPLv3
-pragma solidity 0.8.17;
+pragma solidity 0.8.13;
 
-import "../../lib/utils/Liquids.sol";
+import "../../utils/Liquids.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 

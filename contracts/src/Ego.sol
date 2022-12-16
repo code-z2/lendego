@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPLv3
-pragma solidity 0.8.17;
+pragma solidity 0.8.13;
 
 import "./Borrow.sol";
 import "./Lend.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {Node} from "./lib/ImportantStructs.sol";
-import {Diffuse} from "./lib/utils/Diffuse.sol";
+import {Diffuse} from "./utils/Diffuse.sol";
 
 /**
  * @title Ego - peer to peer lending and borrowing
