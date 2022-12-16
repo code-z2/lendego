@@ -4,7 +4,7 @@
 <br/>
 <p align="center">
 <a href="https://defi.acend.finance" target="_blank">
-<img src="../client/public/svLE" width="225" alt="alchemoney logo">
+<img src="../client/public/svLE.svg" width="225" alt="alchemoney logo">
 </a>
 </p>
 <br/>
@@ -13,7 +13,7 @@
 
 The lendego contracts are powering the solvent P2P money flow structure for the [alchemy of money](https://alchemoney.vercel.app) Defi lendig protocol.
 
-- [Foundry Starter Kit](#foundry-starter-kit)
+- [Lendego](#lendego-contracts)
 - [Getting Started](#getting-started)
   - [Requirements](#requirements)
   - [Quickstart](#quickstart)
@@ -141,11 +141,14 @@ This framework comes with slither parameters, a popular security framework from 
 
 Then, you can run:
 
-```
+```bash
+#slither static analysis
 make slither
+#mythril
+make myth
 ```
 
-And get your slither output.
+And get your slither/myth output.
 
 # Contributing
 

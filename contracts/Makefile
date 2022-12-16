@@ -21,9 +21,9 @@ test :; forge test
 
 snapshot :; forge snapshot
 
-slither :; slither ./src 
+slither :; slither ./src/Ego.sol
 
-myth :; myth analyze ./src --solc-json mythril.config.json --solv 0.8.13 -o jsonv2
+myth :; myth analyze ./src --solc-json mythril.config.json --solv 0.8.13 --max-depth 20
 
 format :; prettier --write src/**/*.sol && prettier --write src/*.sol
 
