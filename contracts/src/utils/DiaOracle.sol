@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import "../../interface/IDIAOracle.sol";
+import "../interface/IDIAOracle.sol";
 
 contract DiaOracle is IDIAOracleV2 {
     function getValue(string memory pair) external pure returns (uint128, uint128) {

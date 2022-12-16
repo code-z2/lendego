@@ -84,10 +84,7 @@ contract VRFConsumerV2 is VRFConsumerBaseV2 {
      * @param requestId - id of the request
      * @param randomWords - array of random results from VRF Coordinator
      */
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
-        internal
-        override
-    {
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         s_randomWords = randomWords;
         emit ReturnedRandomness(randomWords);
     }

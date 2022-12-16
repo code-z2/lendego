@@ -16,19 +16,12 @@ contract KeepersCounter is KeeperCompatibleInterface {
 
     function checkUpkeep(
         bytes memory /* checkData */
-    )
-        public
-        view
-        override
-        returns (bool upkeepNeeded, bytes memory performData)
-    {
+    ) public view override returns (bool upkeepNeeded, bytes memory performData) {
         upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
         performData = bytes("");
     }
 
-    function performUpkeep(
-        bytes calldata /* performData */
-    ) external override {
+    function performUpkeep(bytes calldata /* performData */) external override {
         // add some verification
         (bool upkeepNeeded, ) = checkUpkeep("");
         require(upkeepNeeded, "Time interval not met");
