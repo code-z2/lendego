@@ -1,4 +1,6 @@
 {
     "solidity.packageDefaultDependenciesContractsDirectory": "contracts/src",
-    "solidity.packageDefaultDependenciesDirectory": "contracts/lib"
+    "solidity.packageDefaultDependenciesDirectory": "contracts/lib",
+    "editor.tabCompletion": "on",
+    "diffEditor.codeLens": true
 }
