@@ -23,6 +23,8 @@ contract Ego is Lend, Borrow {
 
     // the default stable-coin
     AcceptedStables private defaultChoice = AcceptedStables.USDC;
+    //reentrancyGuard to prevent illegal and repeated activities
+    bool public reentrancyGuard;
 
     // general pool
     mapping(uint => Node) private pool;
@@ -195,13 +197,16 @@ contract Ego is Lend, Borrow {
         // ! @audit this is rentrant, but at the benefit of the lender
         // ? how: the attacker must successfully deposit money, which increments the lenders shares
         // todo: add rentrancy guard
-        bool success = _transfer(
+        require(!reentrancyGuard,"Reentrancy Detected");
+        //here I set reentrancyGuard to true, do transfer once
+        reentrancyGuard = true;
+        _transfer(
             stableV.asset()[uint(node.lend.choiceOfStable)],
             msg.sender,
             address(stableV),
             calcLoanPlusInterest(nodeId)
         );
-        if (success) {
+
             // unlocks lenders shares
             lockedStables[node.lend.lender] -= node.lend.assets;
             // mints lender some more shares
@@ -212,7 +217,9 @@ contract Ego is Lend, Borrow {
             complete = liquidV.withdraw(msg.sender, node.borrow.collateralIn, reciever, node.borrow.indexOfCollateral);
             // emit loan settled event();
             emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
-        }
+        //Now guard will set to false indicates that you performed this function once you can't renter
+        //for any illegal activity or to for stealing funds
+        reentrancyGuard = false;
     }
 
     /**
