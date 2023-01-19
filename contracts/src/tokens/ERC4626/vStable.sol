@@ -17,7 +17,7 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.1/contr
 /// https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC4626.sol
 /// https://blog.logrocket.com/write-erc-4626-token-contract-yield-bearing-vaults/
 /// https://github.com/transmissions11/solmate/blob/main/src/mixins/ERC4626.sol
-contract StablesVault is ERC20, Ownable {
+contract StablesVault is ERC20, Ownable, ReentrancyGuard{
     using Math for uint256;
     // array of five stable coins
     address[5] internal _assets; // IERC20[5] works but tests disagrees
