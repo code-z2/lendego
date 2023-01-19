@@ -187,7 +187,7 @@ contract Ego is Lend, Borrow, ReentrancyGuard{
      * @param reciever - the address of whom to recieve the takers (msg.sender) collaterals
      * @return complete - true/false (if the  collateral was succefully transfered to the reciever)
      */
-    function exitBorrowerFromPosition(uint256 nodeId, address reciever) public returns (bool complete) {
+    function exitBorrowerFromPosition(uint256 nodeId, address reciever) nonReentrant public returns (bool complete) {
         require(msg.sender == pool[nodeId].borrow.borrower, "Borrower: you did not fill this position!");
         require(pool[nodeId].isOpen, "position has been closed");
         // todo: check balance of liquidV before attempting
@@ -301,7 +301,7 @@ contract Ego is Lend, Borrow, ReentrancyGuard{
      * @param choice - the choiceOfStable to redeem (provided there's sufficient liquidity in the vault)
      * @return amount - the amount  of shares successfully redeemed
      */
-    function redeem(uint256 shares, address receiver, uint8 choice) public returns (uint256 amount) {
+    function redeem(uint256 shares, address receiver, uint8 choice) nonReentrant public returns (uint256 amount) {
         require(
             shares < (stableV.balanceOf(msg.sender) - lockedStables[msg.sender]),
             "cannot redeem more than allowed"
