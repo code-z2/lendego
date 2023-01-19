@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
-
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.1/contracts/security/ReentrancyGuard.sol";
 /// @title minimal multi-token vault contract for stable coins (svToken)
 /// @author peteruche21
 /// note this is minimal and does not implement all methods in EIP4626
@@ -34,6 +34,8 @@ contract StablesVault is ERC20, Ownable {
     constructor(address[5] memory assets, string memory _name, string memory _symbol) ERC20(_name, _symbol) {
         _assets = assets;
     }
+
+    
 
     // return the list of addresses for assets
     function asset() public virtual returns (address[5] memory) {
@@ -112,7 +114,7 @@ contract StablesVault is ERC20, Ownable {
         address receiver,
         address owner_,
         uint256 choice
-    ) public onlyOwner returns (uint256) {
+    ) nonReentrant public onlyOwner returns (uint256) {
         // if trying to withdraw another stable, check theres is enough stable.
         require(_totalAssets(choice) > assets, "not enough liquidity for selected stable");
         require(assets <= shareHolder[owner_], "cannot widthraw more than shareholder has");
@@ -145,7 +147,7 @@ contract StablesVault is ERC20, Ownable {
         address receiver,
         address owner_,
         uint256 choice
-    ) public onlyOwner returns (uint256) {
+    ) nonReentrant public onlyOwner returns (uint256) {
         // you can only redeem shares for stables if the shares are less than the vToken balance of the shareHolder
         require(shares <= balanceOf(owner_), "ERC4626: redeem more than max");
         // the choice of stable must be available
@@ -174,7 +176,7 @@ contract StablesVault is ERC20, Ownable {
         uint256 assets,
         uint256 shares,
         uint256 choice
-    ) internal virtual returns (bool success) {
+    ) nonReentrant internal virtual returns (bool success) {
         // check if the caller has sufficient rights to access the shares
         // gives allowance to widthraw the stables
         if (caller != owner_) {
@@ -185,7 +187,10 @@ contract StablesVault is ERC20, Ownable {
         // shares are burned and after the assets are transferred, which is a valid state.
 
         _burn(owner_, shares);
+        //adding ReentrancyGuard from openzepplin to prevent reentrancy attack
+        
         bool _success = IERC20(_assets[choice]).transfer(receiver, assets);
+        
 
         emit Withdraw(caller, receiver, owner_, assets, shares);
         success = _success;

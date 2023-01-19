@@ -6,6 +6,7 @@ import "./Lend.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {Node} from "./lib/ImportantStructs.sol";
 import {Diffuse} from "./utils/Diffuse.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.1/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title Ego - peer to peer lending and borrowing
@@ -14,7 +15,7 @@ import {Diffuse} from "./utils/Diffuse.sol";
  * all deposits, withdrawals and positions are made from within the EGO boudaries
  * @dev - please see IEgo interface in interface/IEgo
  */
-contract Ego is Lend, Borrow {
+contract Ego is Lend, Borrow, ReentrancyGuard{
     Diffuse diffuse = new Diffuse();
 
     using Counters for Counters.Counter;
@@ -165,6 +166,7 @@ contract Ego is Lend, Borrow {
      * lender can only have access to this method once the loan tenure has expired
      * @param nodeId - the node id for the position which a lender is part of.
      */
+   
     function exitLenderFromPosition(uint256 nodeId) public {
         require(msg.sender == pool[nodeId].lend.lender, "Lender: you are not the lender attached to this node");
         require(pool[nodeId].isOpen, "position has been closed");
@@ -283,7 +285,7 @@ contract Ego is Lend, Borrow {
      * @param choice - the choiceOfStable to withsraw (provided there's sufficient liquidity in the vault)
      * @return amount - the amount  of shares successfully withdrawn
      */
-    function withdraw(uint256 assets, address receiver, uint8 choice) public returns (uint256 amount) {
+    function withdraw(uint256 assets, address receiver, uint8 choice) nonReentrant public returns (uint256 amount) {
         require(
             assets < (stableV.getshares(msg.sender) - lockedStables[msg.sender]),
             "cannot withdraw more than allowed"
@@ -314,7 +316,7 @@ contract Ego is Lend, Borrow {
      * @param lender the lenders lnode.
      * @return boolean - if the creation is successfull or not.
      */
-    function _handleNodeService(PartialNodeB memory borrower, PartialNodeL memory lender) internal returns (bool) {
+    function _handleNodeService(PartialNodeB memory borrower, PartialNodeL memory lender) nonReentrant internal returns (bool) {
         // gets the current node count
         uint256 currentNode = _nodeIdCounter.current();
         // creates paired node
@@ -356,7 +358,7 @@ contract Ego is Lend, Borrow {
      * @param amount: the total (amount) to transfer from the (vault) to (to)
      * @return success - if the transfer is successfull or not
      */
-    function _transfer(address contract_, address from, address to, uint256 amount) internal returns (bool success) {
+    function _transfer(address contract_, address from, address to, uint256 amount) nonReentrant internal returns (bool success) {
         success = IERC20Metadata(contract_).transferFrom(from, to, amount);
     }
 
@@ -380,7 +382,7 @@ contract Ego is Lend, Borrow {
      * taker can then scalp his remains by burning the position.
      * @param nodeId - the node of id nodeId to sell of
      */
-    function _forcefullyExit(uint256 nodeId) internal {
+    function _forcefullyExit(uint256 nodeId) nonReentrant internal {
         Node memory node = pool[nodeId];
         // remove the initial funds first
         (uint128 latestPrice, ) = IDIAOracleV2(liquidV.asset()[node.borrow.indexOfCollateral].priceOracle).getValue(
