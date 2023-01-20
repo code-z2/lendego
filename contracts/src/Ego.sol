@@ -16,6 +16,7 @@ import {Diffuse} from "./utils/Diffuse.sol";
  */
 contract Ego is Lend, Borrow {
     Diffuse diffuse = new Diffuse();
+    bool executing = false;
 
     using Counters for Counters.Counter;
     // private counter used to hold current nodeId
@@ -29,7 +30,9 @@ contract Ego is Lend, Borrow {
     // used to keep track of lenders stables that cannot be withrawn due to open positions
     mapping(address => uint256) private lockedStables;
 
-    constructor(address[5] memory stables) Lend(stables) {}
+    constructor(address[5] memory stables) Lend(stables) {
+        
+    }
 
     /**
      * @notice emitted when a taker fills a stable position
@@ -65,12 +68,20 @@ contract Ego is Lend, Borrow {
      * @param partialNodeLIdx - the lnode id of the position that is to merged with
      * @param tenure - the tenure index (0,1,2) to be used to fetch the corresponding tenure from an array
      */
+
+
+    //  function to resset the counters.counter
+
+
+
     function fillPosition(
         uint128 selectedCollateral,
         uint256 collateralIn_,
         uint256 partialNodeLIdx,
         uint256 tenure
     ) public {
+        require(!executing , "function is already executing");
+        executing = true;
         require(tenure < 3, "Tenure: not surpported");
         require(partialNodeLIdx < lPool.length, "Lender: the selected lender does not exist");
         require(selectedCollateral < liquidV.asset().length, "Liquid: the selected collateral is not surpported");
@@ -116,6 +127,7 @@ contract Ego is Lend, Borrow {
                 // if value exchange fails, just broadcast borrower
             } else bPool.push(borrower);
         }
+        executing = false;
     }
 
     /**
@@ -126,7 +138,14 @@ contract Ego is Lend, Borrow {
      * @param partialNodeBIdx - the bnode id of the taker
      */
     function fillUnstablePosition(uint256 partialNodeBIdx) public {
+
+        // check to ensure that the msg.sender is the borrower associated with the partialNodeBIdx being passed in,
+
+          require(msg.sender == bPool[partialNodeBIdx].borrower, "msg.sender is not the borrower associated with this loan");
+        require(!executing,"already in execution");
+        executing = true;
         require(!bPool[partialNodeBIdx].restricted, "borrowers node either defaulted or was liquidated");
+        
         // only usdc is allowed for unstable positions
         // deposit into the vault
         bool success = stableV.deposit(msg.sender, bPool[partialNodeBIdx].maximumExpectedOutput, uint(defaultChoice));
@@ -156,6 +175,7 @@ contract Ego is Lend, Borrow {
                 );
             }
         }
+        executing = false;
     }
 
     /**
@@ -195,12 +215,15 @@ contract Ego is Lend, Borrow {
         // ! @audit this is rentrant, but at the benefit of the lender
         // ? how: the attacker must successfully deposit money, which increments the lenders shares
         // todo: add rentrancy guard
+        require(!executing,"already in process");
+        execution = true;
         bool success = _transfer(
             stableV.asset()[uint(node.lend.choiceOfStable)],
             msg.sender,
             address(stableV),
             calcLoanPlusInterest(nodeId)
         );
+        execution = false;
         if (success) {
             // unlocks lenders shares
             lockedStables[node.lend.lender] -= node.lend.assets;
