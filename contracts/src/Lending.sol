@@ -12,7 +12,8 @@ abstract contract Lending is SharedStorage {
     function createPosition(
         uint256 assets,
         uint8 choice,
-        uint8 interest
+        uint8 interest,
+        bool approvalBased
     ) public {
         require(interest <= 15, "Interest rate cannot be more 15%");
         entrypoint.deposit(assets, msg.sender, choice, true);
@@ -22,7 +23,8 @@ abstract contract Lending is SharedStorage {
             interestRate: interest,
             assets: assets,
             filled: false,
-            acceptingRequests: true
+            acceptingRequests: true,
+            approvalBased: approvalBased
         });
 
         stablePool.push(_new);

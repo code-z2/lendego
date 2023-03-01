@@ -13,6 +13,7 @@ contract SharedStorage {
 
     mapping(uint256 => Node) internal generalPool;
     mapping(address => uint256) internal lockedStakes;
+    mapping(address => uint128) internal points;
 
     uint8[3] internal acceptedTenures = [30, 60, 90];
 
