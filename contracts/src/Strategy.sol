@@ -14,6 +14,37 @@ contract StrategyV1 is Lending {
     event LoanExtended(uint256 indexed nodeId);
     event ErrorLogging(string reason);
 
+    function approveNode(uint256 nodeId) public {
+        require(msg.sender == generalPool[nodeId].lend.lender, "unknown caller");
+        require(generalPool[nodeId].isPending, "position is not pending");
+        require(generalPool[nodeId].lend.approvalBased, "node is not approvalBased");
+        // approves a node;
+        generalPool[nodeId].isPending = false;
+        generalPool[nodeId].timeStamp = block.timestamp;
+        PartialNodeL memory lend = generalPool[nodeId].lend;
+        _permitAndTransfer(lend.assets,
+            lend.choiceOfStable,
+            generalPool[nodeId].borrow.borrower,
+            entrypoint.getSVaults()[lend.choiceOfStable],
+            true);
+    }
+
+    function rejectNode(uint256 nodeId) public {
+        require(msg.sender == generalPool[nodeId].lend.lender, "unknown caller");
+        require(generalPool[nodeId].isPending, "position is not pending");
+        require(generalPool[nodeId].lend.approvalBased, "node is not approvalBased");
+        // rejects a node;
+        generalPool[nodeId].isOpen = false;
+        generalPool[nodeId].isPending = false;
+        lockedStakes[generalPool[nodeId].lend.lender] -= generalPool[nodeId].lend.assets;
+        PartialNodeB memory borrow = generalPool[nodeId].borrow;
+        _permitAndTransfer(borrow.collateralIn,
+            borrow.indexOfCollateral,
+            borrow.borrower,
+            entrypoint.getLVaults()[borrow.indexOfCollateral].vault,
+            false);
+    }
+
     function fillPosition(
         uint8 choice,
         uint256 assets,
@@ -51,7 +82,7 @@ contract StrategyV1 is Lending {
         // sets the temp node to filled
         lender.filled = true;
 
-        _handleNodeService(borrower, lender);
+        _handleNodeService(borrower, lender, lender.approvalBased);
 
         stablePool[nodeIdL].filled = true;
         emit LoanTaken(msg.sender, stablePool[nodeIdL].lender, stablePool[nodeIdL].assets, acceptedTenures[tenure]);
@@ -68,11 +99,12 @@ contract StrategyV1 is Lending {
             interestRate: liquidPool[nodeIdB].maxPayableInterest,
             assets: liquidPool[nodeIdB].maximumExpectedOutput,
             filled: true,
-            acceptingRequests: true
+            acceptingRequests: true,
+            approvalBased: false
         });
 
         stablePool.push(lender);
-        _handleNodeService(liquidPool[nodeIdB], lender);
+        _handleNodeService(liquidPool[nodeIdB], lender, false);
 
         _removeUnstableItemFromPool(nodeIdB);
         emit LoanTaken(
@@ -110,6 +142,7 @@ contract StrategyV1 is Lending {
         lockedStakes[node.lend.lender] -= node.lend.assets;
         entrypoint.mint(node.lend.lender, calcInterestOnly(nodeId), node.lend.choiceOfStable, true);
         generalPool[nodeId].isOpen = false;
+        points[msg.sender]++;
         entrypoint.withdraw(node.borrow.collateralIn, reciever, msg.sender, node.borrow.indexOfCollateral, false);
         emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
     }
@@ -167,25 +200,33 @@ contract StrategyV1 is Lending {
         entrypoint.redeem(shares, receiver, msg.sender, choice, true);
     }
 
-    function _handleNodeService(PartialNodeB memory borrow, PartialNodeL memory lend) internal {
+    function _handleNodeService(
+        PartialNodeB memory borrow,
+        PartialNodeL memory lend,
+        bool pending
+    ) internal {
         Node memory _new = Node({
             nodeId: nodeCount,
-            timeStamp: block.timestamp,
+            // don't start counting if it's approvalBased
+            timeStamp: pending ? 0: block.timestamp,
             isOpen: true,
+            isPending: pending,
             lend: lend,
             borrow: borrow
         });
-        _permitAndTransfer(
-            lend.assets,
-            lend.choiceOfStable,
-            borrow.borrower,
-            entrypoint.getSVaults()[lend.choiceOfStable],
-            true
-        );
 
         generalPool[nodeCount] = _new;
         nodeCount++;
         lockedStakes[lend.lender] += lend.assets;
+
+        if (!pending)
+            _permitAndTransfer(
+                lend.assets,
+                lend.choiceOfStable,
+                borrow.borrower,
+                entrypoint.getSVaults()[lend.choiceOfStable],
+                true
+            );
     }
 
     function _permitAndTransfer(
@@ -227,13 +268,7 @@ contract StrategyV1 is Lending {
             node.borrow.indexOfCollateral
         );
 
-        _liquidate(
-            debt,
-            IERC20(node.borrow.collateral),
-            stableVaults[_defaultChoice],
-            liquidVault,
-            node
-        );
+        _liquidate(debt, IERC20(node.borrow.collateral), stableVaults[_defaultChoice], liquidVault, node);
 
         node.borrow.restricted = true;
         node.isOpen = false;

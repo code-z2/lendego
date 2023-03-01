@@ -10,6 +10,7 @@ struct PartialNodeL {
     uint256 assets;
     bool filled; // default false
     bool acceptingRequests; // default true
+    bool approvalBased; // default false
 }
 
 struct PartialNodeB {
@@ -28,6 +29,7 @@ struct Node {
     uint256 nodeId; // unique node identifier
     uint timeStamp; // timestamp when node was created
     bool isOpen; // if the positions represented by this node are still open
+    bool isPending; // position lend is approvalBased
     PartialNodeL lend; // the lenders details
     PartialNodeB borrow; // the borrowers details
 }
