@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import "forge-std/Script.sol";
-import "../src/Ego.sol";
+//import "../src/Ego.sol";
 import "../src/tokens/ERC20/ERC20.sol";
 
 contract DeployEgo is Script {
@@ -17,7 +17,7 @@ contract DeployEgo is Script {
 
         vm.startBroadcast();
 
-        new Ego(stables);
+        //new Ego(stables);
 
         vm.stopBroadcast();
     }
