@@ -23,13 +23,24 @@ contract PriceFeedConsumer {
         (
             ,
             /* uint80 roundID */
-            int256 price /* uint256 startedAt */,
+            int256 price, /* uint256 startedAt */ /* uint256 timeStamp */ /* uint80 answeredInRound */
             ,
             ,
 
-        ) = /* uint256 timeStamp */
-            /* uint80 answeredInRound */
-            priceFeed.latestRoundData();
+        ) = priceFeed.latestRoundData();
+        return price;
+    }
+
+    function getLatestPriceFromFeed(address feed) external view returns (int256) {
+        (
+            ,
+            /* uint80 roundID */
+            int256 price, /* uint256 startedAt */ /* uint256 timeStamp */ /* uint80 answeredInRound */
+            ,
+            ,
+
+        ) = AggregatorV3Interface(feed).latestRoundData();
+
         return price;
     }
 

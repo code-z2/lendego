@@ -1,19 +1,11 @@
-// SPDX-License-Identifier: GPLv3
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
-
-enum AcceptedStables {
-    USDC,
-    DAI,
-    USDT,
-    BUSD,
-    FRAX
-}
 
 // represents an unfifilled order
 struct PartialNodeL {
     // lenders entry
     address lender;
-    AcceptedStables choiceOfStable;
+    uint8 choiceOfStable;
     uint8 interestRate;
     uint256 assets;
     bool filled; // default false
@@ -26,8 +18,8 @@ struct PartialNodeB {
     address collateral;
     uint256 collateralIn;
     uint256 maximumExpectedOutput; // usd
-    uint128 tenure;
-    uint128 indexOfCollateral;
+    uint8 tenure;
+    uint8 indexOfCollateral;
     uint8 maxPayableInterest;
     bool restricted;
 }
@@ -41,7 +33,13 @@ struct Node {
 }
 
 struct Tokens {
-    address token;
-    address priceOracle;
-    string pair;
+    address vault;
+    address priceFeed;
+}
+
+struct EntrypointVars {
+    address _editor;
+    address _strategy;
+    address[] _stables;
+    Tokens[] _liquids;
 }
