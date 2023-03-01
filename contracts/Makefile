@@ -8,9 +8,9 @@ all: clean remove install update build
 clean  :; forge clean
 
 # Remove modules
-remove :; rm -rf lib && git add . && git commit -m "modules"
+remove :; rm -rf lib
 
-install :; forge install smartcontractkit/chainlink-brownie-contracts && forge install rari-capital/solmate && forge install foundry-rs/forge-std && forge install openzeppelin/openzeppelin-contracts
+install :; forge install smartcontractkit/chainlink-brownie-contracts rari-capital/solmate foundry-rs/forge-std openzeppelin/openzeppelin-contracts --no-commit
 
 # Update Dependencies
 update:; forge update
