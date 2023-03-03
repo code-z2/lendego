@@ -24,6 +24,7 @@ struct PartialNodeB {
     uint8 indexOfCollateral;
     uint8 maxPayableInterest;
     bool restricted;
+    bool personalised; // default false
 }
 
 struct Node {

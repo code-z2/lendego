@@ -3,8 +3,9 @@ pragma solidity 0.8.13;
 
 import "./Shared.sol";
 import "./extensions/TrustedLending.sol";
+import "./extensions/PersonalisedLending.sol";
 
-abstract contract Lending is TrustedLending, SharedStorage {
+abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage {
     event NewLoan(address indexed lender, address indexed stable, uint256 indexed asset, uint8 interestRate);
     event BurntPosition(address indexed burner, PartialNodeL lnode);
     event NewBorrowRequest(address indexed borrower, address indexed liquid, uint256 indexed assets, uint256 tenure);
@@ -19,6 +20,8 @@ abstract contract Lending is TrustedLending, SharedStorage {
         uint8 collateralPercent
     ) public {
         require(interest <= 15, "Interest rate cannot be more 15%");
+        require(!isBlacklisted(), "you are blacklisted");
+        
         entrypoint.deposit(assets, msg.sender, choice, true);
         PartialNodeL memory _new = PartialNodeL({
             lender: msg.sender,
@@ -42,29 +45,86 @@ abstract contract Lending is TrustedLending, SharedStorage {
         uint8 tenure,
         uint8 interest
     ) public {
-        require(tenure < 3, "invalid Tenure");
-        require(interest <= 15, "Interest rate cannot be more 15%");
-
         address collateral_ = entrypoint.getLVaults()[choice].vault;
         uint8 vaultDecimals = IVault(collateral_).decimals();
         uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, choice, vaultDecimals, 125);
 
         require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
 
-        entrypoint.deposit(collateralIn_, msg.sender, choice, false);
+        _createUnstablePosition(
+            msg.sender,
+            collateral_,
+            collateralIn_,
+            choice,
+            interest,
+            tenure,
+            maximumExpectedOutput_,
+            false
+        );
+
+        emit NewBorrowRequest(msg.sender, collateral_, assets, tenure);
+    }
+
+    function createUnstablePositionPersonalised(
+        address receiver,
+        uint8 choice,
+        uint256 collateralIn_,
+        uint8 tenure,
+        uint8 interest,
+        uint8 factoredNomisPercent
+    ) public onlyValidator {
+        uint256 factoredOutput = 50;
+
+        uint256 maximumExpectedOutput = factoredOutput * 10**IVault(entrypoint.getSVaults()[_defaultChoice]).decimals();
+
+        address collateral_ = entrypoint.getLVaults()[choice].vault;
+        uint8 vaultDecimals = IVault(collateral_).decimals();
+
+        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput, choice, vaultDecimals, factoredNomisPercent);
+
+        require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
+
+        _createUnstablePosition(
+            receiver,
+            collateral_,
+            collateralIn_,
+            choice,
+            interest,
+            tenure,
+            maximumExpectedOutput,
+            true
+        );
+
+        emit NewBorrowRequest(receiver, collateral_, assets, tenure);
+    }
+
+    function _createUnstablePosition(
+        address receiver,
+        address _collateral,
+        uint256 amount,
+        uint8 choice,
+        uint8 interest,
+        uint8 tenure,
+        uint256 expectedOutput,
+        bool _personalised
+    ) internal {
+        require(tenure < 3, "invalid Tenure");
+        require(interest <= 15, "Interest rate cannot be more 15%");
+        require(!_isBlacklisted(receiver), "you are blacklisted");
 
         PartialNodeB memory _new = PartialNodeB({
-            borrower: msg.sender,
-            collateral: collateral_,
-            collateralIn: collateralIn_,
-            maximumExpectedOutput: maximumExpectedOutput_,
+            borrower: receiver,
+            collateral: _collateral,
+            collateralIn: amount,
+            maximumExpectedOutput: expectedOutput,
             tenure: acceptedTenures[tenure],
             indexOfCollateral: choice,
             maxPayableInterest: interest,
-            restricted: false
+            restricted: false,
+            personalised: _personalised
         });
         liquidPool.push(_new);
-        emit NewBorrowRequest(msg.sender, collateral_, assets, tenure);
+        entrypoint.deposit(amount, receiver, choice, false);
     }
 
     function burnPosition(uint256 partialNodeLIdx) public {

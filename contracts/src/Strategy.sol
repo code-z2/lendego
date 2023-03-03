@@ -4,7 +4,11 @@ pragma solidity 0.8.13;
 import "./Lending.sol";
 
 contract StrategyV1 is Lending {
-    constructor(address[5] memory initialUnderlyings, uint8 defaultChoice) SharedStorage(initialUnderlyings) {
+    constructor(
+        address[5] memory initialUnderlyings,
+        uint8 defaultChoice,
+        address validator
+    ) SharedStorage(initialUnderlyings) PersonalisedLending(validator) {
         _defaultChoice = defaultChoice;
         nodeCount = 0;
     }
@@ -22,11 +26,13 @@ contract StrategyV1 is Lending {
         generalPool[nodeId].isPending = false;
         generalPool[nodeId].timeStamp = block.timestamp;
         PartialNodeL memory lend = generalPool[nodeId].lend;
-        _permitAndTransfer(lend.assets,
+        _permitAndTransfer(
+            lend.assets,
             lend.choiceOfStable,
             generalPool[nodeId].borrow.borrower,
             entrypoint.getSVaults()[lend.choiceOfStable],
-            true);
+            true
+        );
     }
 
     function rejectNode(uint256 nodeId) public {
@@ -38,26 +44,24 @@ contract StrategyV1 is Lending {
         generalPool[nodeId].isPending = false;
         lockedStakes[generalPool[nodeId].lend.lender] -= generalPool[nodeId].lend.assets;
         PartialNodeB memory borrow = generalPool[nodeId].borrow;
-        _permitAndTransfer(borrow.collateralIn,
+        _permitAndTransfer(
+            borrow.collateralIn,
             borrow.indexOfCollateral,
             borrow.borrower,
             entrypoint.getLVaults()[borrow.indexOfCollateral].vault,
-            false);
+            false
+        );
     }
 
-    function fillPosition(
-        uint8 choice,
-        uint256 assets,
-        uint256 nodeIdL,
-        uint8 tenure
-    ) public {
+    function fillPosition(uint8 choice, uint256 assets, uint256 nodeIdL, uint8 tenure) public {
         PartialNodeL memory lender = stablePool[nodeIdL];
         require(tenure < 3, "unsurpported tenure");
         require(nodeIdL < stablePool.length, "partial node does not exist");
         require(choice < entrypoint.getLVaults().length, "vault does not exist");
         require(lender.acceptingRequests, "lender not accepting requests");
+        require(!isBlacklisted(), "you are blacklisted");
 
-        if (lender.minCollateralPercentage < 125){
+        if (lender.minCollateralPercentage < 125) {
             require(_isATrustee(lender.lender, msg.sender), "not allowed");
         }
 
@@ -79,7 +83,8 @@ contract StrategyV1 is Lending {
             tenure: acceptedTenures[tenure],
             indexOfCollateral: choice,
             maxPayableInterest: lender.interestRate,
-            restricted: false
+            restricted: false,
+            personalised: false
         });
 
         // sets the node in memory to filled
@@ -93,6 +98,7 @@ contract StrategyV1 is Lending {
 
     function fillUnstablePosition(uint256 nodeIdB) public {
         require(!liquidPool[nodeIdB].restricted, "you can't fill this node");
+        require(!isBlacklisted(), "you are blacklisted");
 
         entrypoint.deposit(liquidPool[nodeIdB].maximumExpectedOutput, msg.sender, _defaultChoice, true);
 
@@ -181,22 +187,14 @@ contract StrategyV1 is Lending {
         stablePool[nodeIdL].acceptingRequests = false;
     }
 
-    function withdraw(
-        uint256 assets,
-        address receiver,
-        uint8 choice
-    ) public {
+    function withdraw(uint256 assets, address receiver, uint8 choice) public {
         uint256 allowedWithdraw = IVault(entrypoint.getSVaults()[choice]).previewWithdraw(assets) -
             lockedStakes[msg.sender];
         require(assets < allowedWithdraw, "cannot withdraw more than allowed");
         entrypoint.withdraw(assets, receiver, msg.sender, choice, true);
     }
 
-    function redeem(
-        uint256 shares,
-        address receiver,
-        uint8 choice
-    ) public {
+    function redeem(uint256 shares, address receiver, uint8 choice) public {
         uint256 allowedReedem = IVault(entrypoint.getSVaults()[choice]).previewRedeem(shares) -
             lockedStakes[msg.sender];
 
@@ -204,15 +202,11 @@ contract StrategyV1 is Lending {
         entrypoint.redeem(shares, receiver, msg.sender, choice, true);
     }
 
-    function _handleNodeService(
-        PartialNodeB memory borrow,
-        PartialNodeL memory lend,
-        bool pending
-    ) internal {
+    function _handleNodeService(PartialNodeB memory borrow, PartialNodeL memory lend, bool pending) internal {
         Node memory _new = Node({
             nodeId: nodeCount,
             // don't start counting if it's approvalBased
-            timeStamp: pending ? 0: block.timestamp,
+            timeStamp: pending ? 0 : block.timestamp,
             isOpen: true,
             isPending: pending,
             lend: lend,
@@ -233,24 +227,13 @@ contract StrategyV1 is Lending {
             );
     }
 
-    function _permitAndTransfer(
-        uint256 assets,
-        uint8 choice,
-        address to,
-        address vaultAddress,
-        bool stable
-    ) internal {
+    function _permitAndTransfer(uint256 assets, uint8 choice, address to, address vaultAddress, bool stable) internal {
         // entrypoint permits strategy to withdraw from a vault.
         entrypoint.permit(assets, choice, stable);
         _transfer(IVault(vaultAddress).asset(), vaultAddress, to, assets);
     }
 
-    function _transfer(
-        address token,
-        address from,
-        address to,
-        uint256 value
-    ) internal {
+    function _transfer(address token, address from, address to, uint256 value) internal {
         SafeERC20.safeTransferFrom(IERC20(token), from, to, value);
     }
 
@@ -281,13 +264,10 @@ contract StrategyV1 is Lending {
         generalPool[nodeId] = node;
     }
 
-    function _liquidate(
-        uint256 amount,
-        IERC20 tokenIn,
-        address vaultIn,
-        address vaultOut,
-        Node memory node
-    ) internal {
+    function _liquidate(uint256 amount, IERC20 tokenIn, address vaultIn, address vaultOut, Node memory node) internal {
+        _incrementTTB(node.borrow.borrower);
+        points[node.borrow.borrower] = 0;
+
         uint256 interests = (amount * node.lend.interestRate) / 100;
         uint256 initialFunds = amount - interests;
 
