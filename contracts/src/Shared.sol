@@ -13,7 +13,7 @@ contract SharedStorage {
 
     mapping(uint256 => Node) internal generalPool;
     mapping(address => uint256) internal lockedStakes;
-    mapping(address => uint128) internal points;
+    mapping(address => uint256) internal points;
 
     uint8[3] internal acceptedTenures = [30, 60, 90];
 
@@ -38,7 +38,7 @@ contract SharedStorage {
         return address(oracle);
     }
 
-    function getdiffuser() public view returns (address) {
+    function getDiffuser() public view returns (address) {
         return address(diffuser);
     }
 
@@ -60,5 +60,13 @@ contract SharedStorage {
             allNodes[i] = generalPool[i];
         }
         return allNodes;
+    }
+
+    function getPoints() public view returns (uint256) {
+        return points[msg.sender];
+    }
+
+    function getPoints(address user) public view returns (uint256) {
+        return points[user];
     }
 }
