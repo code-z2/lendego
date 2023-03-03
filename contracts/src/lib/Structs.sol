@@ -11,6 +11,7 @@ struct PartialNodeL {
     bool filled; // default false
     bool acceptingRequests; // default true
     bool approvalBased; // default false
+    uint8 minCollateralPercentage; // deault 125%
 }
 
 struct PartialNodeB {

@@ -2,8 +2,9 @@
 pragma solidity 0.8.13;
 
 import "./Shared.sol";
+import "./extensions/TrustedLending.sol";
 
-abstract contract Lending is SharedStorage {
+abstract contract Lending is TrustedLending, SharedStorage {
     event NewLoan(address indexed lender, address indexed stable, uint256 indexed asset, uint8 interestRate);
     event BurntPosition(address indexed burner, PartialNodeL lnode);
     event NewBorrowRequest(address indexed borrower, address indexed liquid, uint256 indexed assets, uint256 tenure);
@@ -13,7 +14,9 @@ abstract contract Lending is SharedStorage {
         uint256 assets,
         uint8 choice,
         uint8 interest,
-        bool approvalBased
+        bool approvalBased,
+        // collateral percent greater than 125 is ignored.
+        uint8 collateralPercent
     ) public {
         require(interest <= 15, "Interest rate cannot be more 15%");
         entrypoint.deposit(assets, msg.sender, choice, true);
@@ -24,7 +27,8 @@ abstract contract Lending is SharedStorage {
             assets: assets,
             filled: false,
             acceptingRequests: true,
-            approvalBased: approvalBased
+            approvalBased: approvalBased,
+            minCollateralPercentage: collateralPercent
         });
 
         stablePool.push(_new);
@@ -43,7 +47,7 @@ abstract contract Lending is SharedStorage {
 
         address collateral_ = entrypoint.getLVaults()[choice].vault;
         uint8 vaultDecimals = IVault(collateral_).decimals();
-        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, choice, vaultDecimals);
+        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, choice, vaultDecimals, 125);
 
         require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
 
@@ -104,11 +108,13 @@ abstract contract Lending is SharedStorage {
     function getQuoteByExpectedOutput(
         uint256 maximumExpectedOutput,
         uint8 choice,
-        uint8 lDecimals
+        uint8 lDecimals,
+        uint8 collateralPercent
     ) public view returns (uint256) {
         require(maximumExpectedOutput <= 100000000 ether, "cannot take more than 1m ether");
-        // +/-(0.5%) offset from 125%
-        uint256 leastOutput = maximumExpectedOutput / 4 + maximumExpectedOutput + 1 gwei;
+        uint8 _collateralPErcent = collateralPercent > 125 ? 125 : collateralPercent;
+        // +/-(0.5%) offset from collateral%
+        uint256 leastOutput = (maximumExpectedOutput * _collateralPErcent) / 100 + 1 gwei;
         // using the decimals of the default usd token
         uint8 sDecimals = IVault(entrypoint.getSVaults()[_defaultChoice]).decimals();
         return _scaleExpectedOutput(leastOutput, sDecimals, lDecimals, choice);
