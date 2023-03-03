@@ -51,17 +51,21 @@ contract StrategyV1 is Lending {
         uint256 nodeIdL,
         uint8 tenure
     ) public {
+        PartialNodeL memory lender = stablePool[nodeIdL];
         require(tenure < 3, "unsurpported tenure");
         require(nodeIdL < stablePool.length, "partial node does not exist");
         require(choice < entrypoint.getLVaults().length, "vault does not exist");
-        require(stablePool[nodeIdL].acceptingRequests, "lender not accepting requests");
+        require(lender.acceptingRequests, "lender not accepting requests");
+
+        if (lender.minCollateralPercentage < 125){
+            require(_isATrustee(lender.lender, msg.sender), "not allowed");
+        }
 
         address vault = entrypoint.getLVaults()[choice].vault;
         address collateral = IVault(vault).asset();
         uint8 decimals = IVault(vault).decimals();
 
-        // calculate 125% of maximumExpectedOutput in usd
-        uint256 minAsset = getQuoteByExpectedOutput(stablePool[nodeIdL].assets, choice, decimals);
+        uint256 minAsset = getQuoteByExpectedOutput(lender.assets, choice, decimals, lender.minCollateralPercentage);
 
         require(assets >= minAsset, "Minimum collateral threshold not satisfied");
 
@@ -71,21 +75,20 @@ contract StrategyV1 is Lending {
             borrower: msg.sender,
             collateral: collateral,
             collateralIn: assets,
-            maximumExpectedOutput: stablePool[nodeIdL].assets,
+            maximumExpectedOutput: lender.assets,
             tenure: acceptedTenures[tenure],
             indexOfCollateral: choice,
-            maxPayableInterest: stablePool[nodeIdL].interestRate,
+            maxPayableInterest: lender.interestRate,
             restricted: false
         });
 
-        PartialNodeL memory lender = stablePool[nodeIdL];
-        // sets the temp node to filled
+        // sets the node in memory to filled
         lender.filled = true;
 
         _handleNodeService(borrower, lender, lender.approvalBased);
-
+        // sets the actual node to filled
         stablePool[nodeIdL].filled = true;
-        emit LoanTaken(msg.sender, stablePool[nodeIdL].lender, stablePool[nodeIdL].assets, acceptedTenures[tenure]);
+        emit LoanTaken(msg.sender, lender.lender, lender.assets, acceptedTenures[tenure]);
     }
 
     function fillUnstablePosition(uint256 nodeIdB) public {
@@ -100,7 +103,8 @@ contract StrategyV1 is Lending {
             assets: liquidPool[nodeIdB].maximumExpectedOutput,
             filled: true,
             acceptingRequests: true,
-            approvalBased: false
+            approvalBased: false,
+            minCollateralPercentage: 125
         });
 
         stablePool.push(lender);
