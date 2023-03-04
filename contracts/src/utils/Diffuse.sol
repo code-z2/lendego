@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IWETH.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -39,8 +39,7 @@ contract Diffuse is ReentrancyGuard, Ownable {
     function diffuse(uint256 amount, IERC20 tokenIn, address vault) external nonReentrant onlyOwner {
         require(tokenIn != usd, "usd swap disallowed");
         address[] memory path = getPath(address(tokenIn));
-
-        tokenIn.approve(address(router), amount);
+        SafeERC20.safeApprove(tokenIn, address(router), amount);
         router.swapExactTokensForTokens(
             amount,
             router.getAmountsOut(amount, path)[path.length - 1],
@@ -51,7 +50,7 @@ contract Diffuse is ReentrancyGuard, Ownable {
     }
 
     function refund(IERC20 tokenOut, address vaultAddress) external onlyOwner {
-        tokenOut.transfer(vaultAddress, tokenOut.balanceOf(address(this)));
+        SafeERC20.safeTransfer(tokenOut, vaultAddress, tokenOut.balanceOf(address(this)));
     }
 
     receive() external payable {}
