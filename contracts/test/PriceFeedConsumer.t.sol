@@ -14,11 +14,11 @@ contract PriceFeedConsumerTest is Test {
 
     function setUp() public {
         mockV3Aggregator = new MockV3Aggregator(DECIMALS, INITIAL_ANSWER);
-        priceFeedConsumer = new PriceFeedConsumer(address(mockV3Aggregator));
+        priceFeedConsumer = new PriceFeedConsumer();
     }
 
     function testConsumerReturnsStartingValue() public {
-        int256 price = priceFeedConsumer.getLatestPrice();
+        int256 price = priceFeedConsumer.getLatestPriceFromFeed(address(mockV3Aggregator));
         assertTrue(price == INITIAL_ANSWER);
     }
 }

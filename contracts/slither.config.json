@@ -1,11 +1,16 @@
 {
     "filter_paths": "lib",
     "solc_remaps": [
-      "ds-test/=lib/ds-test/src/",
       "forge-std/=lib/forge-std/src/",
       "@chainlink/=lib/chainlink-brownie-contracts/",
-      "@openzeppelin/=lib/openzeppelin-contracts/"
-
+      "@openzeppelin/=lib/openzeppelin-contracts/",
+      " @solmate=lib/solmate/src/",
+      "@std=lib/forge-std/src/",
+      "@clones=lib/clones-with-immutable-args/src/",
+      "@chainlink/=lib/chainlink-brownie-contracts/",
+      "@uniswap/v2-core/=lib/v2-core/",
+      "@uniswap/v2-periphery/=lib/v2-periphery/",
+      "ds-test/=lib/forge-std/lib/ds-test/src/"
     ]
   }
   

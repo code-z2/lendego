@@ -21,7 +21,7 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
     ) public {
         require(interest <= 15, "Interest rate cannot be more 15%");
         require(!isBlacklisted(), "you are blacklisted");
-        
+
         entrypoint.deposit(assets, msg.sender, choice, true);
         PartialNodeL memory _new = PartialNodeL({
             lender: msg.sender,
@@ -75,7 +75,8 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
     ) public onlyValidator {
         uint256 factoredOutput = 50;
 
-        uint256 maximumExpectedOutput = factoredOutput * 10**IVault(entrypoint.getSVaults()[_defaultChoice]).decimals();
+        uint256 maximumExpectedOutput = factoredOutput *
+            10 ** IVault(entrypoint.getSVaults()[_defaultChoice]).decimals();
 
         address collateral_ = entrypoint.getLVaults()[choice].vault;
         uint8 vaultDecimals = IVault(collateral_).decimals();
@@ -188,20 +189,16 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
     ) internal view returns (uint256) {
         int256 latesPrice = oracle.getLatestPriceFromFeed(entrypoint.getLVaults()[choice].priceFeed);
 
-        uint256 raw = (_scaleOutput(output, sDecimals, lDecimals) * 10**lDecimals) / uint256(latesPrice);
+        uint256 raw = (_scaleOutput(output, sDecimals, lDecimals) * 10 ** lDecimals) / uint256(latesPrice);
 
         return raw;
     }
 
-    function _scaleOutput(
-        uint256 output,
-        uint8 sDecimals,
-        uint8 expectedDecimals
-    ) internal pure returns (uint256) {
+    function _scaleOutput(uint256 output, uint8 sDecimals, uint8 expectedDecimals) internal pure returns (uint256) {
         if (sDecimals < expectedDecimals) {
-            return output * 10**uint256(expectedDecimals - sDecimals);
+            return output * 10 ** uint256(expectedDecimals - sDecimals);
         } else if (sDecimals > expectedDecimals) {
-            return output / 10**uint256(sDecimals - expectedDecimals);
+            return output / 10 ** uint256(sDecimals - expectedDecimals);
         }
         return output;
     }

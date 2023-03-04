@@ -10,54 +10,29 @@ interface IEntrypointV1 {
 
     function addNewLVault(address newVaultAddress) external;
 
-    function updateSVaultAtIndex(address updatedVaultAddress, uint8 index) external;
+    function updateSVaultAtIndex(address updatedVaultAddress, uint256 index) external;
 
-    function updateLVaultAtIndex(address updatedVaultAddress, uint8 index) external;
+    function updateLVaultAtIndex(address updatedVaultAddress, uint256 index) external;
 
-    function deleteSVaultAtIndex(uint8 index) external;
+    function setPriceFeedForVault(uint256 index, address priceFeed) external;
 
-    function deleteLVaultAtIndex(uint8 index) external;
+    function deleteSVaultAtIndex(uint256 index) external;
+
+    function deleteLVaultAtIndex(uint256 index) external;
 
     function changeEditor(address newEditor) external;
 
-    function deposit(
-        uint256 assets,
-        address receiver,
-        uint8 choice,
-        bool stable
-    ) external;
+    function deposit(uint256 assets, address receiver, uint8 choice, bool stable) external;
 
-    function mint(
-        address receiver,
-        uint256 shares,
-        uint8 choice,
-        bool stable
-    ) external;
+    function mint(address receiver, uint256 shares, uint8 choice, bool stable) external;
 
-    function withdraw(
-        uint256 assets,
-        address receiver,
-        address owner,
-        uint8 choice,
-        bool stable
-    ) external;
+    function withdraw(uint256 assets, address receiver, address owner, uint8 choice, bool stable) external;
 
-    function redeem(
-        uint256 shares,
-        address receiver,
-        address owner,
-        uint8 choice,
-        bool stable
-    ) external;
+    function redeem(uint256 shares, address receiver, address owner, uint8 choice, bool stable) external;
 
-    function permit(
-        uint256 amount,
-        address receiver,
-        uint8 choice,
-        bool stable
-    ) external;
+    function permit(uint256 amount, address receiver, uint8 choice, bool stable) external;
 
-    function changeSVaultController(uint8 index, address newController) external;
+    function changeSVaultController(uint256 index, address newController) external;
 
-    function changeLVaultController(uint8 index, address newController) external;
+    function changeLVaultController(uint256 index, address newController) external;
 }
