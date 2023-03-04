@@ -6,10 +6,10 @@ import "./extensions/TrustedLending.sol";
 import "./extensions/PersonalisedLending.sol";
 
 abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage {
-    event NewLoan(address indexed lender, address indexed stable, uint256 indexed asset, uint8 interestRate);
-    event BurntPosition(address indexed burner, PartialNodeL lnode);
-    event NewBorrowRequest(address indexed borrower, address indexed liquid, uint256 indexed assets, uint256 tenure);
-    event BurntUnstablePosition(address indexed burner, PartialNodeB bnode);
+    event NewLoan(address indexed lender, uint256 indexed nodeId, PartialNodeL lnode);
+    event BurntPosition(address indexed burner, uint256 nodeId);
+    event NewBorrowRequest(address indexed borrower, uint256 indexed nodeId, PartialNodeB bnode);
+    event BurntUnstablePosition(address indexed burner, uint256 indexed nodeId);
 
     function createPosition(
         uint256 assets,
@@ -35,7 +35,7 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         });
 
         stablePool.push(_new);
-        emit NewLoan(msg.sender, entrypoint.getSVaults()[choice], assets, interest);
+        emit NewLoan(msg.sender, stablePool.length - 1, _new);
     }
 
     function createUnstablePosition(
@@ -61,8 +61,6 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
             maximumExpectedOutput_,
             false
         );
-
-        emit NewBorrowRequest(msg.sender, collateral_, assets, tenure);
     }
 
     function createUnstablePositionPersonalised(
@@ -95,8 +93,6 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
             maximumExpectedOutput,
             true
         );
-
-        emit NewBorrowRequest(receiver, collateral_, assets, tenure);
     }
 
     function _createUnstablePosition(
@@ -126,6 +122,7 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         });
         liquidPool.push(_new);
         entrypoint.deposit(amount, receiver, choice, false);
+        emit NewBorrowRequest(receiver, liquidPool.length - 1, _new);
     }
 
     function burnPosition(uint256 partialNodeLIdx) public {
@@ -134,7 +131,7 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         PartialNodeL memory temp = stablePool[partialNodeLIdx];
         _removeItemFromPool(partialNodeLIdx);
         entrypoint.withdraw(temp.assets, msg.sender, msg.sender, temp.choiceOfStable, true);
-        emit BurntPosition(msg.sender, temp);
+        emit BurntPosition(msg.sender, partialNodeLIdx);
     }
 
     function burnUnstablePosition(uint256 partialNodeBIdx) public returns (bool success) {
@@ -142,13 +139,13 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         PartialNodeB memory temp = liquidPool[partialNodeBIdx];
         _removeUnstableItemFromPool(partialNodeBIdx);
         entrypoint.withdraw(temp.collateralIn, msg.sender, msg.sender, temp.indexOfCollateral, false);
-        emit BurntUnstablePosition(msg.sender, temp);
+        emit BurntUnstablePosition(msg.sender, partialNodeBIdx);
         return true;
     }
 
     function _removeItemFromPool(uint256 index) internal {
         require(index < stablePool.length, "unable to remove");
-        if (stablePool.length == 1) {
+        if (stablePool.length < 2) {
             delete stablePool[index];
         } else {
             stablePool[index] = stablePool[stablePool.length - 1];
@@ -158,7 +155,7 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
 
     function _removeUnstableItemFromPool(uint256 index) internal {
         require(index < liquidPool.length, "unable to remove");
-        if (liquidPool.length == 1) {
+        if (liquidPool.length < 2) {
             delete liquidPool[index];
         } else {
             liquidPool[index] = liquidPool[liquidPool.length - 1];

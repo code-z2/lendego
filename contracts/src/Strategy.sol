@@ -14,8 +14,8 @@ contract StrategyV1 is Lending {
         nodeCount = 0;
     }
 
-    event LoanTaken(address indexed by, address indexed from, uint256 indexed amount, uint128 tenure);
-    event LoanSettled(address indexed by, address indexed lender, uint256 indexed amount, uint256 nodeId);
+    event LoanTaken(address indexed by, address indexed from, uint256 amount, uint256 indexed nodeId);
+    event LoanSettled(address indexed by, address indexed lender, uint256 amount, uint256 indexed nodeId);
     event LoanExtended(uint256 indexed nodeId);
     event ErrorLogging(string reason);
 
@@ -93,8 +93,6 @@ contract StrategyV1 is Lending {
 
         entrypoint.deposit(assets, msg.sender, choice, false);
         _handleNodeService(borrower, lender, lender.approvalBased);
-
-        emit LoanTaken(msg.sender, lender.lender, lender.assets, acceptedTenures[tenure]);
     }
 
     function fillUnstablePosition(uint256 nodeIdB) public {
@@ -117,13 +115,6 @@ contract StrategyV1 is Lending {
 
         entrypoint.deposit(liquidPool[nodeIdB].maximumExpectedOutput, msg.sender, _defaultChoice, true);
         _handleNodeService(liquidPool[nodeIdB], lender, false);
-
-        emit LoanTaken(
-            liquidPool[nodeIdB].borrower,
-            msg.sender,
-            liquidPool[nodeIdB].maximumExpectedOutput,
-            liquidPool[nodeIdB].tenure
-        );
     }
 
     function exitLenderFromPosition(uint256 nodeId) public {
@@ -204,8 +195,9 @@ contract StrategyV1 is Lending {
     }
 
     function _handleNodeService(PartialNodeB memory borrow, PartialNodeL memory lend, bool pending) internal {
+        uint256 currentNodeCount = nodeCount;
         Node memory _new = Node({
-            nodeId: nodeCount,
+            nodeId: currentNodeCount,
             // don't start counting if it's approvalBased
             timeStamp: pending ? 0 : block.timestamp,
             isOpen: true,
@@ -226,6 +218,8 @@ contract StrategyV1 is Lending {
                 entrypoint.getSVaults()[lend.choiceOfStable],
                 true
             );
+
+        emit LoanTaken(msg.sender, lend.lender, lend.assets, currentNodeCount);
     }
 
     function _permitAndTransfer(uint256 assets, uint8 choice, address to, address vaultAddress, bool stable) internal {
