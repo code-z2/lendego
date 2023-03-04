@@ -6,9 +6,10 @@ import "./Lending.sol";
 contract StrategyV1 is Lending {
     constructor(
         address[5] memory initialUnderlyings,
+        address[3] memory diffuserParams,
         uint8 defaultChoice,
         address validator
-    ) SharedStorage(initialUnderlyings) PersonalisedLending(validator) {
+    ) SharedStorage(initialUnderlyings, diffuserParams) PersonalisedLending(validator) {
         _defaultChoice = defaultChoice;
         nodeCount = 0;
     }
@@ -73,8 +74,6 @@ contract StrategyV1 is Lending {
 
         require(assets >= minAsset, "Minimum collateral threshold not satisfied");
 
-        entrypoint.deposit(assets, msg.sender, choice, false);
-
         PartialNodeB memory borrower = PartialNodeB({
             borrower: msg.sender,
             collateral: collateral,
@@ -89,18 +88,18 @@ contract StrategyV1 is Lending {
 
         // sets the node in memory to filled
         lender.filled = true;
-
-        _handleNodeService(borrower, lender, lender.approvalBased);
         // sets the actual node to filled
         stablePool[nodeIdL].filled = true;
+
+        entrypoint.deposit(assets, msg.sender, choice, false);
+        _handleNodeService(borrower, lender, lender.approvalBased);
+
         emit LoanTaken(msg.sender, lender.lender, lender.assets, acceptedTenures[tenure]);
     }
 
     function fillUnstablePosition(uint256 nodeIdB) public {
         require(!liquidPool[nodeIdB].restricted, "you can't fill this node");
         require(!isBlacklisted(), "you are blacklisted");
-
-        entrypoint.deposit(liquidPool[nodeIdB].maximumExpectedOutput, msg.sender, _defaultChoice, true);
 
         PartialNodeL memory lender = PartialNodeL({
             lender: msg.sender,
@@ -114,9 +113,11 @@ contract StrategyV1 is Lending {
         });
 
         stablePool.push(lender);
+        _removeUnstableItemFromPool(nodeIdB);
+
+        entrypoint.deposit(liquidPool[nodeIdB].maximumExpectedOutput, msg.sender, _defaultChoice, true);
         _handleNodeService(liquidPool[nodeIdB], lender, false);
 
-        _removeUnstableItemFromPool(nodeIdB);
         emit LoanTaken(
             liquidPool[nodeIdB].borrower,
             msg.sender,
@@ -147,12 +148,12 @@ contract StrategyV1 is Lending {
         Node memory node = generalPool[nodeId];
         address vaultAddress = entrypoint.getSVaults()[node.lend.choiceOfStable];
 
-        _transfer(IVault(vaultAddress).asset(), msg.sender, vaultAddress, calcLoanPlusInterest(nodeId));
-
         lockedStakes[node.lend.lender] -= node.lend.assets;
-        entrypoint.mint(node.lend.lender, calcInterestOnly(nodeId), node.lend.choiceOfStable, true);
         generalPool[nodeId].isOpen = false;
         points[msg.sender]++;
+
+        _transfer(IVault(vaultAddress).asset(), msg.sender, vaultAddress, calcLoanPlusInterest(nodeId));
+        entrypoint.mint(node.lend.lender, calcInterestOnly(nodeId), node.lend.choiceOfStable, true);
         entrypoint.withdraw(node.borrow.collateralIn, reciever, msg.sender, node.borrow.indexOfCollateral, false);
         emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
     }
@@ -255,13 +256,13 @@ contract StrategyV1 is Lending {
             node.borrow.indexOfCollateral
         );
 
-        _liquidate(debt, IERC20(node.borrow.collateral), stableVaults[_defaultChoice], liquidVault, node);
-
         node.borrow.restricted = true;
         node.isOpen = false;
         lockedStakes[node.lend.lender] -= node.lend.assets;
         liquidPool.push(node.borrow);
         generalPool[nodeId] = node;
+
+        _liquidate(debt, IERC20(node.borrow.collateral), stableVaults[_defaultChoice], liquidVault, node);
     }
 
     function _liquidate(uint256 amount, IERC20 tokenIn, address vaultIn, address vaultOut, Node memory node) internal {
@@ -270,18 +271,18 @@ contract StrategyV1 is Lending {
 
         uint256 interests = (amount * node.lend.interestRate) / 100;
         uint256 initialFunds = amount - interests;
+        node.borrow.collateralIn -= initialFunds;
 
         // transfer collateral to the diffuse contract
         _permitAndTransfer(amount, node.borrow.indexOfCollateral, address(diffuser), vaultOut, false);
 
         // diffuse the main amount first
         diffuser.diffuse(initialFunds, tokenIn, vaultIn);
-        node.borrow.collateralIn -= initialFunds;
 
         // diffuse the interest
         try diffuser.diffuse(interests, tokenIn, vaultIn) {
-            entrypoint.mint(node.lend.lender, interests, node.lend.choiceOfStable, true);
             node.borrow.collateralIn -= interests;
+            entrypoint.mint(node.lend.lender, interests, node.lend.choiceOfStable, true);
         } catch Error(string memory reason) {
             emit ErrorLogging(reason);
         }

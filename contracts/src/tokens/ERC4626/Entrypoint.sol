@@ -57,15 +57,19 @@ contract VaultsEntrypointV1 {
         store._liquids.push(Tokens(newVaultAddress, priceFeed));
     }
 
-    function updateSVaultAtIndex(address updatedVaultAddress, uint8 index) public onlyEditor {
+    function updateSVaultAtIndex(address updatedVaultAddress, uint256 index) public onlyEditor {
         store._stables[index] = updatedVaultAddress;
     }
 
-    function updateLVaultAtIndex(address updatedVaultAddress, uint8 index) public onlyEditor {
+    function updateLVaultAtIndex(address updatedVaultAddress, uint256 index) public onlyEditor {
         store._liquids[index].vault = updatedVaultAddress;
     }
 
-    function deleteSVaultAtIndex(uint8 index) public onlyEditor {
+    function setPriceFeedForVault(uint256 index, address priceFeed) public onlyEditor {
+        store._liquids[index].priceFeed = priceFeed;
+    }
+
+    function deleteSVaultAtIndex(uint256 index) public onlyEditor {
         require(index < store._stables.length, "unable to remove");
         if (store._stables.length == 1) {
             delete store._stables[index];
@@ -75,7 +79,7 @@ contract VaultsEntrypointV1 {
         }
     }
 
-    function deleteLVaultAtIndex(uint8 index) public onlyEditor {
+    function deleteLVaultAtIndex(uint256 index) public onlyEditor {
         require(index < store._liquids.length, "unable to remove");
         if (store._liquids.length == 1) {
             delete store._liquids[index];
@@ -133,19 +137,16 @@ contract VaultsEntrypointV1 {
         uint8 choice,
         bool stable
     ) external onlyStrategy {
-        IVault(stable ? store._stables[choice] : store._liquids[choice].vault).temporaryPermit(
-            amount,
-            store._strategy
-        );
+        IVault(stable ? store._stables[choice] : store._liquids[choice].vault).temporaryPermit(amount, store._strategy);
     }
 
     // end of strategy calls
 
-    function changeSVaultEntrypoint(uint8 index, address newEntrypoint) public onlyEditor {
+    function changeSVaultEntrypoint(uint256 index, address newEntrypoint) public onlyEditor {
         IVault(store._stables[index]).changeEntrypoint(newEntrypoint);
     }
 
-    function changeLVaultEntrypoint(uint8 index, address newEntrypoint) public onlyEditor {
+    function changeLVaultEntrypoint(uint256 index, address newEntrypoint) public onlyEditor {
         IVault(store._liquids[index].vault).changeEntrypoint(newEntrypoint);
     }
 

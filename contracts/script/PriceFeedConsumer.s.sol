@@ -8,7 +8,7 @@ import "../test/mocks/MockV3Aggregator.sol";
 
 contract DeployPriceFeedConsumer is Script, HelperConfig {
     uint8 constant DECIMALS = 18;
-    int256 constant INITIAL_ANSWER = 2000e18;
+    int256 constant INITIAL_ANSWER = 20e18;
 
     function run() external {
         HelperConfig helperConfig = new HelperConfig();
@@ -21,7 +21,7 @@ contract DeployPriceFeedConsumer is Script, HelperConfig {
 
         vm.startBroadcast();
 
-        new PriceFeedConsumer(priceFeed);
+        new PriceFeedConsumer();
 
         vm.stopBroadcast();
     }

@@ -12,11 +12,7 @@ contract Diffuse is ReentrancyGuard, Ownable {
     IERC20 public immutable usd;
     IWETH public immutable weth;
 
-    constructor(
-        address routerAddress,
-        address usdToken,
-        address wethAddress
-    ) {
+    constructor(address routerAddress, address usdToken, address wethAddress) {
         router = IUniswapV2Router02(routerAddress);
         usd = IERC20(usdToken);
         weth = IWETH(wethAddress);
@@ -40,14 +36,10 @@ contract Diffuse is ReentrancyGuard, Ownable {
         return path;
     }
 
-    function diffuse(
-        uint256 amount,
-        IERC20 tokenIn,
-        address vault
-    ) external nonReentrant onlyOwner {
+    function diffuse(uint256 amount, IERC20 tokenIn, address vault) external nonReentrant onlyOwner {
         require(tokenIn != usd, "usd swap disallowed");
         address[] memory path = getPath(address(tokenIn));
-        
+
         tokenIn.approve(address(router), amount);
         router.swapExactTokensForTokens(
             amount,

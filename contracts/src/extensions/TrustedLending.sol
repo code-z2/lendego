@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-
 contract TrustedLending {
     mapping(address => address[]) internal trustees;
 
-    function isATrustee(address lender) public view returns(bool) {
+    function isATrustee(address lender) public view returns (bool) {
         return _isATrustee(lender, msg.sender);
     }
 

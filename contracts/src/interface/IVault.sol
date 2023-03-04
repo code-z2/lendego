@@ -8,17 +8,9 @@ interface IVault is IERC4626 {
 
     function mint(address receiver, uint256 shares) external;
 
-    function withdraw(
-        uint256 assets,
-        address receiver,
-        address owner
-    ) external returns (uint256);
+    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256);
 
-    function redeem(
-        uint256 shares,
-        address receiver,
-        address owner
-    ) external returns (uint256);
+    function redeem(uint256 shares, address receiver, address owner) external returns (uint256);
 
     function changeEntrypoint(address newEntrypoint) external;
 

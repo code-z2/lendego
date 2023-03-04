@@ -10,7 +10,7 @@ clean  :; forge clean
 # Remove modules
 remove :; rm -rf lib
 
-install :; forge install smartcontractkit/chainlink-brownie-contracts rari-capital/solmate foundry-rs/forge-std openzeppelin/openzeppelin-contracts --no-commit
+install :; forge install smartcontractkit/chainlink-brownie-contracts rari-capital/solmate foundry-rs/forge-std openzeppelin/openzeppelin-contracts uniswap/v2-core uniswap/v2-periphery --no-commit
 
 # Update Dependencies
 update:; forge update
@@ -21,9 +21,9 @@ test :; forge test
 
 snapshot :; forge snapshot
 
-slither :; slither ./src/Ego.sol
+slither :; slither ./src/Strategy.sol
 
-myth :; myth analyze ./src --solc-json mythril.config.json --solv 0.8.13 --max-depth 20
+myth :; myth analyze ./src/Strategy.sol --solc-json mythril.config.json --solv 0.8.13 --max-depth 20
 
 format :; prettier --write src/**/*.sol && prettier --write src/*.sol
 

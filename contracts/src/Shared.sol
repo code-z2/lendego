@@ -24,10 +24,10 @@ contract SharedStorage {
     uint256 public nodeCount;
     uint8 internal _defaultChoice;
 
-    constructor(address[5] memory initialUnderlyings) {
+    constructor(address[5] memory initialUnderlyings, address[3] memory diffuserParams) {
         entrypoint = new VaultsEntrypointV1(initialUnderlyings, address(this), msg.sender);
-        oracle = new PriceFeedConsumer(address(0));
-        diffuser = new Diffuse(address(0), address(0), address(0));
+        oracle = new PriceFeedConsumer();
+        diffuser = new Diffuse(diffuserParams[0], diffuserParams[1], diffuserParams[2]);
     }
 
     function getEntrypoint() public view returns (address) {
