@@ -14,7 +14,7 @@ contract PriceFeedConsumerTest is Test {
 
     function setUp() public {
         mockV3Aggregator = new MockV3Aggregator(DECIMALS, INITIAL_ANSWER);
-        priceFeedConsumer = new PriceFeedConsumer();
+        priceFeedConsumer = new PriceFeedConsumer(address(0));
     }
 
     function testConsumerReturnsStartingValue() public {

@@ -2,16 +2,23 @@
 pragma solidity 0.8.13;
 
 import "./Lending.sol";
+import "./utils/Diffuse.sol";
+import "./interface/ITrustee.sol";
 
 contract StrategyV1 is Lending {
+    using NodeHelpers for Pool;
+
+    Diffuse private immutable _diffuser;
+    ITrustee private immutable _trustee;
+
     constructor(
-        address[5] memory initialUnderlyings,
-        address[3] memory diffuserParams,
-        uint8 defaultChoice,
-        address validator
-    ) SharedStorage(initialUnderlyings, diffuserParams) PersonalisedLending(validator) {
-        _defaultChoice = defaultChoice;
-        nodeCount = 0;
+        address entrypoint,
+        address arcmon,
+        address trustee,
+        address[3] memory diffuserParams
+    ) Lending(entrypoint, arcmon) {
+        _diffuser = new Diffuse(diffuserParams[0], diffuserParams[1], diffuserParams[2]);
+        _trustee = ITrustee(trustee);
     }
 
     event LoanTaken(address indexed by, address indexed from, uint256 amount, uint256 indexed nodeId);
@@ -20,193 +27,135 @@ contract StrategyV1 is Lending {
     event ErrorLogging(string reason);
 
     function approveNode(uint256 nodeId) public {
-        require(msg.sender == generalPool[nodeId].lend.lender, "unknown caller");
-        require(generalPool[nodeId].isPending, "position is not pending");
-        require(generalPool[nodeId].lend.approvalBased, "node is not approvalBased");
-        // approves a node;
-        generalPool[nodeId].isPending = false;
-        generalPool[nodeId].timeStamp = block.timestamp;
-        PartialNodeL memory lend = generalPool[nodeId].lend;
+        Node memory node = pools.generalPool[nodeId];
+        if (msg.sender != node.lend.lender || !node.isPending || !node.lend.approvalBased) revert UnAuthorized();
+
+        pools.approve(nodeId);
         _permitAndTransfer(
-            lend.assets,
-            lend.choiceOfStable,
-            generalPool[nodeId].borrow.borrower,
-            entrypoint.getSVaults()[lend.choiceOfStable],
+            node.lend.assets,
+            node.lend.choiceOfStable,
+            node.borrow.borrower,
+            _entrypoint.getSVaults()[node.lend.choiceOfStable],
             true
         );
     }
 
     function rejectNode(uint256 nodeId) public {
-        require(msg.sender == generalPool[nodeId].lend.lender, "unknown caller");
-        require(generalPool[nodeId].isPending, "position is not pending");
-        require(generalPool[nodeId].lend.approvalBased, "node is not approvalBased");
-        // rejects a node;
-        generalPool[nodeId].isOpen = false;
-        generalPool[nodeId].isPending = false;
-        lockedStakes[generalPool[nodeId].lend.lender] -= generalPool[nodeId].lend.assets;
-        PartialNodeB memory borrow = generalPool[nodeId].borrow;
+        Node memory node = pools.generalPool[nodeId];
+        if (msg.sender != node.lend.lender || !node.isPending || !node.lend.approvalBased) revert UnAuthorized();
+
+        pools.reject(nodeId);
+        lockedStakes[pools.generalPool[nodeId].lend.lender] -= pools.generalPool[nodeId].lend.assets;
         _permitAndTransfer(
-            borrow.collateralIn,
-            borrow.indexOfCollateral,
-            borrow.borrower,
-            entrypoint.getLVaults()[borrow.indexOfCollateral].vault,
+            node.borrow.collateralIn,
+            node.borrow.indexOfCollateral,
+            node.borrow.borrower,
+            _entrypoint.getLVaults()[node.borrow.indexOfCollateral].vault,
             false
         );
     }
 
     function fillPosition(uint8 choice, uint256 assets, uint256 nodeIdL, uint8 tenure) public {
-        PartialNodeL memory lender = stablePool[nodeIdL];
-        require(tenure < 3, "unsurpported tenure");
-        require(nodeIdL < stablePool.length, "partial node does not exist");
-        require(choice < entrypoint.getLVaults().length, "vault does not exist");
-        require(lender.acceptingRequests, "lender not accepting requests");
-        require(!isBlacklisted(), "you are blacklisted");
+        PartialNodeL memory lend = pools.stablePool[nodeIdL];
+        if (
+            tenure > 2 ||
+            nodeIdL >= pools.stablePool.length ||
+            choice >= _entrypoint.getLVaults().length ||
+            !lend.acceptingRequests ||
+            _arcmon.isBlacklisted(msg.sender)
+        ) revert UnAuthorized();
 
-        if (lender.minCollateralPercentage < 125) {
-            require(_isATrustee(lender.lender, msg.sender), "not allowed");
-        }
+        if (lend.minCollateralPercentage < 125 && !_trustee.isATrustee(lend.lender)) revert UnAuthorized();
 
-        address vault = entrypoint.getLVaults()[choice].vault;
+        address vault = _entrypoint.getLVaults()[choice].vault;
         address collateral = IVault(vault).asset();
         uint8 decimals = IVault(vault).decimals();
+        uint256 minAsset = _oracle.getQuoteByExpectedOutput(
+            lend.assets,
+            choice,
+            decimals,
+            lend.minCollateralPercentage
+        );
 
-        uint256 minAsset = getQuoteByExpectedOutput(lender.assets, choice, decimals, lender.minCollateralPercentage);
+        if (assets < minAsset) revert UnAuthorized();
 
-        require(assets >= minAsset, "Minimum collateral threshold not satisfied");
-
-        PartialNodeB memory borrower = PartialNodeB({
-            borrower: msg.sender,
-            collateral: collateral,
-            collateralIn: assets,
-            maximumExpectedOutput: lender.assets,
-            tenure: acceptedTenures[tenure],
-            indexOfCollateral: choice,
-            maxPayableInterest: lender.interestRate,
-            restricted: false,
-            personalised: false
-        });
-
-        // sets the node in memory to filled
-        lender.filled = true;
-        // sets the actual node to filled
-        stablePool[nodeIdL].filled = true;
-
-        entrypoint.deposit(assets, msg.sender, choice, false);
-        _handleNodeService(borrower, lender, lender.approvalBased);
-    }
-
-    function fillUnstablePosition(uint256 nodeIdB) public {
-        require(!liquidPool[nodeIdB].restricted, "you can't fill this node");
-        require(!isBlacklisted(), "you are blacklisted");
-
-        PartialNodeL memory lender = PartialNodeL({
-            lender: msg.sender,
-            choiceOfStable: _defaultChoice,
-            interestRate: liquidPool[nodeIdB].maxPayableInterest,
-            assets: liquidPool[nodeIdB].maximumExpectedOutput,
-            filled: true,
-            acceptingRequests: true,
-            approvalBased: false,
-            minCollateralPercentage: 125
-        });
-
-        stablePool.push(lender);
-        _removeUnstableItemFromPool(nodeIdB);
-
-        entrypoint.deposit(liquidPool[nodeIdB].maximumExpectedOutput, msg.sender, _defaultChoice, true);
-        _handleNodeService(liquidPool[nodeIdB], lender, false);
-    }
-
-    function exitLenderFromPosition(uint256 nodeId) public {
-        require(msg.sender == generalPool[nodeId].lend.lender, "unknown caller");
-        require(generalPool[nodeId].isOpen, "position has been closed");
-        require(_hasTenureExpired(generalPool[nodeId]), "loan is still active");
-        // ? audit required
-        _forcefullyExit(nodeId);
-
-        emit LoanSettled(
-            generalPool[nodeId].borrow.borrower,
-            generalPool[nodeId].lend.lender,
-            generalPool[nodeId].lend.assets,
-            nodeId
+        lend.filled = true;
+        _entrypoint.deposit(assets, msg.sender, choice, false);
+        _handleNodeService(
+            pools.fill(choice, assets, nodeIdL, tenure, collateral, lend.assets, lend.interestRate, acceptedTenures),
+            lend,
+            lend.approvalBased
         );
     }
 
+    function fillUnstablePosition(uint256 nodeIdB) public {
+        PartialNodeB memory borrow = _removeUnstableItemFromPool(nodeIdB);
+        if (borrow.restricted || _arcmon.isBlacklisted(msg.sender)) revert UnAuthorized();
+
+        _entrypoint.deposit(borrow.maximumExpectedOutput, msg.sender, _defaultChoice, true);
+        _handleNodeService(
+            borrow,
+            pools.fillUnstable(_defaultChoice, borrow.maxPayableInterest, borrow.maximumExpectedOutput),
+            false
+        );
+    }
+
+    function exitLenderFromPosition(uint256 nodeId) public {
+        Node memory node = pools.generalPool[nodeId];
+        if (msg.sender != node.lend.lender || !node.isOpen || pools.tenureExpired(nodeId)) revert UnAuthorized();
+        _forcefullyExit(nodeId);
+        emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
+    }
+
     function exitBorrowerFromPosition(uint256 nodeId, address reciever) public {
-        require(msg.sender == generalPool[nodeId].borrow.borrower, "unknown caller");
-        require(generalPool[nodeId].isOpen, "position has been closed");
+        Node memory node = pools.generalPool[nodeId];
+        if (msg.sender != node.borrow.borrower || !node.isOpen) revert UnAuthorized();
 
-        Node memory node = generalPool[nodeId];
-        address vaultAddress = entrypoint.getSVaults()[node.lend.choiceOfStable];
-
+        address vaultAddress = _entrypoint.getSVaults()[node.lend.choiceOfStable];
         lockedStakes[node.lend.lender] -= node.lend.assets;
-        generalPool[nodeId].isOpen = false;
+        pools.generalPool[nodeId].isOpen = false;
         points[msg.sender]++;
 
-        _transfer(IVault(vaultAddress).asset(), msg.sender, vaultAddress, calcLoanPlusInterest(nodeId));
-        entrypoint.mint(node.lend.lender, calcInterestOnly(nodeId), node.lend.choiceOfStable, true);
-        entrypoint.withdraw(node.borrow.collateralIn, reciever, msg.sender, node.borrow.indexOfCollateral, false);
+        _transfer(IVault(vaultAddress).asset(), msg.sender, vaultAddress, pools.calcLoanPlusInterest(nodeId));
+        _entrypoint.mint(node.lend.lender, pools.calcInterestOnly(nodeId), node.lend.choiceOfStable, true);
+        _entrypoint.withdraw(node.borrow.collateralIn, reciever, msg.sender, node.borrow.indexOfCollateral, false);
         emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
     }
 
     function extendLoanDuration(uint256 nodeId) public {
-        require(msg.sender == generalPool[nodeId].borrow.borrower, "invalid caller");
-        require(!_hasTenureExpired(generalPool[nodeId]), "tenure cannot be extended");
-        require(generalPool[nodeId].isOpen, "position has been closed");
-        require(generalPool[nodeId].borrow.tenure % 30 == 0, "tenure can only be extended once");
+        if (
+            msg.sender != pools.generalPool[nodeId].borrow.borrower ||
+            pools.tenureExpired(nodeId) ||
+            !pools.generalPool[nodeId].isOpen ||
+            pools.generalPool[nodeId].borrow.tenure % 30 != 0
+        ) revert UnAuthorized();
 
-        generalPool[nodeId].borrow.tenure += 15;
-
-        uint8 oldInterst = generalPool[nodeId].lend.interestRate;
-        uint8 newInterest = oldInterst / uint8(generalPool[nodeId].borrow.tenure / 15) + oldInterst;
-
-        (newInterest > 15)
-            ? generalPool[nodeId].lend.interestRate = 15
-            : generalPool[nodeId].lend.interestRate = newInterest;
+        pools.extendDuration(nodeId);
         emit LoanExtended(nodeId);
     }
 
-    function calcLoanPlusInterest(uint256 nodeId) public view returns (uint256) {
-        return generalPool[nodeId].lend.assets + calcInterestOnly(nodeId);
-    }
-
-    function calcInterestOnly(uint256 nodeId) public view returns (uint256) {
-        return (generalPool[nodeId].lend.assets * generalPool[nodeId].lend.interestRate) / 100;
-    }
-
     function deactivatePartialNode(uint256 nodeIdL) public {
-        require(msg.sender == stablePool[nodeIdL].lender, "failed to deactivate");
-        stablePool[nodeIdL].acceptingRequests = false;
+        if (msg.sender != pools.stablePool[nodeIdL].lender) revert UnAuthorized();
+        pools.stablePool[nodeIdL].acceptingRequests = false;
     }
 
     function withdraw(uint256 assets, address receiver, uint8 choice) public {
-        uint256 allowedWithdraw = IVault(entrypoint.getSVaults()[choice]).previewWithdraw(assets) -
+        uint256 allowedWithdraw = IVault(_entrypoint.getSVaults()[choice]).previewWithdraw(assets) -
             lockedStakes[msg.sender];
-        require(assets < allowedWithdraw, "cannot withdraw more than allowed");
-        entrypoint.withdraw(assets, receiver, msg.sender, choice, true);
+        if (assets > allowedWithdraw) revert UnAuthorized();
+        _entrypoint.withdraw(assets, receiver, msg.sender, choice, true);
     }
 
     function redeem(uint256 shares, address receiver, uint8 choice) public {
-        uint256 allowedReedem = IVault(entrypoint.getSVaults()[choice]).previewRedeem(shares) -
+        uint256 allowedReedem = IVault(_entrypoint.getSVaults()[choice]).previewRedeem(shares) -
             lockedStakes[msg.sender];
-
-        require(shares < allowedReedem, "cannot redeem more than allowed");
-        entrypoint.redeem(shares, receiver, msg.sender, choice, true);
+        if (shares > allowedReedem) revert UnAuthorized();
+        _entrypoint.redeem(shares, receiver, msg.sender, choice, true);
     }
 
     function _handleNodeService(PartialNodeB memory borrow, PartialNodeL memory lend, bool pending) internal {
         uint256 currentNodeCount = nodeCount;
-        Node memory _new = Node({
-            nodeId: currentNodeCount,
-            // don't start counting if it's approvalBased
-            timeStamp: pending ? 0 : block.timestamp,
-            isOpen: true,
-            isPending: pending,
-            lend: lend,
-            borrow: borrow
-        });
-
-        generalPool[nodeCount] = _new;
+        pools.mergeNode(borrow, lend, currentNodeCount, pending);
         nodeCount++;
         lockedStakes[lend.lender] += lend.assets;
 
@@ -215,16 +164,14 @@ contract StrategyV1 is Lending {
                 lend.assets,
                 lend.choiceOfStable,
                 borrow.borrower,
-                entrypoint.getSVaults()[lend.choiceOfStable],
+                _entrypoint.getSVaults()[lend.choiceOfStable],
                 true
             );
-
         emit LoanTaken(msg.sender, lend.lender, lend.assets, currentNodeCount);
     }
 
     function _permitAndTransfer(uint256 assets, uint8 choice, address to, address vaultAddress, bool stable) internal {
-        // entrypoint permits strategy to withdraw from a vault.
-        entrypoint.permit(assets, choice, stable);
+        _entrypoint.permit(assets, choice, stable);
         _transfer(IVault(vaultAddress).asset(), vaultAddress, to, assets);
     }
 
@@ -232,56 +179,38 @@ contract StrategyV1 is Lending {
         SafeERC20.safeTransferFrom(IERC20(token), from, to, value);
     }
 
-    function _hasTenureExpired(Node memory node) internal view returns (bool) {
-        return block.timestamp > node.timeStamp + node.borrow.tenure * 1 days;
-    }
-
     function _forcefullyExit(uint256 nodeId) internal {
-        // exit without notice
-        Node memory node = generalPool[nodeId];
-        address liquidVault = entrypoint.getLVaults()[node.borrow.indexOfCollateral].vault;
-        address[] memory stableVaults = entrypoint.getSVaults();
+        Node memory node = pools.generalPool[nodeId];
+        address liquidVault = _entrypoint.getLVaults()[node.borrow.indexOfCollateral].vault;
+        address[] memory stableVaults = _entrypoint.getSVaults();
 
-        // converts lenders funds to borrowers collateral equivalent
-        uint256 debt = _scaleExpectedOutput(
-            calcLoanPlusInterest(nodeId),
+        uint256 debt = _oracle.scaleExpectedOutput(
+            pools.calcLoanPlusInterest(nodeId),
             IVault(stableVaults[node.lend.choiceOfStable]).decimals(),
             IVault(liquidVault).decimals(),
             node.borrow.indexOfCollateral
         );
 
-        node.borrow.restricted = true;
-        node.isOpen = false;
+        pools.forcedExit(nodeId);
         lockedStakes[node.lend.lender] -= node.lend.assets;
-        liquidPool.push(node.borrow);
-        generalPool[nodeId] = node;
-
         _liquidate(debt, IERC20(node.borrow.collateral), stableVaults[_defaultChoice], liquidVault, node);
     }
 
     function _liquidate(uint256 amount, IERC20 tokenIn, address vaultIn, address vaultOut, Node memory node) internal {
-        _incrementTTB(node.borrow.borrower);
+        _arcmon.incrementTTB(node.borrow.borrower);
         points[node.borrow.borrower] = 0;
-
         uint256 interests = (amount * node.lend.interestRate) / 100;
         uint256 initialFunds = amount - interests;
         node.borrow.collateralIn -= initialFunds;
 
-        // transfer collateral to the diffuse contract
-        _permitAndTransfer(amount, node.borrow.indexOfCollateral, address(diffuser), vaultOut, false);
-
-        // diffuse the main amount first
-        diffuser.diffuse(initialFunds, tokenIn, vaultIn);
-
-        // diffuse the interest
-        try diffuser.diffuse(interests, tokenIn, vaultIn) {
+        _permitAndTransfer(amount, node.borrow.indexOfCollateral, address(_diffuser), vaultOut, false);
+        _diffuser.diffuse(initialFunds, tokenIn, vaultIn);
+        try _diffuser.diffuse(interests, tokenIn, vaultIn) {
             node.borrow.collateralIn -= interests;
-            entrypoint.mint(node.lend.lender, interests, node.lend.choiceOfStable, true);
+            _entrypoint.mint(node.lend.lender, interests, node.lend.choiceOfStable, true);
         } catch Error(string memory reason) {
             emit ErrorLogging(reason);
         }
-
-        // refund excess tokens back to vault
-        diffuser.refund(tokenIn, vaultOut);
+        _diffuser.refund(tokenIn, vaultOut);
     }
 }

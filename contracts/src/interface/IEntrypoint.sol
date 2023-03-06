@@ -16,6 +16,8 @@ interface IEntrypointV1 {
 
     function setPriceFeedForVault(uint256 index, address priceFeed) external;
 
+    function setStrategyContract(address strategy) external;
+
     function deleteSVaultAtIndex(uint256 index) external;
 
     function deleteLVaultAtIndex(uint256 index) external;

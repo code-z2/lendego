@@ -8,7 +8,7 @@ contract TrustedLending {
         return _isATrustee(lender, msg.sender);
     }
 
-    function addTrustedaddress(address trustee) public {
+    function addTrustedAddress(address trustee) public {
         trustees[msg.sender].push(trustee);
     }
 

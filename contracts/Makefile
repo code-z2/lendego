@@ -38,6 +38,9 @@ anvil-fork :; anvil --fork-url ${EVMOS_RPC_URL} -m 'test test test test test tes
 deploy-goerli :; @forge script script/${contract}.s.sol:Deploy${contract} --rpc-url ${GOERLI_RPC_URL}  --private-key ${PRIVATE_KEY} --broadcast --verify --etherscan-api-key ${ETHERSCAN_API_KEY}  -vvvv
 
 # use the "@" to hide the command from your shell 
+deploy-ftm-testnet :; @forge script script/${contract}.s.sol:Deploy${contract} --rpc-url ${FANTOM_TESTNET_RPC_URL}  --private-key ${PRIVATE_KEY} --broadcast --verify --verifier-url https://api-testnet.ftmscan.com/api --etherscan-api-key ${ETHERSCAN_API_KEY}  -vvvv
+
+# use the "@" to hide the command from your shell 
 deploy-evmos :; @forge script script/${contract}.s.sol:Deploy${contract} --rpc-url ${EVMOS_RPC_URL}  --private-key ${PRIVATE_KEY} --broadcast  -vvvv
 
 # use the "@" to hide the command from your shell 
