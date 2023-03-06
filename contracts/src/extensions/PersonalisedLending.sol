@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-contract PersonalisedLending {
+contract Personalisation {
+    address private _strategyAddress;
     address private _validator;
+
     mapping(address => uint256) internal ttb;
 
     mapping(address => bool) private blacklistedAddresses;
 
-    constructor(address validator) {
-        _validator = validator;
+    error UnAuthorized(bytes reason);
+
+    constructor(address validatorAddress, address strategyAddress) {
+        _validator = validatorAddress;
+        _strategyAddress = strategyAddress;
     }
 
     modifier onlyValidator() {
-        require(msg.sender == _validator, "not the validator");
+        if (msg.sender != _validator) revert UnAuthorized("not validator");
         _;
     }
 
@@ -24,8 +29,21 @@ contract PersonalisedLending {
         return _isBlacklisted(msg.sender);
     }
 
+    function isBlacklisted(address user) external view returns (bool) {
+        return _isBlacklisted(user);
+    }
+
     function reenact(address user) public onlyValidator {
         _reenact(user);
+    }
+
+    function validator() public view returns (address) {
+        return _validator;
+    }
+
+    function incrementTTB(address user) external {
+        if (msg.sender != _strategyAddress) revert UnAuthorized("not strategy");
+        _incrementTTB(user);
     }
 
     function _incrementTTB(address user) internal {
@@ -50,5 +68,9 @@ contract PersonalisedLending {
         if (ttb[user] <= 20) {
             blacklistedAddresses[user] = false;
         } else revert("max number of reenactments reached");
+    }
+
+    function setStrategy(address strategy) public onlyValidator {
+        _strategyAddress = strategy;
     }
 }

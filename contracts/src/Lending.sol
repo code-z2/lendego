@@ -2,14 +2,25 @@
 pragma solidity 0.8.13;
 
 import "./Shared.sol";
-import "./extensions/TrustedLending.sol";
-import "./extensions/PersonalisedLending.sol";
+import "./tokens/ERC4626/Entrypoint.sol";
+import "./chainlink/PriceFeedConsumer.sol";
 
-abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage {
-    event NewLoan(address indexed lender, uint256 indexed nodeId, PartialNodeL lnode);
+import "./interface/IPersonalisation.sol";
+
+contract Lending is SharedStorage {
+    using NodeHelpers for Pool;
+
+    VaultsEntrypointV1 internal immutable _entrypoint;
+    PriceFeedConsumer internal immutable _oracle;
+
+    IPersonalisation internal immutable _arcmon;
+
+    event NewLoan(address indexed lender, uint256 indexed nodeId);
     event BurntPosition(address indexed burner, uint256 nodeId);
-    event NewBorrowRequest(address indexed borrower, uint256 indexed nodeId, PartialNodeB bnode);
+    event NewBorrowRequest(address indexed borrower, uint256 indexed nodeId);
     event BurntUnstablePosition(address indexed burner, uint256 indexed nodeId);
+
+    error UnAuthorized();
 
     function createPosition(
         uint256 assets,
@@ -19,23 +30,10 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         // collateral percent greater than 125 is ignored.
         uint8 collateralPercent
     ) public {
-        require(interest <= 15, "Interest rate cannot be more 15%");
-        require(!isBlacklisted(), "you are blacklisted");
-
-        entrypoint.deposit(assets, msg.sender, choice, true);
-        PartialNodeL memory _new = PartialNodeL({
-            lender: msg.sender,
-            choiceOfStable: choice,
-            interestRate: interest,
-            assets: assets,
-            filled: false,
-            acceptingRequests: true,
-            approvalBased: approvalBased,
-            minCollateralPercentage: collateralPercent
-        });
-
-        stablePool.push(_new);
-        emit NewLoan(msg.sender, stablePool.length - 1, _new);
+        if (interest > 15 || _arcmon.isBlacklisted(msg.sender)) revert UnAuthorized();
+        _entrypoint.deposit(assets, msg.sender, choice, true);
+        pools.create(assets, choice, interest, approvalBased, collateralPercent);
+        emit NewLoan(msg.sender, pools.stablePool.length - 1);
     }
 
     function createUnstablePosition(
@@ -45,12 +43,11 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         uint8 tenure,
         uint8 interest
     ) public {
-        address collateral_ = entrypoint.getLVaults()[choice].vault;
+        address collateral_ = _entrypoint.getLVaults()[choice].vault;
         uint8 vaultDecimals = IVault(collateral_).decimals();
-        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput_, choice, vaultDecimals, 125);
+        uint256 assets = _oracle.getQuoteByExpectedOutput(maximumExpectedOutput_, choice, vaultDecimals, 125);
 
-        require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
-
+        if (collateralIn_ < assets) revert UnAuthorized();
         _createUnstablePosition(
             msg.sender,
             collateral_,
@@ -70,19 +67,20 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         uint8 tenure,
         uint8 interest,
         uint8 factoredNomisPercent
-    ) public onlyValidator {
-        uint256 factoredOutput = 50;
+    ) public {
+        if (msg.sender != _arcmon.validator()) revert UnAuthorized();
+        uint256 maximumExpectedOutput = 50 * 10 ** IVault(_entrypoint.getSVaults()[_defaultChoice]).decimals();
 
-        uint256 maximumExpectedOutput = factoredOutput *
-            10 ** IVault(entrypoint.getSVaults()[_defaultChoice]).decimals();
-
-        address collateral_ = entrypoint.getLVaults()[choice].vault;
+        address collateral_ = _entrypoint.getLVaults()[choice].vault;
         uint8 vaultDecimals = IVault(collateral_).decimals();
 
-        uint256 assets = getQuoteByExpectedOutput(maximumExpectedOutput, choice, vaultDecimals, factoredNomisPercent);
-
-        require(collateralIn_ >= assets, "Minimum collateral threshold not satisfied");
-
+        uint256 assets = _oracle.getQuoteByExpectedOutput(
+            maximumExpectedOutput,
+            choice,
+            vaultDecimals,
+            factoredNomisPercent
+        );
+        if (collateralIn_ < assets) revert UnAuthorized();
         _createUnstablePosition(
             receiver,
             collateral_,
@@ -105,98 +103,62 @@ abstract contract Lending is TrustedLending, PersonalisedLending, SharedStorage 
         uint256 expectedOutput,
         bool _personalised
     ) internal {
-        require(tenure < 3, "invalid Tenure");
-        require(interest <= 15, "Interest rate cannot be more 15%");
-        require(!_isBlacklisted(receiver), "you are blacklisted");
-
-        PartialNodeB memory _new = PartialNodeB({
-            borrower: receiver,
-            collateral: _collateral,
-            collateralIn: amount,
-            maximumExpectedOutput: expectedOutput,
-            tenure: acceptedTenures[tenure],
-            indexOfCollateral: choice,
-            maxPayableInterest: interest,
-            restricted: false,
-            personalised: _personalised
-        });
-        liquidPool.push(_new);
-        entrypoint.deposit(amount, receiver, choice, false);
-        emit NewBorrowRequest(receiver, liquidPool.length - 1, _new);
+        if (tenure > 2 || interest > 15 || _arcmon.isBlacklisted(receiver)) revert UnAuthorized();
+        pools.createUnstable(
+            receiver,
+            _collateral,
+            amount,
+            choice,
+            interest,
+            tenure,
+            expectedOutput,
+            _personalised,
+            acceptedTenures
+        );
+        _entrypoint.deposit(amount, receiver, choice, false);
+        emit NewBorrowRequest(receiver, pools.liquidPool.length - 1);
     }
 
     function burnPosition(uint256 partialNodeLIdx) public {
-        require(msg.sender == stablePool[partialNodeLIdx].lender, "invalid lender");
-        require(!stablePool[partialNodeLIdx].filled, "cannot burn position");
-        PartialNodeL memory temp = stablePool[partialNodeLIdx];
+        PartialNodeL memory temp = pools.stablePool[partialNodeLIdx];
+        if (msg.sender != temp.lender || temp.filled) revert UnAuthorized();
+
         _removeItemFromPool(partialNodeLIdx);
-        entrypoint.withdraw(temp.assets, msg.sender, msg.sender, temp.choiceOfStable, true);
+        _entrypoint.withdraw(temp.assets, msg.sender, msg.sender, temp.choiceOfStable, true);
         emit BurntPosition(msg.sender, partialNodeLIdx);
     }
 
-    function burnUnstablePosition(uint256 partialNodeBIdx) public returns (bool success) {
-        require(msg.sender == liquidPool[partialNodeBIdx].borrower, "Node does not exist");
-        PartialNodeB memory temp = liquidPool[partialNodeBIdx];
+    function burnUnstablePosition(uint256 partialNodeBIdx) public {
+        PartialNodeB memory temp = pools.liquidPool[partialNodeBIdx];
+        if (msg.sender != temp.borrower) revert UnAuthorized();
+
         _removeUnstableItemFromPool(partialNodeBIdx);
-        entrypoint.withdraw(temp.collateralIn, msg.sender, msg.sender, temp.indexOfCollateral, false);
+        _entrypoint.withdraw(temp.collateralIn, msg.sender, msg.sender, temp.indexOfCollateral, false);
         emit BurntUnstablePosition(msg.sender, partialNodeBIdx);
-        return true;
     }
 
     function _removeItemFromPool(uint256 index) internal {
-        require(index < stablePool.length, "unable to remove");
-        if (stablePool.length < 2) {
-            delete stablePool[index];
+        if (pools.stablePool.length < 2) {
+            pools.stablePool.pop();
         } else {
-            stablePool[index] = stablePool[stablePool.length - 1];
-            stablePool.pop();
+            pools.stablePool[index] = pools.stablePool[pools.stablePool.length - 1];
+            pools.stablePool.pop();
         }
     }
 
-    function _removeUnstableItemFromPool(uint256 index) internal {
-        require(index < liquidPool.length, "unable to remove");
-        if (liquidPool.length < 2) {
-            delete liquidPool[index];
+    function _removeUnstableItemFromPool(uint256 index) internal returns (PartialNodeB memory temp) {
+        temp = pools.liquidPool[index];
+        if (pools.liquidPool.length < 2) {
+            pools.liquidPool.pop();
         } else {
-            liquidPool[index] = liquidPool[liquidPool.length - 1];
-            liquidPool.pop();
+            pools.liquidPool[index] = pools.liquidPool[pools.liquidPool.length - 1];
+            pools.liquidPool.pop();
         }
     }
 
-    function getQuoteByExpectedOutput(
-        uint256 maximumExpectedOutput,
-        uint8 choice,
-        uint8 lDecimals,
-        uint8 collateralPercent
-    ) public view returns (uint256) {
-        require(maximumExpectedOutput <= 100000000 ether, "cannot take more than 1m ether");
-        uint8 _collateralPErcent = collateralPercent > 125 ? 125 : collateralPercent;
-        // +/-(0.5%) offset from collateral%
-        uint256 leastOutput = (maximumExpectedOutput * _collateralPErcent) / 100 + 1 gwei;
-        // using the decimals of the default usd token
-        uint8 sDecimals = IVault(entrypoint.getSVaults()[_defaultChoice]).decimals();
-        return _scaleExpectedOutput(leastOutput, sDecimals, lDecimals, choice);
-    }
-
-    function _scaleExpectedOutput(
-        uint256 output,
-        uint8 sDecimals,
-        uint8 lDecimals,
-        uint8 choice
-    ) internal view returns (uint256) {
-        int256 latesPrice = oracle.getLatestPriceFromFeed(entrypoint.getLVaults()[choice].priceFeed);
-
-        uint256 raw = (_scaleOutput(output, sDecimals, lDecimals) * 10 ** lDecimals) / uint256(latesPrice);
-
-        return raw;
-    }
-
-    function _scaleOutput(uint256 output, uint8 sDecimals, uint8 expectedDecimals) internal pure returns (uint256) {
-        if (sDecimals < expectedDecimals) {
-            return output * 10 ** uint256(expectedDecimals - sDecimals);
-        } else if (sDecimals > expectedDecimals) {
-            return output / 10 ** uint256(sDecimals - expectedDecimals);
-        }
-        return output;
+    constructor(address entrypoint, address arcmon) {
+        _entrypoint = VaultsEntrypointV1(payable(entrypoint));
+        _oracle = new PriceFeedConsumer(entrypoint);
+        _arcmon = IPersonalisation(arcmon);
     }
 }

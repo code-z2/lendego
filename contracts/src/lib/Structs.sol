@@ -36,6 +36,12 @@ struct Node {
     PartialNodeB borrow; // the borrowers details
 }
 
+struct Pool {
+    PartialNodeL[] stablePool;
+    PartialNodeB[] liquidPool;
+    mapping(uint256 => Node) generalPool;
+}
+
 struct Tokens {
     address vault;
     address priceFeed;

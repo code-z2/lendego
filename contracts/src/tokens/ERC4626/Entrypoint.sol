@@ -26,19 +26,16 @@ contract VaultsEntrypointV1 {
     }
 
     constructor(
-        address[5] memory underlyings,
-        address strategy,
-        address editor
+        address[5] memory underlyings
     ) {
-        store._editor = editor;
-        store._strategy = strategy;
+        store._editor = msg.sender;
         address self = address(this);
 
-        store._stables[0] = address(new Vault(IERC20(underlyings[0]), "alchemy DAI", "svDAI", self));
-        store._stables[1] = address(new Vault(IERC20(underlyings[1]), "alchemy USDC", "svUSDC", self));
-        store._stables[2] = address(new Vault(IERC20(underlyings[2]), "alchemy USDT", "svUSDT", self));
-        store._liquids[0].vault = address(new Vault(IERC20(underlyings[3]), "alchemy FTM", "lvFTM", self));
-        store._liquids[1].vault = address(new Vault(IERC20(underlyings[4]), "alchemy WETH", "lvWETH", self));
+        store._stables.push(address(new Vault(IERC20(underlyings[0]), "alchemy DAI", "svDAI", self)));
+        store._stables.push(address(new Vault(IERC20(underlyings[1]), "alchemy USDC", "svUSDC", self)));
+        store._stables.push(address(new Vault(IERC20(underlyings[2]), "alchemy USDT", "svUSDT", self)));
+        store._liquids.push(Tokens(address(new Vault(IERC20(underlyings[3]), "alchemy FTM", "lvFTM", self)), self));
+        store._liquids.push(Tokens(address(new Vault(IERC20(underlyings[4]), "alchemy WETH", "lvWETH", self)), self));
     }
 
     function getSVaults() public view returns (address[] memory) {
@@ -67,6 +64,10 @@ contract VaultsEntrypointV1 {
 
     function setPriceFeedForVault(uint256 index, address priceFeed) public onlyEditor {
         store._liquids[index].priceFeed = priceFeed;
+    }
+
+    function setStrategyContract(address strategy) public onlyEditor {
+        store._strategy = strategy;
     }
 
     function deleteSVaultAtIndex(uint256 index) public onlyEditor {
