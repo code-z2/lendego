@@ -6,48 +6,46 @@ import "../src/tokens/ERC20/ERC20.sol";
 import "../src/Strategy.sol";
 import "../src/interface/IEntrypoint.sol";
 import "../src/tokens/ERC4626/Entrypoint.sol";
+import "../src/tokens/ERC4626/Vault.sol";
 import "../src/extensions/PersonalisedLending.sol";
 import "../src/extensions/TrustedLending.sol";
 
 contract DeployStrategy is Script {
     function run() external {
-        address dai = address(new Token("Dai", "DAI", 18));
-        address usdc = address(new Token("USDC", "USDC", 6));
-        address usdt = address(new Token("fwrapped USDT", "fUSDT", 6));
-        address ftm = address(new Token("Wrapped Fantom", "wFTM", 18));
-        address weth = address(new Token("Wrapped Ether", "WETH", 18));
-
-        address[5] memory initialUnderlyings = [dai, usdc, usdt, ftm, weth];
-
-        address router = 0xa6AD18C2aC47803E193F75c3677b14BF19B94883; // spookyswap router on ftm testnet
-
-        address[3] memory diffuserParams = [router, usdc, weth];
-
-
-        address ftmusd = 0xe04676B9A9A2973BCb0D1478b5E1E9098BBB7f3D; // fantom testnet
-        address ethusd = 0xB8C458C957a6e6ca7Cc53eD95bEA548c52AFaA24; // eth/usd on ftm testnet
-
         vm.startBroadcast();
-        // deploy vaults and entrypoint
-        VaultsEntrypointV1 entrypoint = new VaultsEntrypointV1(initialUnderlyings);
-        // deploy trustee
-        TrustedLending trustee = new TrustedLending();
-        // deploy personalisation
-        Personalisation personalized = new Personalisation(msg.sender, address(0));
-        // deploy strategy
-        StrategyV1 strategy = new StrategyV1(
-            address(entrypoint),
-            address(personalized),
-            address(trustee),
-            diffuserParams
-        );
-        // update entrypoint
-        entrypoint.setStrategyContract(address(strategy));
-        entrypoint.setPriceFeedForVault(0, ftmusd);
-        entrypoint.setPriceFeedForVault(1, ethusd);
 
-        // update personalisation
+        Token dai = new Token("Dai", "DAI", 18);
+        Token usdc = new Token("USDC", "USDC", 6);
+        Token usdt = new Token("fwrapped USDT", "fUSDT", 6);
+        Token ftm = new Token("Wrapped Fantom", "wFTM", 18);
+        Token weth = new Token("Wrapped Ether", "WETH", 18);
+
+        address[3] memory diffuserParams = [0xa6AD18C2aC47803E193F75c3677b14BF19B94883, address(usdc), address(weth)];
+
+        TrustedLending trustee = new TrustedLending();
+        Personalisation personalized = new Personalisation(msg.sender, address(0));
+
+        VaultsEntrypointV1 entrypoint = new VaultsEntrypointV1();
+        address entrypointAddr = address(entrypoint);
+
+        StrategyV1 strategy = new StrategyV1(entrypointAddr, address(personalized), address(trustee), diffuserParams);
+
+        // deploy five vaults
+        Vault vdai = new Vault(dai, "alchemy DAI", "svDAI", entrypointAddr);
+        Vault vusdc = new Vault(usdc, "alchemy USDC", "svUSDC", entrypointAddr);
+        Vault vusdt = new Vault(usdt, "alchemy USDT", "svUSDT", entrypointAddr);
+        Vault vftm = new Vault(ftm, "alchemy FTM", "lvFTM", entrypointAddr);
+        Vault vweth = new Vault(weth, "alchemy WETH", "lvWETH", entrypointAddr);
+
+        entrypoint.addNewSVault(address(vdai));
+        entrypoint.addNewSVault(address(vusdc));
+        entrypoint.addNewSVault(address(vusdt));
+        entrypoint.addNewLVault(address(vftm), 0xe04676B9A9A2973BCb0D1478b5E1E9098BBB7f3D);
+        entrypoint.addNewLVault(address(vweth), 0xB8C458C957a6e6ca7Cc53eD95bEA548c52AFaA24);
+
+        entrypoint.setStrategyContract(address(strategy));
         personalized.setStrategy(address(strategy));
+
         vm.stopBroadcast();
     }
 }

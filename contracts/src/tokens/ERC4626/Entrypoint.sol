@@ -25,17 +25,8 @@ contract VaultsEntrypointV1 {
         _;
     }
 
-    constructor(
-        address[5] memory underlyings
-    ) {
+    constructor() {
         store._editor = msg.sender;
-        address self = address(this);
-
-        store._stables.push(address(new Vault(IERC20(underlyings[0]), "alchemy DAI", "svDAI", self)));
-        store._stables.push(address(new Vault(IERC20(underlyings[1]), "alchemy USDC", "svUSDC", self)));
-        store._stables.push(address(new Vault(IERC20(underlyings[2]), "alchemy USDT", "svUSDT", self)));
-        store._liquids.push(Tokens(address(new Vault(IERC20(underlyings[3]), "alchemy FTM", "lvFTM", self)), self));
-        store._liquids.push(Tokens(address(new Vault(IERC20(underlyings[4]), "alchemy WETH", "lvWETH", self)), self));
     }
 
     function getSVaults() public view returns (address[] memory) {
