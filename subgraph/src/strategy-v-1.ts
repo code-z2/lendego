@@ -6,6 +6,7 @@ import {
   NewBorrowRequest as NewBorrowRequestEvent,
   NewLoan as NewLoanEvent,
   UnstableItemRemoved as UnstableItemRemovedEvent,
+  NodeDeactivated as NodeDeactivatedEvent,
 } from "../generated/StrategyV1/StrategyV1";
 import { Node, Borrow, Lend, User } from "../generated/schema";
 
@@ -28,6 +29,14 @@ export function handleLoanSettled(event: LoanSettledEvent): void {
   let entity = Node.load(event.params.nodeId.toHexString());
   if (entity) {
     entity.isOpen = false;
+    entity.save();
+  }
+}
+
+export function handleNodeDeactivated(event: NodeDeactivatedEvent): void {
+  let entity = Lend.load(event.params.nodeId.toHexString());
+  if (entity) {
+    entity.acceptingRequests = false;
     entity.save();
   }
 }
@@ -63,6 +72,12 @@ export function handleLoanTaken(event: LoanTakenEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  let lend = Lend.load(event.params.lendId.toHexString());
+  if (lend) {
+    lend.filled = true;
+    lend.save();
+  }
 }
 
 export function handleNewBorrowRequest(event: NewBorrowRequestEvent): void {
@@ -95,6 +110,8 @@ export function handleNewLoan(event: NewLoanEvent): void {
   entity.choice = event.params.choice;
   entity.interest = event.params.interest;
   entity.assets = event.params.assets;
+  entity.filled = false;
+  entity.acceptingRequests = true;
   entity.ab = event.params.ab;
 
   entity.blockNumber = event.block.number;

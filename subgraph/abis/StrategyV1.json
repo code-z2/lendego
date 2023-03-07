@@ -50,7 +50,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "nodeId",
         "type": "uint256"
@@ -63,7 +63,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "nodeId",
         "type": "uint256"
@@ -105,6 +105,12 @@
         "name": "isPending",
         "type": "bool"
       },
+       {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "lendId",
+          "type": "uint256"
+        },
       {
         "components": [
           { "internalType": "address", "name": "lender", "type": "address" },
@@ -261,6 +267,19 @@
     "name": "NewLoan",
     "type": "event"
   },
+      {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "nodeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "NodeDeactivated",
+      "type": "event"
+    },
   {
     "anonymous": false,
     "inputs": [

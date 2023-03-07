@@ -6,9 +6,9 @@ dataSources:
     name: StrategyV1
     network: fantom-testnet
     source:
-      address: "0x20739c056626eefb9a5b48e29a1dec6c3e22c223"
+      address: "0x93231c5bB4dc64D997B796E3ed3818067a9BcDFc"
       abi: StrategyV1
-      startBlock: 14367286
+      startBlock: 14369324
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -24,12 +24,12 @@ dataSources:
       eventHandlers:
         - event: ItemRemoved(uint256,address)
           handler: handleItemRemoved
-        - event: LoanExtended(indexed uint256)
+        - event: LoanExtended(uint256)
           handler: handleLoanExtended
-        - event: LoanSettled(indexed uint256,address,address,uint256)
+        - event: LoanSettled(uint256,address,address,uint256)
           handler: handleLoanSettled
         - event: LoanTaken(indexed
-            uint256,bool,(address,uint8,uint8,uint256,bool,bool,bool,uint8),(address,address,uint256,uint256,uint8,uint8,uint8,bool,bool))
+            uint256,bool,uint256,(address,uint8,uint8,uint256,bool,bool,bool,uint8),(address,address,uint256,uint256,uint8,uint8,uint8,bool,bool))
           handler: handleLoanTaken
         - event: NewBorrowRequest(indexed uint256,address,uint256,uint256,uint8,uint8,uint8)
           handler: handleNewBorrowRequest
@@ -37,4 +37,6 @@ dataSources:
           handler: handleNewLoan
         - event: UnstableItemRemoved(uint256)
           handler: handleUnstableItemRemoved
+        - event: NodeDeactivated(uint256)
+          handler: handleNodeDeactivated
       file: StrategyV1/StrategyV1.wasm

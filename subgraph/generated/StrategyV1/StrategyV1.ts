@@ -119,15 +119,19 @@ export class LoanTaken__Params {
     return this._event.parameters[1].value.toBoolean();
   }
 
+  get lendId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
   get lend(): LoanTakenLendStruct {
     return changetype<LoanTakenLendStruct>(
-      this._event.parameters[2].value.toTuple()
+      this._event.parameters[3].value.toTuple()
     );
   }
 
   get borrow(): LoanTakenBorrowStruct {
     return changetype<LoanTakenBorrowStruct>(
-      this._event.parameters[3].value.toTuple()
+      this._event.parameters[4].value.toTuple()
     );
   }
 }
@@ -281,6 +285,24 @@ export class NewLoan__Params {
 
   get ab(): boolean {
     return this._event.parameters[5].value.toBoolean();
+  }
+}
+
+export class NodeDeactivated extends ethereum.Event {
+  get params(): NodeDeactivated__Params {
+    return new NodeDeactivated__Params(this);
+  }
+}
+
+export class NodeDeactivated__Params {
+  _event: NodeDeactivated;
+
+  constructor(event: NodeDeactivated) {
+    this._event = event;
+  }
+
+  get nodeId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 

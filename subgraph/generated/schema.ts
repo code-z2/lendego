@@ -448,6 +448,24 @@ export class Lend extends Entity {
     this.set("assets", Value.fromBigInt(value));
   }
 
+  get filled(): boolean {
+    let value = this.get("filled");
+    return value!.toBoolean();
+  }
+
+  set filled(value: boolean) {
+    this.set("filled", Value.fromBoolean(value));
+  }
+
+  get acceptingRequests(): boolean {
+    let value = this.get("acceptingRequests");
+    return value!.toBoolean();
+  }
+
+  set acceptingRequests(value: boolean) {
+    this.set("acceptingRequests", Value.fromBoolean(value));
+  }
+
   get ab(): boolean {
     let value = this.get("ab");
     return value!.toBoolean();

@@ -46,6 +46,8 @@ type Lend @entity(immutable: true) {
   choice: Int! # uint8
   interest: Int! # uint8
   assets: BigInt! # uint256
+  filled: Boolean! #bool
+  acceptingRequests: Boolean! #bool
   ab: Boolean! # bool
   blockNumber: BigInt!
   blockTimestamp: BigInt!

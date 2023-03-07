@@ -21,9 +21,10 @@ contract StrategyV1 is Lending {
         _trustee = ITrustee(trustee);
     }
 
-    event LoanTaken(uint256 indexed nodeId, bool isPending, PartialNodeL lend, PartialNodeB borrow);
-    event LoanSettled(uint256 indexed nodeId, address borrower, address lender, uint256 amount);
-    event LoanExtended(uint256 indexed nodeId);
+    event LoanTaken(uint256 indexed nodeId, bool isPending, uint256 lendId, PartialNodeL lend, PartialNodeB borrow);
+    event LoanSettled(uint256 nodeId, address borrower, address lender, uint256 amount);
+    event LoanExtended(uint256 nodeId);
+    event NodeDeactivated(uint256 nodeId);
     event ErrorLogging(string reason);
 
     function approveNode(uint256 nodeId) public {
@@ -85,7 +86,8 @@ contract StrategyV1 is Lending {
         _handleNodeService(
             pools.fill(choice, assets, nodeIdL, tenure, collateral, lend.assets, lend.interestRate, acceptedTenures),
             lend,
-            lend.approvalBased
+            lend.approvalBased,
+            nodeIdL
         );
     }
 
@@ -94,10 +96,12 @@ contract StrategyV1 is Lending {
         if (borrow.restricted || _arcmon.isBlacklisted(msg.sender)) revert UnAuthorized();
 
         _entrypoint.deposit(borrow.maximumExpectedOutput, msg.sender, _defaultChoice, true);
+        uint256 lendId = pools.stablePool.length;
         _handleNodeService(
             borrow,
             pools.fillUnstable(_defaultChoice, borrow.maxPayableInterest, borrow.maximumExpectedOutput),
-            false
+            false,
+            lendId
         );
     }
 
@@ -138,6 +142,7 @@ contract StrategyV1 is Lending {
     function deactivatePartialNode(uint256 nodeIdL) public {
         if (msg.sender != pools.stablePool[nodeIdL].lender) revert UnAuthorized();
         pools.stablePool[nodeIdL].acceptingRequests = false;
+        emit NodeDeactivated(nodeIdL);
     }
 
     function withdraw(uint256 assets, address receiver, uint8 choice) public {
@@ -154,7 +159,12 @@ contract StrategyV1 is Lending {
         _entrypoint.redeem(shares, receiver, msg.sender, choice, true);
     }
 
-    function _handleNodeService(PartialNodeB memory borrow, PartialNodeL memory lend, bool pending) internal {
+    function _handleNodeService(
+        PartialNodeB memory borrow,
+        PartialNodeL memory lend,
+        bool pending,
+        uint256 lendId
+    ) internal {
         uint256 currentNodeCount = nodeCount;
         pools.mergeNode(borrow, lend, currentNodeCount, pending);
         nodeCount++;
@@ -168,7 +178,7 @@ contract StrategyV1 is Lending {
                 _entrypoint.getSVaults()[lend.choiceOfStable],
                 true
             );
-        emit LoanTaken(currentNodeCount, pending, lend, borrow);
+        emit LoanTaken(currentNodeCount, pending, lendId, lend, borrow);
     }
 
     function _permitAndTransfer(uint256 assets, uint8 choice, address to, address vaultAddress, bool stable) internal {
