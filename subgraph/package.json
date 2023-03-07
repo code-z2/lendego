@@ -1,0 +1,20 @@
+{
+  "name": "arcmon",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": "true",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ peteruche21/arcmon",
+    "create-local": "graph create --node http://localhost:8020/ peteruche21/arcmon",
+    "remove-local": "graph remove --node http://localhost:8020/ peteruche21/arcmon",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 peteruche21/arcmon",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.42.4",
+    "@graphprotocol/graph-ts": "0.29.1"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
+}

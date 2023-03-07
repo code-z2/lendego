@@ -1,0 +1,653 @@
+[
+  {
+    "inputs": [
+      { "internalType": "address", "name": "entrypoint", "type": "address" },
+      { "internalType": "address", "name": "arcmon", "type": "address" },
+      { "internalType": "address", "name": "trustee", "type": "address" },
+      {
+        "internalType": "address[3]",
+        "name": "diffuserParams",
+        "type": "address[3]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  { "inputs": [], "name": "UnAuthorized", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "reason",
+        "type": "string"
+      }
+    ],
+    "name": "ErrorLogging",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "burner",
+        "type": "address"
+      }
+    ],
+    "name": "ItemRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "nodeId",
+        "type": "uint256"
+      }
+    ],
+    "name": "LoanExtended",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "nodeId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LoanSettled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "nodeId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isPending",
+        "type": "bool"
+      },
+      {
+        "components": [
+          { "internalType": "address", "name": "lender", "type": "address" },
+          {
+            "internalType": "uint8",
+            "name": "choiceOfStable",
+            "type": "uint8"
+          },
+          { "internalType": "uint8", "name": "interestRate", "type": "uint8" },
+          { "internalType": "uint256", "name": "assets", "type": "uint256" },
+          { "internalType": "bool", "name": "filled", "type": "bool" },
+          {
+            "internalType": "bool",
+            "name": "acceptingRequests",
+            "type": "bool"
+          },
+          { "internalType": "bool", "name": "approvalBased", "type": "bool" },
+          {
+            "internalType": "uint8",
+            "name": "minCollateralPercentage",
+            "type": "uint8"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct PartialNodeL",
+        "name": "lend",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          { "internalType": "address", "name": "borrower", "type": "address" },
+          {
+            "internalType": "address",
+            "name": "collateral",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "collateralIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maximumExpectedOutput",
+            "type": "uint256"
+          },
+          { "internalType": "uint8", "name": "tenure", "type": "uint8" },
+          {
+            "internalType": "uint8",
+            "name": "indexOfCollateral",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "maxPayableInterest",
+            "type": "uint8"
+          },
+          { "internalType": "bool", "name": "restricted", "type": "bool" },
+          { "internalType": "bool", "name": "personalised", "type": "bool" }
+        ],
+        "indexed": false,
+        "internalType": "struct PartialNodeB",
+        "name": "borrow",
+        "type": "tuple"
+      }
+    ],
+    "name": "LoanTaken",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assets",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "interest",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "choice",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "tenure",
+        "type": "uint8"
+      }
+    ],
+    "name": "NewBorrowRequest",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "choice",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "interest",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assets",
+        "type": "uint256"
+      },
+      { "indexed": false, "internalType": "bool", "name": "ab", "type": "bool" }
+    ],
+    "name": "NewLoan",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "UnstableItemRemoved",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeId", "type": "uint256" }
+    ],
+    "name": "approveNode",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "partialNodeLIdx",
+        "type": "uint256"
+      }
+    ],
+    "name": "burnPosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "partialNodeBIdx",
+        "type": "uint256"
+      }
+    ],
+    "name": "burnUnstablePosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "assets", "type": "uint256" },
+      { "internalType": "uint8", "name": "choice", "type": "uint8" },
+      { "internalType": "uint8", "name": "interest", "type": "uint8" },
+      { "internalType": "bool", "name": "approvalBased", "type": "bool" },
+      { "internalType": "uint8", "name": "collateralPercent", "type": "uint8" }
+    ],
+    "name": "createPosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint8", "name": "choice", "type": "uint8" },
+      { "internalType": "uint256", "name": "collateralIn_", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "maximumExpectedOutput_",
+        "type": "uint256"
+      },
+      { "internalType": "uint8", "name": "tenure", "type": "uint8" },
+      { "internalType": "uint8", "name": "interest", "type": "uint8" }
+    ],
+    "name": "createUnstablePosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "receiver", "type": "address" },
+      { "internalType": "uint8", "name": "choice", "type": "uint8" },
+      { "internalType": "uint256", "name": "collateralIn_", "type": "uint256" },
+      { "internalType": "uint8", "name": "tenure", "type": "uint8" },
+      { "internalType": "uint8", "name": "interest", "type": "uint8" },
+      {
+        "internalType": "uint8",
+        "name": "factoredNomisPercent",
+        "type": "uint8"
+      }
+    ],
+    "name": "createUnstablePositionPersonalised",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeIdL", "type": "uint256" }
+    ],
+    "name": "deactivatePartialNode",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeId", "type": "uint256" },
+      { "internalType": "address", "name": "reciever", "type": "address" }
+    ],
+    "name": "exitBorrowerFromPosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeId", "type": "uint256" }
+    ],
+    "name": "exitLenderFromPosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeId", "type": "uint256" }
+    ],
+    "name": "extendLoanDuration",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint8", "name": "choice", "type": "uint8" },
+      { "internalType": "uint256", "name": "assets", "type": "uint256" },
+      { "internalType": "uint256", "name": "nodeIdL", "type": "uint256" },
+      { "internalType": "uint8", "name": "tenure", "type": "uint8" }
+    ],
+    "name": "fillPosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeIdB", "type": "uint256" }
+    ],
+    "name": "fillUnstablePosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllBorrowers",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "borrower", "type": "address" },
+          {
+            "internalType": "address",
+            "name": "collateral",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "collateralIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maximumExpectedOutput",
+            "type": "uint256"
+          },
+          { "internalType": "uint8", "name": "tenure", "type": "uint8" },
+          {
+            "internalType": "uint8",
+            "name": "indexOfCollateral",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "maxPayableInterest",
+            "type": "uint8"
+          },
+          { "internalType": "bool", "name": "restricted", "type": "bool" },
+          { "internalType": "bool", "name": "personalised", "type": "bool" }
+        ],
+        "internalType": "struct PartialNodeB[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllLenders",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "lender", "type": "address" },
+          {
+            "internalType": "uint8",
+            "name": "choiceOfStable",
+            "type": "uint8"
+          },
+          { "internalType": "uint8", "name": "interestRate", "type": "uint8" },
+          { "internalType": "uint256", "name": "assets", "type": "uint256" },
+          { "internalType": "bool", "name": "filled", "type": "bool" },
+          {
+            "internalType": "bool",
+            "name": "acceptingRequests",
+            "type": "bool"
+          },
+          { "internalType": "bool", "name": "approvalBased", "type": "bool" },
+          {
+            "internalType": "uint8",
+            "name": "minCollateralPercentage",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct PartialNodeL[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllPositions",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "nodeId", "type": "uint256" },
+          { "internalType": "uint256", "name": "timeStamp", "type": "uint256" },
+          { "internalType": "bool", "name": "isOpen", "type": "bool" },
+          { "internalType": "bool", "name": "isPending", "type": "bool" },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "lender",
+                "type": "address"
+              },
+              {
+                "internalType": "uint8",
+                "name": "choiceOfStable",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "interestRate",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "assets",
+                "type": "uint256"
+              },
+              { "internalType": "bool", "name": "filled", "type": "bool" },
+              {
+                "internalType": "bool",
+                "name": "acceptingRequests",
+                "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "approvalBased",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint8",
+                "name": "minCollateralPercentage",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct PartialNodeL",
+            "name": "lend",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "borrower",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "collateral",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "collateralIn",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maximumExpectedOutput",
+                "type": "uint256"
+              },
+              { "internalType": "uint8", "name": "tenure", "type": "uint8" },
+              {
+                "internalType": "uint8",
+                "name": "indexOfCollateral",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "maxPayableInterest",
+                "type": "uint8"
+              },
+              { "internalType": "bool", "name": "restricted", "type": "bool" },
+              { "internalType": "bool", "name": "personalised", "type": "bool" }
+            ],
+            "internalType": "struct PartialNodeB",
+            "name": "borrow",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Node[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" }
+    ],
+    "name": "getPoints",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPoints",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nodeCount",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "shares", "type": "uint256" },
+      { "internalType": "address", "name": "receiver", "type": "address" },
+      { "internalType": "uint8", "name": "choice", "type": "uint8" }
+    ],
+    "name": "redeem",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "nodeId", "type": "uint256" }
+    ],
+    "name": "rejectNode",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "assets", "type": "uint256" },
+      { "internalType": "address", "name": "receiver", "type": "address" },
+      { "internalType": "uint8", "name": "choice", "type": "uint8" }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

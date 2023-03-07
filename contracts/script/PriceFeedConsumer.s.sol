@@ -21,7 +21,7 @@ contract DeployPriceFeedConsumer is Script, HelperConfig {
 
         vm.startBroadcast();
 
-        new PriceFeedConsumer(address(0));
+        new ArcmonPriceFeedConsumer(address(0));
 
         vm.stopBroadcast();
     }

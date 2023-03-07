@@ -11,14 +11,22 @@ contract Lending is SharedStorage {
     using NodeHelpers for Pool;
 
     VaultsEntrypointV1 internal immutable _entrypoint;
-    PriceFeedConsumer internal immutable _oracle;
+    ArcmonPriceFeedConsumer internal immutable _oracle;
 
     IPersonalisation internal immutable _arcmon;
 
-    event NewLoan(address indexed lender, uint256 indexed nodeId);
-    event BurntPosition(address indexed burner, uint256 nodeId);
-    event NewBorrowRequest(address indexed borrower, uint256 indexed nodeId);
-    event BurntUnstablePosition(address indexed burner, uint256 indexed nodeId);
+    event NewLoan(uint256 indexed index, address lender, uint8 choice, uint8 interest, uint256 assets, bool ab);
+    event NewBorrowRequest(
+        uint256 indexed index,
+        address borrower,
+        uint256 assets,
+        uint256 amount,
+        uint8 interest,
+        uint8 choice,
+        uint8 tenure
+    );
+    event ItemRemoved(uint256 index, address burner);
+    event UnstableItemRemoved(uint256 index);
 
     error UnAuthorized();
 
@@ -27,13 +35,12 @@ contract Lending is SharedStorage {
         uint8 choice,
         uint8 interest,
         bool approvalBased,
-        // collateral percent greater than 125 is ignored.
         uint8 collateralPercent
     ) public {
         if (interest > 15 || _arcmon.isBlacklisted(msg.sender)) revert UnAuthorized();
         _entrypoint.deposit(assets, msg.sender, choice, true);
         pools.create(assets, choice, interest, approvalBased, collateralPercent);
-        emit NewLoan(msg.sender, pools.stablePool.length - 1);
+        emit NewLoan(pools.stablePool.length - 1, msg.sender, choice, interest, assets, approvalBased);
     }
 
     function createUnstablePosition(
@@ -116,49 +123,34 @@ contract Lending is SharedStorage {
             acceptedTenures
         );
         _entrypoint.deposit(amount, receiver, choice, false);
-        emit NewBorrowRequest(receiver, pools.liquidPool.length - 1);
+        emit NewBorrowRequest(pools.liquidPool.length - 1, receiver, amount, expectedOutput, interest, choice, tenure);
     }
 
     function burnPosition(uint256 partialNodeLIdx) public {
         PartialNodeL memory temp = pools.stablePool[partialNodeLIdx];
         if (msg.sender != temp.lender || temp.filled) revert UnAuthorized();
 
-        _removeItemFromPool(partialNodeLIdx);
+        delete pools.stablePool[partialNodeLIdx];
         _entrypoint.withdraw(temp.assets, msg.sender, msg.sender, temp.choiceOfStable, true);
-        emit BurntPosition(msg.sender, partialNodeLIdx);
+        emit ItemRemoved(partialNodeLIdx, msg.sender);
     }
 
     function burnUnstablePosition(uint256 partialNodeBIdx) public {
-        PartialNodeB memory temp = pools.liquidPool[partialNodeBIdx];
-        if (msg.sender != temp.borrower) revert UnAuthorized();
+        if (msg.sender != pools.liquidPool[partialNodeBIdx].borrower) revert UnAuthorized();
 
-        _removeUnstableItemFromPool(partialNodeBIdx);
+        PartialNodeB memory temp = _removeUnstableItemFromPool(partialNodeBIdx);
         _entrypoint.withdraw(temp.collateralIn, msg.sender, msg.sender, temp.indexOfCollateral, false);
-        emit BurntUnstablePosition(msg.sender, partialNodeBIdx);
-    }
-
-    function _removeItemFromPool(uint256 index) internal {
-        if (pools.stablePool.length < 2) {
-            pools.stablePool.pop();
-        } else {
-            pools.stablePool[index] = pools.stablePool[pools.stablePool.length - 1];
-            pools.stablePool.pop();
-        }
     }
 
     function _removeUnstableItemFromPool(uint256 index) internal returns (PartialNodeB memory temp) {
         temp = pools.liquidPool[index];
-        if (pools.liquidPool.length < 2) {
-            pools.liquidPool.pop();
-        } else {
-            pools.liquidPool[index] = pools.liquidPool[pools.liquidPool.length - 1];
-            pools.liquidPool.pop();
-        }
+        delete pools.liquidPool[index];
+        emit UnstableItemRemoved(index);
     }
 
     constructor(address entrypoint, address arcmon) {
         _entrypoint = VaultsEntrypointV1(payable(entrypoint));
-        _oracle = new PriceFeedConsumer(entrypoint);
+        _oracle = new ArcmonPriceFeedConsumer(entrypoint);
         _arcmon = IPersonalisation(arcmon);
     }
 }
