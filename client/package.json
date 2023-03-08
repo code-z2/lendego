@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.10",
     "@rainbow-me/rainbowkit": "^0.8.0",
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.1.5",
     "@tanstack/react-query": "^4.18.0",
@@ -20,6 +21,7 @@
     "eslint": "^8.27.0",
     "eslint-config-next": "^13.0.3",
     "ethers": "^5.7.2",
+    "graphql": "^16.6.0",
     "next": "^13.0.3",
     "next-auth": "^4.17.0",
     "react": "^0.0.0-experimental-353c30252-20221202",
@@ -33,6 +35,7 @@
     "zustand": "^4.1.4"
   },
   "devDependencies": {
+    "@graphprotocol/client-cli": "^2.2.19",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.2.4"

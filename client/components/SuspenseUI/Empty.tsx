@@ -2,7 +2,7 @@ import React from "react";
 
 const Empty = () => {
   return (
-    <div className="mockup-window my-5 bg-base-300">
+    <div className="card my-5 bg-base-300">
       <div className="flex justify-center px-4 py-16 bg-base-200">
         <span>
           <svg

@@ -4,19 +4,20 @@ import React, { SetStateAction } from "react";
 type contractObj = { address: string; abi: ContractInterface };
 export interface IContracts {
   [key: string]: {
-    WEVMOS: contractObj;
-    USDC: contractObj;
-    USDT: contractObj;
-    BUSD: contractObj;
-    DAI: contractObj;
-    FRAX: contractObj;
-    ATOM: contractObj;
-    WETH: contractObj;
-    DIA: contractObj;
-    EGO: contractObj;
-    ORACLE: contractObj;
-    STABLEV: contractObj;
-    LIQUIDV: contractObj;
+    WEVMOS?: contractObj;
+    USDC?: contractObj;
+    USDT?: contractObj;
+    BUSD?: contractObj;
+    DAI?: contractObj;
+    FRAX?: contractObj;
+    ATOM?: contractObj;
+    WETH?: contractObj;
+    DIA?: contractObj;
+    EGO?: contractObj;
+    ORACLE?: contractObj;
+    STABLEV?: contractObj;
+    LIQUIDV?: contractObj;
+    [key: string]: contractObj | undefined;
   };
 }
 

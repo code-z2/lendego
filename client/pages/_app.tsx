@@ -21,29 +21,30 @@ import { publicProvider } from "wagmi/providers/public";
 import LayoutComponent from "../components/Layout";
 import useStore from "../store/useStore";
 import { useEffect } from "react";
+import SubgraphApolloProvider from "../gql/client";
 
-const testnetEvmos: Chain = {
-  id: 9000,
-  name: "Evmos Testnet",
+const fantomTestnet: Chain = {
+  id: 4002,
+  name: "Fantom Testnet",
   network: "Evmos",
-  iconUrl: "/evmos_logo.svg",
+  iconUrl: "/fantom_logo.svg",
   iconBackground: "#fff",
   nativeCurrency: {
     decimals: 18,
-    name: "Evmos",
-    symbol: "tEVMOS",
+    name: "Fantom",
+    symbol: "FTM",
   },
   rpcUrls: {
-    default: "https://eth.bd.evmos.dev:8545",
+    default: "https://rpc.ankr.com/fantom_testnet",
   },
   blockExplorers: {
-    default: { name: "evm explorer", url: "https://evm.evmos.dev" },
+    default: { name: "fantomscan", url: "https://testnet.ftmscan.com" },
   },
   testnet: true,
 };
 
 const { chains, provider } = configureChains(
-  [testnetEvmos],
+  [fantomTestnet],
   [
     jsonRpcProvider({ rpc: (chain) => ({ http: chain.rpcUrls.default }) }),
     publicProvider(),
@@ -89,9 +90,11 @@ export default function App({ Component, pageProps }: AppProps) {
             }}
           >
             <QueryClientProvider client={queryClient}>
-              <LayoutComponent>
-                <Component {...pageProps} />
-              </LayoutComponent>
+              <SubgraphApolloProvider>
+                <LayoutComponent>
+                  <Component {...pageProps} />
+                </LayoutComponent>
+              </SubgraphApolloProvider>
             </QueryClientProvider>
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>

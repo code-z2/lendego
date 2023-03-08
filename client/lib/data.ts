@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { ethers } from "ethers";
+import { ContractInterface, ethers } from "ethers";
 import { formatEther, formatUnits } from "ethers/lib/utils.js";
 import { contracts, liquids, stables } from "./constants";
 import {
@@ -13,24 +13,24 @@ import {
 const EMVOS_RPC_URL: string = process.env.NEXT_PUBLIC_EMVOS_RPC_URL as string;
 const provider = new ethers.providers.JsonRpcProvider(EMVOS_RPC_URL);
 const acceptedStables = [
-  contracts[9000].USDC.address.toLowerCase(),
-  contracts[9000].USDT.address.toLowerCase(),
-  contracts[9000].BUSD.address.toLowerCase(),
-  contracts[9000].DAI.address.toLowerCase(),
-  contracts[9000].FRAX.address.toLowerCase(),
-  contracts[9000].STABLEV.address.toLowerCase(),
+  contracts[9000].USDC?.address.toLowerCase() as string,
+  contracts[9000].USDT?.address.toLowerCase() as string,
+  contracts[9000].BUSD?.address.toLowerCase() as string,
+  contracts[9000].DAI?.address.toLowerCase() as string,
+  contracts[9000].FRAX?.address.toLowerCase() as string,
+  contracts[9000].STABLEV?.address.toLowerCase() as string,
 ];
 const acceptedLiquids = [
-  contracts[9000].WEVMOS.address.toLowerCase(),
-  contracts[9000].WETH.address.toLowerCase(),
-  contracts[9000].DIA.address.toLowerCase(),
-  contracts[9000].ATOM.address.toLowerCase(),
+  contracts[9000].WEVMOS?.address.toLowerCase() as string,
+  contracts[9000].WETH?.address.toLowerCase() as string,
+  contracts[9000].DIA?.address.toLowerCase() as string,
+  contracts[9000].ATOM?.address.toLowerCase() as string,
 ];
 
 export const ego = (chainId: string) =>
   new ethers.Contract(
-    contracts[chainId].EGO.address,
-    contracts[chainId].EGO.abi,
+    contracts[chainId].EGO?.address as string,
+    contracts[chainId].EGO?.abi as ContractInterface,
     provider
   );
 
@@ -39,7 +39,7 @@ function formatLendNode(data: any, id?: number): ILend {
     lnodeId: id,
     lender: data.lender,
     stableId: data.choiceOfStable, // choiceOfStable
-    stableAddress: stables(9000)[data.choiceOfStable].address,
+    stableAddress: stables(9000)[data.choiceOfStable].address as string,
     stableName: stables(9000)[data.choiceOfStable].name, // choiceOfStable name
     interestRate: data.interestRate,
     assets: formatUnits(
@@ -170,7 +170,7 @@ function formatBalances(data: {}[] | void, accepted: Set<string>): IBalance[] {
 }
 
 async function getStableBalances(chain: string) {
-  const balances = await getBalances(contracts[chain].STABLEV.address, chain);
+  const balances = await getBalances(contracts[chain].STABLEV?.address as string, chain);
   const formattedData: IBalance[] = formatBalances(
     balances,
     new Set(acceptedStables)
@@ -179,7 +179,7 @@ async function getStableBalances(chain: string) {
 }
 
 async function getLiquidBalances(chain: string) {
-  const balances = await getBalances(contracts[chain].LIQUIDV.address, chain);
+  const balances = await getBalances(contracts[chain].LIQUIDV?.address as string, chain);
   const formattedData: IBalance[] = formatBalances(
     balances,
     new Set(acceptedLiquids)
