@@ -2,8 +2,8 @@
     "name": "lendego",
     "version": "1.0.0",
     "description": "Solvent P2P defi Lending Model.",
-    "author": "(Patrick Collins - foundry-starter-kit), Peter Anyaogu, Rukevwe Simon",
-    "license": "GPLv3",
+    "author": "(Patrick Collins - foundry-starter-kit), Peter Anyaogu",
+    "license": "MIT",
     "private": "true",
     "files": [
         "src/**/*.sol"

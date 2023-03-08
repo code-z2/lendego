@@ -21,9 +21,10 @@ contract StrategyV1 is Lending {
         _trustee = ITrustee(trustee);
     }
 
-    event LoanTaken(address indexed by, address indexed from, uint256 amount, uint256 indexed nodeId);
-    event LoanSettled(address indexed by, address indexed lender, uint256 amount, uint256 indexed nodeId);
-    event LoanExtended(uint256 indexed nodeId);
+    event LoanTaken(uint256 indexed nodeId, bool isPending, uint256 lendId, PartialNodeL lend, PartialNodeB borrow);
+    event LoanSettled(uint256 nodeId, address borrower, address lender, uint256 amount);
+    event LoanExtended(uint256 nodeId);
+    event NodeDeactivated(uint256 nodeId);
     event ErrorLogging(string reason);
 
     function approveNode(uint256 nodeId) public {
@@ -45,7 +46,7 @@ contract StrategyV1 is Lending {
         if (msg.sender != node.lend.lender || !node.isPending || !node.lend.approvalBased) revert UnAuthorized();
 
         pools.reject(nodeId);
-        lockedStakes[pools.generalPool[nodeId].lend.lender] -= pools.generalPool[nodeId].lend.assets;
+        lockedStakes[node.lend.lender][node.lend.choiceOfStable] -= pools.generalPool[nodeId].lend.assets;
         _permitAndTransfer(
             node.borrow.collateralIn,
             node.borrow.indexOfCollateral,
@@ -53,6 +54,7 @@ contract StrategyV1 is Lending {
             _entrypoint.getLVaults()[node.borrow.indexOfCollateral].vault,
             false
         );
+        emit LoanSettled(nodeId, node.borrow.borrower, node.lend.lender, node.lend.assets);
     }
 
     function fillPosition(uint8 choice, uint256 assets, uint256 nodeIdL, uint8 tenure) public {
@@ -84,7 +86,8 @@ contract StrategyV1 is Lending {
         _handleNodeService(
             pools.fill(choice, assets, nodeIdL, tenure, collateral, lend.assets, lend.interestRate, acceptedTenures),
             lend,
-            lend.approvalBased
+            lend.approvalBased,
+            nodeIdL
         );
     }
 
@@ -93,10 +96,12 @@ contract StrategyV1 is Lending {
         if (borrow.restricted || _arcmon.isBlacklisted(msg.sender)) revert UnAuthorized();
 
         _entrypoint.deposit(borrow.maximumExpectedOutput, msg.sender, _defaultChoice, true);
+        uint256 lendId = pools.stablePool.length;
         _handleNodeService(
             borrow,
             pools.fillUnstable(_defaultChoice, borrow.maxPayableInterest, borrow.maximumExpectedOutput),
-            false
+            false,
+            lendId
         );
     }
 
@@ -104,7 +109,7 @@ contract StrategyV1 is Lending {
         Node memory node = pools.generalPool[nodeId];
         if (msg.sender != node.lend.lender || !node.isOpen || pools.tenureExpired(nodeId)) revert UnAuthorized();
         _forcefullyExit(nodeId);
-        emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
+        emit LoanSettled(nodeId, node.borrow.borrower, node.lend.lender, node.lend.assets);
     }
 
     function exitBorrowerFromPosition(uint256 nodeId, address reciever) public {
@@ -112,14 +117,14 @@ contract StrategyV1 is Lending {
         if (msg.sender != node.borrow.borrower || !node.isOpen) revert UnAuthorized();
 
         address vaultAddress = _entrypoint.getSVaults()[node.lend.choiceOfStable];
-        lockedStakes[node.lend.lender] -= node.lend.assets;
+        lockedStakes[node.lend.lender][node.lend.choiceOfStable] -= node.lend.assets;
         pools.generalPool[nodeId].isOpen = false;
         points[msg.sender]++;
 
         _transfer(IVault(vaultAddress).asset(), msg.sender, vaultAddress, pools.calcLoanPlusInterest(nodeId));
         _entrypoint.mint(node.lend.lender, pools.calcInterestOnly(nodeId), node.lend.choiceOfStable, true);
         _entrypoint.withdraw(node.borrow.collateralIn, reciever, msg.sender, node.borrow.indexOfCollateral, false);
-        emit LoanSettled(node.borrow.borrower, node.lend.lender, node.lend.assets, nodeId);
+        emit LoanSettled(nodeId, node.borrow.borrower, node.lend.lender, node.lend.assets);
     }
 
     function extendLoanDuration(uint256 nodeId) public {
@@ -137,27 +142,33 @@ contract StrategyV1 is Lending {
     function deactivatePartialNode(uint256 nodeIdL) public {
         if (msg.sender != pools.stablePool[nodeIdL].lender) revert UnAuthorized();
         pools.stablePool[nodeIdL].acceptingRequests = false;
+        emit NodeDeactivated(nodeIdL);
     }
 
     function withdraw(uint256 assets, address receiver, uint8 choice) public {
-        uint256 allowedWithdraw = IVault(_entrypoint.getSVaults()[choice]).previewWithdraw(assets) -
-            lockedStakes[msg.sender];
+        uint256 allowedWithdraw = IVault(_entrypoint.getSVaults()[choice]).balanceOf(msg.sender) -
+            lockedStakes[msg.sender][choice];
         if (assets > allowedWithdraw) revert UnAuthorized();
         _entrypoint.withdraw(assets, receiver, msg.sender, choice, true);
     }
 
     function redeem(uint256 shares, address receiver, uint8 choice) public {
-        uint256 allowedReedem = IVault(_entrypoint.getSVaults()[choice]).previewRedeem(shares) -
-            lockedStakes[msg.sender];
+        uint256 allowedReedem = IVault(_entrypoint.getSVaults()[choice]).balanceOf(msg.sender) -
+            lockedStakes[msg.sender][choice];
         if (shares > allowedReedem) revert UnAuthorized();
         _entrypoint.redeem(shares, receiver, msg.sender, choice, true);
     }
 
-    function _handleNodeService(PartialNodeB memory borrow, PartialNodeL memory lend, bool pending) internal {
+    function _handleNodeService(
+        PartialNodeB memory borrow,
+        PartialNodeL memory lend,
+        bool pending,
+        uint256 lendId
+    ) internal {
         uint256 currentNodeCount = nodeCount;
         pools.mergeNode(borrow, lend, currentNodeCount, pending);
         nodeCount++;
-        lockedStakes[lend.lender] += lend.assets;
+        lockedStakes[lend.lender][lend.choiceOfStable] += lend.assets;
 
         if (!pending)
             _permitAndTransfer(
@@ -167,7 +178,7 @@ contract StrategyV1 is Lending {
                 _entrypoint.getSVaults()[lend.choiceOfStable],
                 true
             );
-        emit LoanTaken(msg.sender, lend.lender, lend.assets, currentNodeCount);
+        emit LoanTaken(currentNodeCount, pending, lendId, lend, borrow);
     }
 
     function _permitAndTransfer(uint256 assets, uint8 choice, address to, address vaultAddress, bool stable) internal {
@@ -192,8 +203,17 @@ contract StrategyV1 is Lending {
         );
 
         pools.forcedExit(nodeId);
-        lockedStakes[node.lend.lender] -= node.lend.assets;
+        lockedStakes[node.lend.lender][node.lend.choiceOfStable] -= node.lend.assets;
         _liquidate(debt, IERC20(node.borrow.collateral), stableVaults[_defaultChoice], liquidVault, node);
+        emit NewBorrowRequest(
+            pools.liquidPool.length - 1,
+            node.borrow.borrower,
+            node.borrow.collateralIn,
+            0,
+            node.borrow.maxPayableInterest,
+            node.borrow.indexOfCollateral,
+            node.borrow.tenure
+        );
     }
 
     function _liquidate(uint256 amount, IERC20 tokenIn, address vaultIn, address vaultOut, Node memory node) internal {

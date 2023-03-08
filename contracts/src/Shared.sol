@@ -8,7 +8,7 @@ contract SharedStorage {
     using NodeHelpers for Pool;
     Pool internal pools;
 
-    mapping(address => uint256) internal lockedStakes;
+    mapping(address => mapping(uint8 => uint256)) internal lockedStakes;
     mapping(address => uint256) internal points;
 
     uint8[3] internal acceptedTenures = [30, 60, 90];

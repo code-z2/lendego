@@ -1,0 +1,8 @@
+{
+  "fantom-testnet": {
+    "StrategyV1": {
+      "address": "0x565e855babf8581b0EDA138D02CB8F66E927a224",
+      "startBlock": 14358620
+    }
+  }
+}

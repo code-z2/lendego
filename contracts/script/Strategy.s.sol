@@ -28,14 +28,14 @@ contract DeployStrategy is Script {
         VaultsEntrypointV1 entrypoint = new VaultsEntrypointV1();
         address entrypointAddr = address(entrypoint);
 
-        StrategyV1 strategy = new StrategyV1(entrypointAddr, address(personalized), address(trustee), diffuserParams);
-
         // deploy five vaults
         Vault vdai = new Vault(dai, "alchemy DAI", "svDAI", entrypointAddr);
         Vault vusdc = new Vault(usdc, "alchemy USDC", "svUSDC", entrypointAddr);
         Vault vusdt = new Vault(usdt, "alchemy USDT", "svUSDT", entrypointAddr);
         Vault vftm = new Vault(ftm, "alchemy FTM", "lvFTM", entrypointAddr);
         Vault vweth = new Vault(weth, "alchemy WETH", "lvWETH", entrypointAddr);
+
+        StrategyV1 strategy = new StrategyV1(entrypointAddr, address(personalized), address(trustee), diffuserParams);
 
         entrypoint.addNewSVault(address(vdai));
         entrypoint.addNewSVault(address(vusdc));

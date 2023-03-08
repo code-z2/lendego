@@ -1,0 +1,41 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: StrategyV1
+    network: fantom-testnet
+    source:
+      address: "0x93231c5bB4dc64D997B796E3ed3818067a9BcDFc"
+      abi: StrategyV1
+      startBlock: 14369324
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Node
+        - Borrow
+        - Lend
+        - User
+      abis:
+        - name: StrategyV1
+          file: ./abis/StrategyV1.json
+      eventHandlers:
+        - event: ItemRemoved(uint256,address)
+          handler: handleItemRemoved
+        - event: LoanExtended(uint256)
+          handler: handleLoanExtended
+        - event: LoanSettled(uint256,address,address,uint256)
+          handler: handleLoanSettled
+        - event: LoanTaken(indexed uint256,bool,uint256,(address,uint8,uint8,uint256,bool,bool,bool,uint8),(address,address,uint256,uint256,uint8,uint8,uint8,bool,bool))
+          handler: handleLoanTaken
+        - event: NewBorrowRequest(indexed uint256,address,uint256,uint256,uint8,uint8,uint8)
+          handler: handleNewBorrowRequest
+        - event: NewLoan(indexed uint256,address,uint8,uint8,uint256,bool)
+          handler: handleNewLoan
+        - event: UnstableItemRemoved(uint256)
+          handler: handleUnstableItemRemoved
+        - event: NodeDeactivated(uint256)
+          handler: handleNodeDeactivated
+      file: ./src/strategy-v-1.ts

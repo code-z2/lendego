@@ -1,0 +1,65 @@
+type Node @entity(immutable: true) {
+  id: ID!
+  nodeId: BigInt! # uint256
+  isPending: Boolean! # bool
+  isOpen: Boolean! # bool
+  lend_lender: User! # address
+  lend_choiceOfStable: Int! # uint8
+  lend_interestRate: Int! # uint8
+  lend_assets: BigInt! # uint256
+  lend_filled: Boolean! # bool
+  lend_acceptingRequests: Boolean! # bool
+  lend_approvalBased: Boolean! # bool
+  lend_minCollateralPercentage: Int! # uint8
+  borrow_borrower: User! @relation(name: "node_borrower") # address
+  borrow_collateral: Bytes! # address
+  borrow_collateralIn: BigInt! # uint256
+  borrow_maximumExpectedOutput: BigInt! # uint256
+  borrow_tenure: Int! # uint8
+  borrow_indexOfCollateral: Int! # uint8
+  borrow_maxPayableInterest: Int! # uint8
+  borrow_restricted: Boolean! # bool
+  borrow_personalised: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Borrow @entity(immutable: true) {
+  id: ID!
+  nodeId: BigInt! # uint256
+  borrower: User! # address
+  assets: BigInt! # uint256
+  amount: BigInt! # uint256
+  interest: Int! # uint8
+  choice: Int! # uint8
+  tenure: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Lend @entity(immutable: true) {
+  id: ID!
+  nodeId: BigInt! # uint256
+  lender: User! # address
+  choice: Int! # uint8
+  interest: Int! # uint8
+  assets: BigInt! # uint256
+  filled: Boolean! #bool
+  acceptingRequests: Boolean! #bool
+  ab: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type User @entity {
+  id: Bytes!
+  lends: [Lend!]! @derivedFrom(field: "lender")
+  borrows: [Borrow!]! @derivedFrom(field: "borrower")
+  positions: [Node!]!
+    @derivedFrom(field: "borrow_borrower")
+    @relation(name: "node_borrower")
+  pairedPositions: [Node!]! @derivedFrom(field: "lend_lender")
+}

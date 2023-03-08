@@ -8,7 +8,7 @@ import "../tokens/ERC4626/Entrypoint.sol";
  * @title The PriceConsumerV3 contract
  * @notice Acontract that returns latest price from Chainlink Price Feeds
  */
-contract PriceFeedConsumer {
+contract ArcmonPriceFeedConsumer {
     VaultsEntrypointV1 private immutable _entrypoint;
 
     constructor(address entrypoint) {
